@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://bhit-platform-x96a-git-main-bhit-d1f4a11d.vercel.app/api/$1"
+    }
+  ]
+}
