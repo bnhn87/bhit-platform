@@ -1,0 +1,430 @@
+{
+  "name": "bhit-work-os-web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint . --ext .ts,.tsx --max-warnings=0",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "dev:check": "npm run lint && npm run typecheck"
+  },
+  "dependencies": {
+    "@google/genai": "^1.16.0",
+    "@google/generative-ai": "^0.24.1",
+    "@react-pdf/renderer": "^4.3.0",
+    "@supabase/supabase-js": "^2.57.4",
+    "@types/uuid": "^10.0.0",
+    "context7": "^1.0.3",
+    "date-fns": "^4.1.0",
+    "exceljs": "^4.4.0",
+    "html2canvas": "^1.4.1",
+    "immer": "^10.1.1",
+    "jspdf": "^3.0.2",
+    "konva": "^9.3.22",
+    "localforage": "^1.10.0",
+    "lucide-react": "^0.544.0",
+    "multer": "^2.0.2",
+    "nanoid": "^5.1.5",
+    "next": "^15.4.6",
+    "openai": "^5.12.2",
+    "pdf-parse": "^1.1.1",
+    "pdfjs-dist": "^5.4.54",
+    "puppeteer": "^24.20.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-konva": "^19.0.7",
+    "uuid": "^13.0.0",
+    "xlsx": "^0.18.5",
+    "zod": "^3.25.76",
+    "zustand": "^5.0.7"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.8.0",
+    "@testing-library/react": "^16.3.0",
+    "@types/jest": "^30.0.0",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^20.19.11",
+    "@types/react": "^18.3.24",
+    "@types/react-dom": "^18.3.7",
+    "@typescript-eslint/eslint-plugin": "^8.41.0",
+    "@typescript-eslint/parser": "^8.41.0",
+    "autoprefixer": "^10.4.21",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^14.2.32",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-react": "^7.37.5",
+    "node-mocks-http": "^1.17.2",
+    "postcss": "^8.5.6",
+    "prettier": "^3.6.2",
+    "tailwindcss": "^4.1.12",
+    "typescript": "^5.9.2"
+  }
+}
+
+
+=== NEXT CONFIG ===
+
+const path = require("path");
+
+const webpack = require("webpack");
+
+module.exports = {
+  reactStrictMode: false,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  outputFileTracingRoot: path.join(__dirname),
+  webpack: (config) => {
+    config.resolve.alias["@"] = path.resolve(__dirname);
+    config.resolve.alias["@/lib"] = path.resolve(__dirname, "lib");
+    config.resolve.alias["@/hooks"] = path.resolve(__dirname, "hooks");
+    config.resolve.alias["@/components"] = path.resolve(__dirname, "components");
+    config.resolve.alias["@/modules"] = path.resolve(__dirname, "modules");
+    
+    config.plugins.push(
+      new webpack.DefinePlugin({
+        "process.env.GEMINI_API_KEY": JSON.stringify(process.env.GEMINI_API_KEY || "")
+      })
+    );
+    
+    return config;
+  },
+};
+
+=== DOCUMENTATION ===
+
+# Floor Planner Enhancements Summary
+
+This document summarizes the enhancements made to the BHIT Work OS Floor Planner functionality.
+
+## Database Integration
+
+### 1. Database Schema
+- Created `job_floorplans` table for storing floor plan data
+- Created `generated_tasks` table for storing auto-generated installation tasks
+- Added proper indexes for performance
+- Implemented Row Level Security (RLS) policies
+- Added automatic timestamp update triggers
+
+### 2. Database Utility Functions
+- Created `floorPlannerDB.ts` with utility functions for database operations:
+  - `getFloorPlanForJob()` - Retrieve floor plan for a specific job
+  - `saveFloorPlan()` - Save or update floor plan
+  - `getGeneratedTasksForJob()` - Retrieve generated tasks for a job
+  - `saveGeneratedTasks()` - Save generated tasks
+  - `deleteFloorPlan()` - Delete floor plan
+  - `deleteGeneratedTasksForJob()` - Delete all generated tasks for a job
+
+## Component Enhancements
+
+### 1. JobFloorPlanner Component
+- Integrated with database utility functions for persistence
+- Added database loading on component mount
+- Implemented database saving when project is updated
+- Maintained localStorage fallback for client-side storage
+- Preserved all existing Google Studio floor planner functionality
+
+### 2. FloorPlanTab Component
+- Added status indicator showing if floor plan exists for job
+- Improved UI with better information panels
+- Maintained link to full floor planner page
+
+### 3. Floor Plan Page
+- Enhanced navigation tabs
+- Added comprehensive information panel with usage guide
+- Improved styling and user experience
+
+## API Endpoints
+
+### 1. Test Endpoint
+- Created `/api/test-floorplanner-db` for testing database integration
+- Verifies existence of required tables
+
+### 2. Setup Endpoint
+- Created `/api/setup-floorplanner` that returns the database schema
+- Helps with initial setup process
+
+## Testing
+
+### 1. Test Page
+- Created `/test-floorplanner` page for testing database integration
+- Allows testing all database operations
+- Provides sample data for testing
+
+## Documentation
+
+### 1. Setup Guide
+- Created `database/floorplanner-setup-guide.md`
+- Detailed instructions for setting up database schema
+- Troubleshooting tips
+
+### 2. Component README
+- Created `components/floorplanner/README.md`
+- Comprehensive documentation of floor planner functionality
+- Component descriptions and usage instructions
+
+## Key Improvements
+
+1. **Database Persistence**: Floor plans and tasks are now stored in the database
+2. **Better User Feedback**: Status indicators show if floor plans exist
+3. **Enhanced Documentation**: Comprehensive guides for setup and usage
+4. **Testing Infrastructure**: Built-in test page for verifying functionality
+5. **Improved UI/UX**: Better information panels and navigation
+6. **Maintained Compatibility**: All existing functionality preserved
+
+## Next Steps
+
+1. **Apply Database Schema**: Run the SQL script in `database/floorplanner-schema.sql`
+2. **Test Integration**: Use the `/test-floorplanner` page to verify database operations
+3. **Verify RLS Policies**: Ensure Row Level Security is properly configured
+4. **Test with Different Roles**: Verify functionality works for directors, ops, and regular users
+5. **Customize Furniture Catalog**: Update SmartQuote furniture data as needed
+
+## Files Modified/Added
+
+### Modified:
+- `/components/floorplanner/JobFloorPlanner.tsx` - Added database integration
+- `/components/tabs/FloorPlanTab.tsx` - Added status indicators
+- `/pages/job/[id]/floorplan.tsx` - Enhanced UI and information
+
+### Added:
+- `/lib/floorPlannerDB.ts` - Database utility functions
+- `/pages/api/test-floorplanner-db.ts` - Test endpoint
+- `/pages/api/setup-floorplanner.ts` - Setup endpoint
+- `/pages/test-floorplanner.tsx` - Test page
+- `/database/floorplanner-setup-guide.md` - Setup guide
+- `/components/floorplanner/README.md` - Component documentation
+
+This enhancement provides a complete database integration for the floor planner while maintaining all existing functionality.
+
+=== DATABASE ===
+
+-- SQL script to create the required tables for task generation
+-- Copy and paste this into the Supabase SQL editor
+
+-- Create job_floorplans table
+CREATE TABLE IF NOT EXISTS job_floorplans (
+    id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+    job_id UUID NOT NULL,
+    name TEXT NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    floor_plan_url TEXT,
+    furniture JSONB DEFAULT '[]'::jsonb,
+    scale NUMERIC,
+    floor_plan_width INTEGER,
+    floor_plan_height INTEGER
+);
+
+-- Create generated_tasks table
+CREATE TABLE IF NOT EXISTS generated_tasks (
+    id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+    job_id UUID NOT NULL,
+    title TEXT NOT NULL,
+    description TEXT,
+    install_order INTEGER DEFAULT 0,
+    room_zone TEXT,
+    furniture_ids JSONB DEFAULT '[]'::jsonb,
+    estimated_time_minutes INTEGER,
+    dependencies JSONB DEFAULT '[]'::jsonb,
+    is_generated BOOLEAN DEFAULT true,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    -- Progress tracking fields
+    status TEXT DEFAULT 'Uplift',
+    completed_qty INTEGER DEFAULT 0,
+    total_qty INTEGER DEFAULT 1,
+    missing_notes TEXT
+);
+
+-- Create indexes for performance
+CREATE INDEX IF NOT EXISTS idx_job_floorplans_job_id ON job_floorplans(job_id);
+CREATE INDEX IF NOT EXISTS idx_job_floorplans_created_at ON job_floorplans(created_at);
+CREATE INDEX IF NOT EXISTS idx_generated_tasks_job_id ON generated_tasks(job_id);
+CREATE INDEX IF NOT EXISTS idx_generated_tasks_install_order ON generated_tasks(job_id, install_order);
+CREATE INDEX IF NOT EXISTS idx_generated_tasks_status ON generated_tasks(status);
+CREATE INDEX IF NOT EXISTS idx_generated_tasks_completed_qty ON generated_tasks(completed_qty);
+CREATE INDEX IF NOT EXISTS idx_generated_tasks_total_qty ON generated_tasks(total_qty);
+
+-- Enable RLS (Row Level Security)
+ALTER TABLE job_floorplans ENABLE ROW LEVEL SECURITY;
+ALTER TABLE generated_tasks ENABLE ROW LEVEL SECURITY;
+
+-- Add constraints to ensure data integrity for generated_tasks
+-- Check if constraints exist before adding them
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint 
+        WHERE conname = 'valid_status'
+    ) THEN
+        ALTER TABLE generated_tasks 
+        ADD CONSTRAINT valid_status 
+        CHECK (status IN ('Uplift', 'Placed', 'Built', 'Incomplete', 'Missing'));
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        -- Constraint might already exist with a different name
+        NULL;
+END $$;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint 
+        WHERE conname = 'non_negative_completed_qty'
+    ) THEN
+        ALTER TABLE generated_tasks 
+        ADD CONSTRAINT non_negative_completed_qty 
+        CHECK (completed_qty >= 0);
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        NULL;
+END $$;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint 
+        WHERE conname = 'positive_total_qty'
+    ) THEN
+        ALTER TABLE generated_tasks 
+        ADD CONSTRAINT positive_total_qty 
+        CHECK (total_qty > 0);
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        NULL;
+END $$;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint 
+        WHERE conname = 'completed_not_exceed_total'
+    ) THEN
+        ALTER TABLE generated_tasks 
+        ADD CONSTRAINT completed_not_exceed_total 
+        CHECK (completed_qty <= total_qty);
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        NULL;
+END $$;
+
+-- Create function to automatically update updated_at timestamp if it doesn't exist
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+-- Create triggers for automatic timestamp updates
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_trigger 
+        WHERE tgname = 'update_job_floorplans_updated_at'
+    ) THEN
+        CREATE TRIGGER update_job_floorplans_updated_at
+            BEFORE UPDATE ON job_floorplans
+            FOR EACH ROW
+            EXECUTE FUNCTION update_updated_at_column();
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        NULL;
+END $$;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_trigger 
+        WHERE tgname = 'update_generated_tasks_updated_at'
+    ) THEN
+        CREATE TRIGGER update_generated_tasks_updated_at
+            BEFORE UPDATE ON generated_tasks
+            FOR EACH ROW
+            EXECUTE FUNCTION update_updated_at_column();
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        NULL;
+END $$;
+
+-- Add comments for documentation
+COMMENT ON TABLE job_floorplans IS 'Floor plans associated with jobs, including furniture placement data';
+COMMENT ON TABLE generated_tasks IS 'Auto-generated installation tasks based on floor plan furniture placement';
+COMMENT ON COLUMN job_floorplans.furniture IS 'JSON array of placed furniture items with positions and properties';
+COMMENT ON COLUMN generated_tasks.dependencies IS 'JSON array of task IDs that must complete before this task';
+COMMENT ON COLUMN generated_tasks.furniture_ids IS 'JSON array of furniture IDs this task involves installing';
+
+=== FILES ===
+
+total 869616
+drwxr-xr-x    5 benhone  staff        160 22 Sep 13:03 __tests__
+drwxr-xr-x    2 benhone  staff         64 13 Aug 11:28 _backup_20250813_112809
+drwxr-xr-x   61 benhone  staff       1952 30 Sep 15:30 .
+drwxr-xr-x   11 benhone  staff        352 30 Sep 16:20 ..
+-rw-r--r--@   1 benhone  staff       8196 14 Sep 11:34 .DS_Store
+-rw-r--r--    1 benhone  staff        354 12 Sep 21:26 .env.example
+-rw-r--r--    1 benhone  staff        857 14 Sep 11:34 .env.local
+-rw-r--r--    1 benhone  staff         28 13 Aug 11:23 .eslintignore
+-rw-r--r--    1 benhone  staff        780 25 Aug 23:02 .eslintrc.json
+-rw-r--r--    1 benhone  staff         58 25 Aug 22:48 .eslintrc.json.bak.20250825-224810
+drwxr-xr-x   12 benhone  staff        384 30 Sep 15:31 .next
+drwxr-xr-x    2 benhone  staff         64 14 Sep 11:35 audit_logs
+-rw-r--r--    1 benhone  staff    5918185 14 Sep 11:42 BHIT_AUDIT.md
+drwxr-xr-x    5 benhone  staff        160 18 Aug 18:25 bhit-dumps
+-rw-r--r--    1 benhone  staff  146136256 30 Aug 21:46 BHIT-OS-2025-08-30.zip
+-rw-r--r--@   1 benhone  staff  292272684 30 Aug 21:47 BHIT-OS-slim.zip
+-rwxr-xr-x    1 benhone  staff        703 30 Aug 23:54 bootstrap.sh
+drwxr-xr-x   34 benhone  staff       1088 22 Sep 17:49 components
+-rw-r--r--    1 benhone  staff       1324 14 Sep 21:43 create-schema-now.sql
+-rw-r--r--@   1 benhone  staff       2622 12 Sep 12:20 create-tables-simple.sql
+-rw-r--r--@   1 benhone  staff       5133 12 Sep 12:20 create-tables.sql
+drwxr-xr-x@   4 benhone  staff        128 31 Aug 21:43 database
+drwxr-xr-x    4 benhone  staff        128 20 Aug 12:54 diagnostics
+drwxr-xr-x    4 benhone  staff        128  7 Sep 22:45 docs
+-rw-r--r--    1 benhone  staff        364 14 Sep 16:41 fix-deleted-at-data.sql
+-rw-r--r--    1 benhone  staff       1140 14 Sep 16:43 fix-deleted-at-safe.sql
+-rw-r--r--@   1 benhone  staff       4020  7 Sep 22:00 floorplanner-enhancements-summary.md
+-rw-r--r--    1 benhone  staff         97 30 Sep 15:12 global.d.ts
+drwxr-xr-x    9 benhone  staff        288 30 Sep 15:24 hooks
+-rw-r--r--    1 benhone  staff       8518 12 Sep 21:35 INFRASTRUCTURE.md
+-rw-r--r--    1 benhone  staff       1455 15 Sep 21:17 jest.config.js
+-rw-r--r--    1 benhone  staff        195 15 Sep 21:17 jest.env.js
+-rw-r--r--    1 benhone  staff       3859 15 Sep 21:17 jest.setup.js
+drwxr-xr-x   35 benhone  staff       1120 22 Sep 17:00 lib
+-rw-r--r--    1 benhone  staff      31488 22 Sep 15:22 lint-output.txt
+drwxr-xr-x    7 benhone  staff        224 18 Aug 19:09 locales
+-rw-r--r--    1 benhone  staff        246 22 Sep 12:55 middleware.disabled.ts
+-rw-r--r--    1 benhone  staff        246 22 Sep 12:55 middleware.enabled.ts
+-rw-r--r--    1 benhone  staff        450 22 Sep 12:55 middleware.ts
+drwxr-xr-x@  29 benhone  staff        928 22 Sep 16:59 migrations
+drwxr-xr-x    4 benhone  staff        128 14 Sep 10:15 modules
+-rw-r--r--    1 benhone  staff        264 30 Aug 22:10 next-env.d.ts
+-rw-r--r--    1 benhone  staff        784 30 Sep 15:30 next.config.js
+drwxr-xr-x  575 benhone  staff      18400 22 Sep 11:47 node_modules
+-rw-r--r--@   1 benhone  staff     395833 22 Sep 11:47 package-lock.json
+-rw-r--r--@   1 benhone  staff       1810 22 Sep 11:47 package.json
+drwxr-xr-x@  32 benhone  staff       1024 30 Sep 15:35 pages
+-rw-r--r--    1 benhone  staff       4782 14 Sep 11:35 project_audit.json
+drwxr-xr-x    2 benhone  staff         64 24 Sep 21:37 project-reference
+drwxr-xr-x    7 benhone  staff        224 22 Sep 16:11 public
+-rw-r--r--@   1 benhone  staff       7946 30 Aug 23:25 repo_full_tree.txt
+-rw-r--r--    1 benhone  staff        662 30 Aug 23:23 repo_tree.txt
+drwxr-xr-x    5 benhone  staff        160 22 Sep 16:46 scripts
+-rw-r--r--    1 benhone  staff       1117 14 Sep 21:50 SETUP-DATABASE.md
+-rw-r--r--@   1 benhone  staff       2453 12 Sep 12:20 SETUP-TASK-GENERATION.md
+drwxr-xr-x    3 benhone  staff         96 14 Sep 09:46 styles
+-rw-r--r--    1 benhone  staff        461 14 Sep 16:32 test-soft-delete-schema.sql
+-rw-r--r--@   1 benhone  staff       1162 22 Sep 11:48 tsconfig.json
+-rw-r--r--@   1 benhone  staff        481 25 Aug 22:47 tsconfig.json.bak.20250825-224752
+-rw-r--r--@   1 benhone  staff     322621 30 Sep 14:52 tsconfig.tsbuildinfo
+drwxr-xr-x    3 benhone  staff         96 30 Sep 15:13 types

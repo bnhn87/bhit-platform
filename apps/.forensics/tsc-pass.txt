@@ -1,0 +1,214 @@
+components/ActivityFeed.tsx(11,29): error TS1005: ',' expected.
+components/ActivityFeed.tsx(11,34): error TS1005: ':' expected.
+components/charts/BarChart.tsx(19,29): error TS1005: ',' expected.
+components/charts/BarChart.tsx(19,34): error TS1005: ':' expected.
+components/charts/Heatmap.tsx(147,33): error TS1005: ',' expected.
+components/charts/Heatmap.tsx(147,38): error TS1005: ':' expected.
+components/CostControlPanel.tsx(112,44): error TS1005: ',' expected.
+components/CostControlPanel.tsx(112,49): error TS1005: ':' expected.
+components/CostControlPanel.tsx(125,31): error TS1005: ',' expected.
+components/CostControlPanel.tsx(125,36): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+components/CostControlPanel.tsx(125,37): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+components/CostControlPanel.tsx(125,38): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+components/CostControlPanel.tsx(182,7): error TS1005: ')' expected.
+components/CostControlPanel.tsx(183,31): error TS1005: ',' expected.
+components/CostControlPanel.tsx(183,36): error TS1005: ':' expected.
+components/CostControlPanel.tsx(201,5): error TS1128: Declaration or statement expected.
+components/CostControlPanel.tsx(202,3): error TS1109: Expression expected.
+components/CostControlPanel.tsx(224,29): error TS1005: ',' expected.
+components/CostControlPanel.tsx(224,34): error TS1005: ':' expected.
+components/CostSummary.tsx(55,43): error TS1005: ',' expected.
+components/CostSummary.tsx(55,47): error TS1005: ':' expected.
+components/CostSummary.tsx(56,44): error TS1005: ',' expected.
+components/CostSummary.tsx(56,49): error TS1005: ':' expected.
+components/CostSummary.tsx(92,29): error TS1005: ',' expected.
+components/CostSummary.tsx(92,34): error TS1005: ':' expected.
+components/drawings/DrawingsTab.tsx(127,14): error TS1109: Expression expected.
+components/job/DrawingsPanel.tsx(97,29): error TS1005: ',' expected.
+components/job/DrawingsPanel.tsx(97,34): error TS1005: ':' expected.
+components/job/PhotoGrid.tsx(12,29): error TS1005: ',' expected.
+components/job/PhotoGrid.tsx(12,34): error TS1005: ':' expected.
+components/jobs/JobCard.tsx(25,12): error TS1109: Expression expected.
+components/MapPanel.tsx(9,29): error TS1005: ',' expected.
+components/MapPanel.tsx(9,33): error TS1005: ':' expected.
+components/MetricCard.tsx(16,12): error TS1109: Expression expected.
+components/tabs/DrawingsTab.tsx(94,16): error TS1109: Expression expected.
+components/tabs/DrawingsTab.tsx(126,16): error TS1109: Expression expected.
+components/tabs/DrawingsTab.tsx(135,31): error TS1005: ',' expected.
+components/tabs/DrawingsTab.tsx(135,36): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+components/tabs/DrawingsTab.tsx(135,37): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+components/tabs/DrawingsTab.tsx(135,38): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+components/tabs/DrawingsTab.tsx(152,7): error TS17015: Expected corresponding closing tag for JSX fragment.
+components/tabs/DrawingsTab.tsx(153,3): error TS1109: Expression expected.
+components/tabs/DrawingsTab.tsx(224,1): error TS1005: ')' expected.
+components/tabs/DrawingsTab.tsx(224,3): error TS1109: Expression expected.
+components/tabs/DrawingsTab.tsx(224,4): error TS1109: Expression expected.
+components/tabs/PlanningTab.tsx(81,31): error TS1005: ',' expected.
+components/tabs/PlanningTab.tsx(81,36): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+components/tabs/PlanningTab.tsx(81,37): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+components/tabs/PlanningTab.tsx(81,38): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+components/tabs/PlanningTab.tsx(111,31): error TS1005: ',' expected.
+components/tabs/PlanningTab.tsx(111,36): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+components/tabs/PlanningTab.tsx(111,37): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+components/tabs/PlanningTab.tsx(111,38): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+components/tabs/PlanningTab.tsx(132,9): error TS17015: Expected corresponding closing tag for JSX fragment.
+components/tabs/PlanningTab.tsx(134,31): error TS1005: ',' expected.
+components/tabs/PlanningTab.tsx(134,36): error TS1005: ':' expected.
+components/tabs/PlanningTab.tsx(153,5): error TS1128: Declaration or statement expected.
+components/tabs/PlanningTab.tsx(155,1): error TS1109: Expression expected.
+components/tabs/PlanningTab.tsx(155,3): error TS1109: Expression expected.
+components/tabs/PlanningTab.tsx(155,4): error TS1109: Expression expected.
+components/ui/StatCard.tsx(14,29): error TS1005: ',' expected.
+components/ui/StatCard.tsx(14,33): error TS1005: ':' expected.
+pages/admin/costing.tsx(31,47): error TS1005: ',' expected.
+pages/admin/costing.tsx(31,52): error TS1005: ':' expected.
+pages/admin/costing.tsx(32,48): error TS1005: ',' expected.
+pages/admin/costing.tsx(32,52): error TS1005: ':' expected.
+pages/admin/costing.tsx(36,31): error TS1005: ',' expected.
+pages/admin/costing.tsx(36,36): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/admin/costing.tsx(36,37): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/admin/costing.tsx(36,38): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+pages/admin/costing.tsx(61,7): error TS1005: ')' expected.
+pages/admin/costing.tsx(62,5): error TS1128: Declaration or statement expected.
+pages/admin/costing.tsx(63,3): error TS1109: Expression expected.
+pages/clients/index.tsx(6,31): error TS1005: ',' expected.
+pages/clients/index.tsx(6,36): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/clients/index.tsx(6,37): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/clients/index.tsx(6,38): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+pages/clients/index.tsx(12,7): error TS17015: Expected corresponding closing tag for JSX fragment.
+pages/clients/index.tsx(14,1): error TS1109: Expression expected.
+pages/clients/index.tsx(14,3): error TS1109: Expression expected.
+pages/clients/index.tsx(14,4): error TS1109: Expression expected.
+pages/close-day/[jobId].tsx(111,29): error TS1005: ',' expected.
+pages/close-day/[jobId].tsx(111,33): error TS1005: ':' expected.
+pages/dashboard.tsx(14,34): error TS1005: ',' expected.
+pages/dashboard.tsx(14,38): error TS1005: ':' expected.
+pages/dashboard.tsx(55,34): error TS1005: ',' expected.
+pages/dashboard.tsx(55,41): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/dashboard.tsx(55,44): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+pages/dashboard.tsx(58,10): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/dashboard.tsx(59,43): error TS1005: ',' expected.
+pages/dashboard.tsx(59,50): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/dashboard.tsx(59,53): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+pages/dashboard.tsx(59,87): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/dashboard.tsx(63,43): error TS1005: ',' expected.
+pages/dashboard.tsx(63,50): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/dashboard.tsx(63,53): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+pages/dashboard.tsx(63,113): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/dashboard.tsx(65,34): error TS1005: ',' expected.
+pages/dashboard.tsx(65,41): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/dashboard.tsx(65,44): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+pages/dashboard.tsx(68,10): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/dev/bootstrap.tsx(26,29): error TS1005: ',' expected.
+pages/dev/bootstrap.tsx(26,33): error TS1005: ':' expected.
+pages/dev/diag.tsx(44,29): error TS1005: ',' expected.
+pages/dev/diag.tsx(44,33): error TS1005: ':' expected.
+pages/job/new.tsx(128,31): error TS1005: ',' expected.
+pages/job/new.tsx(128,66): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/job/new.tsx(128,67): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/job/new.tsx(128,68): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+pages/job/new.tsx(234,7): error TS17015: Expected corresponding closing tag for JSX fragment.
+pages/job/new.tsx(235,3): error TS1109: Expression expected.
+pages/job/new.tsx(245,1): error TS1005: ')' expected.
+pages/job/new.tsx(245,3): error TS1109: Expression expected.
+pages/job/new.tsx(245,4): error TS1109: Expression expected.
+pages/jobs/new.tsx(95,31): error TS1005: ',' expected.
+pages/jobs/new.tsx(95,66): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/jobs/new.tsx(95,67): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/jobs/new.tsx(95,68): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+pages/jobs/new.tsx(209,7): error TS17015: Expected corresponding closing tag for JSX fragment.
+pages/jobs/new.tsx(210,3): error TS1109: Expression expected.
+pages/jobs/new.tsx(220,1): error TS1005: ')' expected.
+pages/jobs/new.tsx(220,3): error TS1109: Expression expected.
+pages/jobs/new.tsx(220,4): error TS1109: Expression expected.
+pages/settings/index.tsx(82,42): error TS1005: ',' expected.
+pages/settings/index.tsx(82,47): error TS1005: ':' expected.
+pages/settings/index.tsx(182,29): error TS1005: ',' expected.
+pages/settings/index.tsx(182,34): error TS1005: ':' expected.
+pages/settings/organization.tsx(22,1): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/settings/organization.tsx(25,3): error TS1109: Expression expected.
+pages/settings/organization.tsx(26,12): error TS1005: '}' expected.
+pages/settings/organization.tsx(32,3): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/settings/organization.tsx(33,1): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/settings/organization.tsx(36,19): error TS1005: '}' expected.
+pages/settings/organization.tsx(38,42): error TS1003: Identifier expected.
+pages/settings/organization.tsx(38,48): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+pages/settings/organization.tsx(40,41): error TS1003: Identifier expected.
+pages/settings/organization.tsx(40,47): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+pages/settings/organization.tsx(42,17): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+pages/settings/organization.tsx(55,9): error TS1005: '}' expected.
+pages/settings/organization.tsx(56,3): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/settings/organization.tsx(59,5): error TS1109: Expression expected.
+pages/settings/organization.tsx(63,9): error TS1005: '}' expected.
+pages/settings/organization.tsx(67,5): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/settings/organization.tsx(68,87): error TS1005: '}' expected.
+pages/settings/organization.tsx(68,94): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/settings/organization.tsx(71,3): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/settings/organization.tsx(78,7): error TS1005: '}' expected.
+pages/settings/organization.tsx(79,3): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/settings/organization.tsx(82,5): error TS1109: Expression expected.
+pages/settings/organization.tsx(84,33): error TS1005: ',' expected.
+pages/settings/organization.tsx(84,38): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/settings/organization.tsx(84,39): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/settings/organization.tsx(84,40): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+pages/settings/organization.tsx(84,51): error TS17002: Expected corresponding JSX closing tag for 'Layout'.
+pages/settings/organization.tsx(85,9): error TS17015: Expected corresponding closing tag for JSX fragment.
+pages/settings/organization.tsx(86,5): error TS1109: Expression expected.
+pages/settings/organization.tsx(90,5): error TS2657: JSX expressions must have one parent element.
+pages/settings/organization.tsx(94,33): error TS1005: ',' expected.
+pages/settings/organization.tsx(94,38): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/settings/organization.tsx(94,39): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/settings/organization.tsx(94,40): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+pages/settings/organization.tsx(115,33): error TS1005: ',' expected.
+pages/settings/organization.tsx(115,38): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/settings/organization.tsx(115,39): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/settings/organization.tsx(115,40): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+pages/settings/organization.tsx(135,11): error TS17002: Expected corresponding JSX closing tag for 'Layout'.
+pages/settings/organization.tsx(155,7): error TS1005: ')' expected.
+pages/settings/organization.tsx(156,5): error TS1109: Expression expected.
+pages/settings/organization.tsx(158,1): error TS1109: Expression expected.
+pages/settings/organization.tsx(158,3): error TS1109: Expression expected.
+pages/settings/organization.tsx(158,4): error TS1109: Expression expected.
+pages/settings/organization.tsx(159,1): error TS1128: Declaration or statement expected.
+pages/today/guest.tsx(77,3): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/today/guest.tsx(85,33): error TS1005: ',' expected.
+pages/today/guest.tsx(85,38): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/today/guest.tsx(85,39): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/today/guest.tsx(85,40): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+pages/today/guest.tsx(113,8): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/today/guest.tsx(117,33): error TS1005: ',' expected.
+pages/today/guest.tsx(117,38): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/today/guest.tsx(117,39): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/today/guest.tsx(117,40): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+pages/today/guest.tsx(142,11): error TS17015: Expected corresponding closing tag for JSX fragment.
+pages/today/guest.tsx(142,14): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+pages/today/guest.tsx(143,8): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/today/guest.tsx(144,7): error TS17015: Expected corresponding closing tag for JSX fragment.
+pages/today/guest.tsx(146,1): error TS1109: Expression expected.
+pages/today/guest.tsx(146,3): error TS1109: Expression expected.
+pages/today/guest.tsx(146,4): error TS1109: Expression expected.
+pages/today/guest.tsx(156,1): error TS1005: ')' expected.
+pages/today/guest.tsx(156,3): error TS1109: Expression expected.
+pages/today/guest.tsx(156,4): error TS1109: Expression expected.
+pages/today/guest.tsx(168,1): error TS1005: '}' expected.
+pages/today/index.tsx(75,33): error TS1005: ',' expected.
+pages/today/index.tsx(75,38): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/today/index.tsx(75,39): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/today/index.tsx(75,40): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+pages/today/index.tsx(111,33): error TS1005: ',' expected.
+pages/today/index.tsx(111,38): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/today/index.tsx(111,39): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/today/index.tsx(111,40): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+pages/today/index.tsx(149,9): error TS17015: Expected corresponding closing tag for JSX fragment.
+pages/today/index.tsx(150,5): error TS1109: Expression expected.
+pages/today/index.tsx(152,1): error TS1109: Expression expected.
+pages/today/index.tsx(152,3): error TS1109: Expression expected.
+pages/today/index.tsx(152,4): error TS1109: Expression expected.
+pages/today/index.tsx(157,25): error TS1005: ',' expected.
+pages/today/index.tsx(157,30): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/today/index.tsx(157,31): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+pages/today/index.tsx(157,32): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+pages/today/index.tsx(164,7): error TS17015: Expected corresponding closing tag for JSX fragment.
+pages/today/index.tsx(166,1): error TS1109: Expression expected.
+pages/today/index.tsx(166,3): error TS1109: Expression expected.
+pages/today/index.tsx(166,4): error TS1109: Expression expected.

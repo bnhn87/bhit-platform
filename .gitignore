@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Next.js
+.next/
+out/
+
+# Environment files - CRITICAL!
+.env
+.env.*
+!.env.example
+
+# Large files
+*.zip
+*.tar.gz
+bhit-dumps/
+
+# Misc
+.DS_Store
+*.log
