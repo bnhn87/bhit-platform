@@ -1,0 +1,108 @@
+{
+"git":{"present":false}
+,
+"inventory":{
+  "top_level_listing":"total 858800
+drwxr-xr-x    2 benhone  staff         64 13 Aug 11:28 _backup_20250813_112809
+drwxr-xr-x   54 benhone  staff       1728 14 Sep 11:35 .
+drwxr-xr-x    7 benhone  staff        224 25 Aug 22:48 ..
+-rw-r--r--@   1 benhone  staff       8196 14 Sep 11:34 .DS_Store
+-rw-r--r--    1 benhone  staff        354 12 Sep 21:26 .env.example
+-rw-r--r--    1 benhone  staff        857 14 Sep 11:34 .env.local
+-rw-r--r--    1 benhone  staff         28 13 Aug 11:23 .eslintignore
+-rw-r--r--    1 benhone  staff        780 25 Aug 23:02 .eslintrc.json
+-rw-r--r--    1 benhone  staff         58 25 Aug 22:48 .eslintrc.json.bak.20250825-224810
+drwxr-xr-x   12 benhone  staff        384 14 Sep 11:34 .next
+drwxr-xr-x    2 benhone  staff         64 14 Sep 11:35 audit_logs
+drwxr-xr-x    5 benhone  staff        160 18 Aug 18:25 bhit-dumps
+-rw-r--r--    1 benhone  staff  146136256 30 Aug 21:46 BHIT-OS-2025-08-30.zip
+-rw-r--r--@   1 benhone  staff  292272684 30 Aug 21:47 BHIT-OS-slim.zip
+-rwxr-xr-x    1 benhone  staff        703 30 Aug 23:54 bootstrap.sh
+drwxr-xr-x   35 benhone  staff       1120 14 Sep 10:37 components
+-rw-r--r--@   1 benhone  staff       2622 12 Sep 12:20 create-tables-simple.sql
+-rw-r--r--@   1 benhone  staff       5133 12 Sep 12:20 create-tables.sql
+drwxr-xr-x@   4 benhone  staff        128 31 Aug 21:43 database
+drwxr-xr-x    4 benhone  staff        128 20 Aug 12:54 diagnostics
+drwxr-xr-x    4 benhone  staff        128  7 Sep 22:45 docs
+-rw-r--r--@   1 benhone  staff       4020  7 Sep 22:00 floorplanner-enhancements-summary.md
+-rw-r--r--    1 benhone  staff        134 30 Aug 22:10 global.d.ts
+drwxr-xr-x    8 benhone  staff        256 12 Sep 21:28 hooks
+-rw-r--r--    1 benhone  staff       8518 12 Sep 21:35 INFRASTRUCTURE.md
+drwxr-xr-x   31 benhone  staff        992 14 Sep 09:36 lib
+drwxr-xr-x    7 benhone  staff        224 18 Aug 19:09 locales
+-rw-r--r--    1 benhone  staff        246 30 Aug 22:10 middleware.disabled.ts
+-rw-r--r--    1 benhone  staff        246 30 Aug 22:10 middleware.enabled.ts
+-rw-r--r--    1 benhone  staff        450 30 Aug 22:10 middleware.ts
+drwxr-xr-x@  11 benhone  staff        352 12 Sep 05:29 migrations
+drwxr-xr-x    4 benhone  staff        128 14 Sep 10:15 modules
+-rw-r--r--    1 benhone  staff        264 30 Aug 22:10 next-env.d.ts
+-rw-r--r--@   1 benhone  staff        735 12 Sep 13:18 next.config.js
+-rw-r--r--    1 benhone  staff        712 30 Aug 23:02 next.config.js.bak
+drwxr-xr-x  552 benhone  staff      17664 14 Sep 10:56 node_modules
+-rw-r--r--@   1 benhone  staff     372439 14 Sep 10:57 package-lock.json
+-rw-r--r--@   1 benhone  staff       1693 14 Sep 10:57 package.json
+drwxr-xr-x@  33 benhone  staff       1056 14 Sep 11:28 pages
+-rw-r--r--    1 benhone  staff         28 14 Sep 11:35 project_audit.json
+drwxr-xr-x    4 benhone  staff        128 13 Aug 13:07 public
+-rw-r--r--@   1 benhone  staff       7946 30 Aug 23:25 repo_full_tree.txt
+-rw-r--r--    1 benhone  staff        662 30 Aug 23:23 repo_tree.txt
+drwxr-xr-x    4 benhone  staff        128 12 Sep 05:28 scripts
+-rw-r--r--@   1 benhone  staff       2453 12 Sep 12:20 SETUP-TASK-GENERATION.md
+drwxr-xr-x    3 benhone  staff         96 14 Sep 09:46 styles
+-rw-r--r--@   1 benhone  staff       1131 12 Sep 21:26 tsconfig.json
+-rw-r--r--@   1 benhone  staff        665 30 Aug 22:59 tsconfig.json.bak
+-rw-r--r--@   1 benhone  staff        481 25 Aug 22:47 tsconfig.json.bak.20250825-224752
+-rw-r--r--@   1 benhone  staff     172784 14 Sep 09:44 tsconfig.tsbuildinfo
+-rw-r--r--    1 benhone  staff     147367 25 Aug 22:38 tsconfig.tsbuildinfo.bak
+-rw-r--r--    1 benhone  staff     233278 25 Aug 22:47 tsconfig.tsbuildinfo.bak.bak
+-rw-r--r--@   1 benhone  staff     233280 25 Aug 22:31 tsconfig.tsbuildinfo.bak.bak.bak
+drwxr-xr-x    3 benhone  staff         96 12 Sep 21:32 types",
+  "has_README":false,
+  "has_LICENSE":false,
+  "has_CONTRIBUTING":false,
+  "has_gitignore":false,
+  "has_github_dir":false,
+  "has_CI_configs":false,
+  "has_Dockerfile":false,
+  "has_docker_compose":false,
+  "has_Makefile":false,
+  "manifests":{
+    "package.json":true,
+    "yarn.lock":false,
+    "pnpm-lock.yaml":false,
+    "pyproject.toml":false,
+    "requirements.txt":false,
+    "Pipfile":false,
+    "setup.py":false,
+    "tox.ini":false,
+    "pom.xml":false,
+    "build.gradle":false,
+    "go.mod":false,
+    "Cargo.toml":false,
+    "Gemfile":false,
+    "composer.json":false
+  }
+}
+,
+"languages":{
+  "node":true,
+  "python":false,
+  "java":false,
+  "go":false,
+  "rust":false,
+  "ruby":false,
+  "php":false,
+  ".net":false
+}
+,
+"linters":{
+  "eslint":false,
+  "prettier":false,
+  "flake8":false,
+  "pylint":false,
+  "golangci-lint":false,
+  "hadolint":false,
+  "shellcheck":true
+}
+,
+"large_files":[

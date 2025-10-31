@@ -1,0 +1,8 @@
+{
+  "name": "BHIT SmartQuote",
+  "description": "A quoting tool for BH Installation & Transport Ltd to upload quote files, extract products, calculate install time, waste, and crew needs, and generate client-facing PDFs and internal Excel reports.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "prompt": ""
+}

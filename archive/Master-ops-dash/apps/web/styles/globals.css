@@ -1,0 +1,31 @@
+/* ---- Global base / reset (safe, minimal) ---- */
+
+* { box-sizing: border-box; }
+html, body, #__next { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
+    "Apple Color Emoji", "Segoe UI Emoji";
+  background: #0b1118;   /* dark base to match app */
+  color: #eaeef5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a { color: inherit; text-decoration: none; }
+
+button, input, textarea, select {
+  font: inherit;
+  color: inherit;
+}
+
+img, svg, video, canvas, audio, iframe, embed, object {
+  display: block;
+  max-width: 100%;
+}
+
+/* Scrollbar (optional, subtle) */
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-thumb { background: #1b2431; border-radius: 8px; }
+*::-webkit-scrollbar-track { background: #0f151c; }

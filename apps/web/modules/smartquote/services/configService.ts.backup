@@ -1,0 +1,428 @@
+
+import { AppConfig, ProductReference, Vehicle } from '../types';
+
+const CONFIG_STORAGE_KEY = 'bhit_app_config';
+
+const createReferenceEntry = (name: string, timeMinutes: number): ProductReference => {
+    const installTimeHours = parseFloat((timeMinutes / 60).toFixed(2));
+    const lowerName = name.toLowerCase();
+    const isHeavy = installTimeHours > 0.75 || ['sofa', 'co-work', 'duo', 'large'].some(term => lowerName.includes(term));
+    return {
+        installTimeHours,
+        isHeavy,
+        wasteVolumeM3: 0.035,
+    };
+};
+
+const DEFAULT_PRODUCT_REFERENCE_SHEET: Record<string, ProductReference> = {
+    // October 2025 Rawside Catalogue
+    // FLX Range
+    'FLX-SINGLE-L1200': { installTimeHours: 0.60, wasteVolumeM3: 0.035, isHeavy: false },
+    'FLX-SINGLE-L1400': { installTimeHours: 0.60, wasteVolumeM3: 0.035, isHeavy: false },
+    'FLX-SINGLE-L1600': { installTimeHours: 0.60, wasteVolumeM3: 0.035, isHeavy: false },
+    'FLX-COWORK-4P-L2400': { installTimeHours: 1.45, wasteVolumeM3: 0.035, isHeavy: true },
+    'FLX-COWORK-6P-L3600': { installTimeHours: 1.90, wasteVolumeM3: 0.035, isHeavy: true },
+    'FLX-COWORK-6P-L4200': { installTimeHours: 1.90, wasteVolumeM3: 0.035, isHeavy: true },
+    'FLX-COWORK-8P-L4800': { installTimeHours: 2.00, wasteVolumeM3: 0.035, isHeavy: true },
+    'FLX-ESSENTIALS': { installTimeHours: 0.65, wasteVolumeM3: 0.035, isHeavy: false }, // Standard + 0.05
+
+    // Workaround / Woody
+    'WORKAROUND-MEETING-L2000': { installTimeHours: 1.30, wasteVolumeM3: 0.035, isHeavy: true },
+    'WORKAROUND-MEETING-L2800': { installTimeHours: 1.70, wasteVolumeM3: 0.035, isHeavy: true },
+    'WORKAROUND-MEETING-L3600': { installTimeHours: 1.70, wasteVolumeM3: 0.035, isHeavy: true },
+    'WORKAROUND-MEETING-L4000': { installTimeHours: 2.00, wasteVolumeM3: 0.035, isHeavy: true },
+    'WORKAROUND-MEETING-L5200': { installTimeHours: 2.00, wasteVolumeM3: 0.035, isHeavy: true },
+    'WORKAROUND-CIRCULAR-D1000': { installTimeHours: 0.70, wasteVolumeM3: 0.035, isHeavy: false },
+    'WORKAROUND-CIRCULAR-D1200': { installTimeHours: 0.70, wasteVolumeM3: 0.035, isHeavy: false },
+    'WORKAROUND-CIRCULAR-D1800': { installTimeHours: 1.45, wasteVolumeM3: 0.035, isHeavy: true },
+    'WOODY-WORKAROUND': { installTimeHours: 1.70, wasteVolumeM3: 0.035, isHeavy: true },
+
+    // Bass Range
+    'BASS-RECT-L2000': { installTimeHours: 1.60, wasteVolumeM3: 0.035, isHeavy: true },
+    'BASS-RECT-L2400': { installTimeHours: 1.60, wasteVolumeM3: 0.035, isHeavy: true },
+    'BASS-RECT-L2800': { installTimeHours: 1.75, wasteVolumeM3: 0.035, isHeavy: true },
+    'BASS-RECT-L3200': { installTimeHours: 1.60, wasteVolumeM3: 0.035, isHeavy: true },
+    'BASS-PLUS-L4000': { installTimeHours: 2.00, wasteVolumeM3: 0.035, isHeavy: true },
+    'BASS-PLUS-L5200': { installTimeHours: 2.30, wasteVolumeM3: 0.035, isHeavy: true },
+    'BASS-PLUS-TRIANGULAR': { installTimeHours: 1.60, wasteVolumeM3: 0.035, isHeavy: true },
+    'BASS-ROUND-D1200': { installTimeHours: 1.30, wasteVolumeM3: 0.035, isHeavy: true },
+    'BASS-COFFEE-TABLE': { installTimeHours: 0.10, wasteVolumeM3: 0.035, isHeavy: false },
+    'BASS-CREDENZA-L2200': { installTimeHours: 0.40, wasteVolumeM3: 0.035, isHeavy: false },
+    'BASS-TAPERED-SMALL': { installTimeHours: 1.85, wasteVolumeM3: 0.035, isHeavy: true }, // Base + 0.25
+    'BASS-TAPERED-LARGE': { installTimeHours: 2.05, wasteVolumeM3: 0.035, isHeavy: true }, // Base + 0.45
+    'BASS-PILL': { installTimeHours: 1.80, wasteVolumeM3: 0.035, isHeavy: true },
+
+    // Frank Range
+    'FRANK-L2000': { installTimeHours: 1.60, wasteVolumeM3: 0.035, isHeavy: true },
+    'FRANK-L2400': { installTimeHours: 1.60, wasteVolumeM3: 0.035, isHeavy: true },
+    'FRANK-L3200': { installTimeHours: 2.00, wasteVolumeM3: 0.035, isHeavy: true },
+    'FRANK-L3600': { installTimeHours: 2.00, wasteVolumeM3: 0.035, isHeavy: true },
+    'FRANK-L4800': { installTimeHours: 2.80, wasteVolumeM3: 0.035, isHeavy: true },
+    'FRANK-L5200': { installTimeHours: 2.75, wasteVolumeM3: 0.035, isHeavy: true },
+    'FRANK-BENCH-L1200': { installTimeHours: 1.00, wasteVolumeM3: 0.035, isHeavy: true },
+    'FRANK-BENCH-L1500': { installTimeHours: 1.00, wasteVolumeM3: 0.035, isHeavy: true },
+
+    // Arne Range
+    'ARNE-L1800': { installTimeHours: 1.30, wasteVolumeM3: 0.035, isHeavy: true },
+    'ARNE-L4000': { installTimeHours: 3.00, wasteVolumeM3: 0.035, isHeavy: true },
+    'ARNE-L6600': { installTimeHours: 3.60, wasteVolumeM3: 0.035, isHeavy: true },
+    'ARNE-COFFEE-TABLE': { installTimeHours: 1.20, wasteVolumeM3: 0.035, isHeavy: true },
+
+    // Hi-Lo Range
+    'HILO-SINGLE-L1200': { installTimeHours: 1.30, wasteVolumeM3: 0.035, isHeavy: true },
+    'HILO-SINGLE-L1400': { installTimeHours: 1.30, wasteVolumeM3: 0.035, isHeavy: true },
+    'HILO-SINGLE-L1600': { installTimeHours: 1.30, wasteVolumeM3: 0.035, isHeavy: true },
+    'HILO-DUO-L1200': { installTimeHours: 1.65, wasteVolumeM3: 0.035, isHeavy: true },
+    'HILO-DUO-L1400': { installTimeHours: 1.65, wasteVolumeM3: 0.035, isHeavy: true },
+    'HILO-DUO-L1600': { installTimeHours: 1.65, wasteVolumeM3: 0.035, isHeavy: true },
+    'HILO-DUO-H-FRAME': { installTimeHours: 1.65, wasteVolumeM3: 0.035, isHeavy: true },
+    'HILO-DIVIDER': { installTimeHours: 0.00, wasteVolumeM3: 0.035, isHeavy: false },
+    'HILO-CABLE-SPINE': { installTimeHours: 0.00, wasteVolumeM3: 0.035, isHeavy: false },
+
+    // Café Range
+    'CAFE-ROUND-D1000': { installTimeHours: 0.40, wasteVolumeM3: 0.035, isHeavy: false },
+    'CAFE-ROUND-D1200': { installTimeHours: 0.40, wasteVolumeM3: 0.035, isHeavy: false },
+    'CAFE-BAR-L1800': { installTimeHours: 0.40, wasteVolumeM3: 0.035, isHeavy: false },
+
+    // Cat Range
+    'CAT-BAR-L1800': { installTimeHours: 1.30, wasteVolumeM3: 0.035, isHeavy: true },
+    'CAT-BAR-L2400': { installTimeHours: 1.30, wasteVolumeM3: 0.035, isHeavy: true },
+    'CAT-BAR-L3000': { installTimeHours: 1.30, wasteVolumeM3: 0.035, isHeavy: true },
+    'CAT-BAR-L4000': { installTimeHours: 1.30, wasteVolumeM3: 0.035, isHeavy: true },
+    'CAT-TABLE-L1800': { installTimeHours: 1.30, wasteVolumeM3: 0.035, isHeavy: true },
+    'CAT-TABLE-L2400': { installTimeHours: 1.30, wasteVolumeM3: 0.035, isHeavy: true },
+    'CAT-TABLE-L3000': { installTimeHours: 1.30, wasteVolumeM3: 0.035, isHeavy: true },
+    'CAT-TABLE-L4000': { installTimeHours: 1.30, wasteVolumeM3: 0.035, isHeavy: true },
+
+    // Cage Range
+    'CAGE-SOFA-L1800': { installTimeHours: 0.70, wasteVolumeM3: 0.035, isHeavy: false },
+    'CAGE-SOFA-L2400': { installTimeHours: 0.70, wasteVolumeM3: 0.035, isHeavy: false },
+    'CAGE-BASE-CUPBOARD': { installTimeHours: 0.50, wasteVolumeM3: 0.035, isHeavy: false },
+    'CAGE-STEEL-CUBE': { installTimeHours: 0.50, wasteVolumeM3: 0.035, isHeavy: false },
+    'CAGE-OPEN-CUBE': { installTimeHours: 0.50, wasteVolumeM3: 0.035, isHeavy: false },
+
+    // Credenza / Enza
+    'CREDENZA-L1000': { installTimeHours: 0.40, wasteVolumeM3: 0.035, isHeavy: false },
+    'CREDENZA-L1600': { installTimeHours: 0.40, wasteVolumeM3: 0.035, isHeavy: false },
+    'CREDENZA-L2000': { installTimeHours: 0.40, wasteVolumeM3: 0.035, isHeavy: false },
+    'CREDENZA-L2400': { installTimeHours: 0.40, wasteVolumeM3: 0.035, isHeavy: false },
+    'ENZA-L1600': { installTimeHours: 0.40, wasteVolumeM3: 0.035, isHeavy: false },
+    'ENZA-L2000': { installTimeHours: 0.40, wasteVolumeM3: 0.035, isHeavy: false },
+
+    // Desk End / Planter
+    'DESK-END-CUPBOARD': { installTimeHours: 0.50, wasteVolumeM3: 0.035, isHeavy: false },
+    'DESK-END-PLANTER': { installTimeHours: 0.50, wasteVolumeM3: 0.035, isHeavy: false },
+    'PLANTER-SHELL': { installTimeHours: 0.00, wasteVolumeM3: 0.035, isHeavy: false },
+
+    // Lockers
+    'LOCKER-CARCASS-2H': { installTimeHours: 0.50, wasteVolumeM3: 0.035, isHeavy: false },
+    'LOCKER-CARCASS-3H': { installTimeHours: 0.50, wasteVolumeM3: 0.035, isHeavy: false },
+    'LOCKER-CARCASS-4H': { installTimeHours: 0.50, wasteVolumeM3: 0.035, isHeavy: false },
+    'LOCKER-CARCASS-5H': { installTimeHours: 0.50, wasteVolumeM3: 0.035, isHeavy: false },
+    'CLOAKING-PANELS': { installTimeHours: 0.00, wasteVolumeM3: 0.035, isHeavy: false },
+
+    // Seating
+    'JUST-A-CHAIR': { installTimeHours: 0.30, wasteVolumeM3: 0.035, isHeavy: false },
+    'LOTTUS-SLEDGE': { installTimeHours: 0.01, wasteVolumeM3: 0.035, isHeavy: false },
+    'BILLY-SINGLE': { installTimeHours: 1.35, wasteVolumeM3: 0.035, isHeavy: true },
+
+    // Roller / Duke / Surf / Ludo / Bad Boy / Indy / Naz
+    'ROLLER-L2400': { installTimeHours: 1.80, wasteVolumeM3: 0.035, isHeavy: true },
+    'SURF-L2000': { installTimeHours: 1.60, wasteVolumeM3: 0.035, isHeavy: true },
+    'SURF-L2400': { installTimeHours: 1.60, wasteVolumeM3: 0.035, isHeavy: true },
+    'SURF-L3000': { installTimeHours: 1.60, wasteVolumeM3: 0.035, isHeavy: true },
+    'SURF-L4000': { installTimeHours: 1.60, wasteVolumeM3: 0.035, isHeavy: true },
+    'DUKE-L2400': { installTimeHours: 1.70, wasteVolumeM3: 0.035, isHeavy: true },
+    'DUKE-L3000': { installTimeHours: 1.70, wasteVolumeM3: 0.035, isHeavy: true },
+    'DUKE-L4000': { installTimeHours: 1.70, wasteVolumeM3: 0.035, isHeavy: true },
+    'LUDO-L2000': { installTimeHours: 1.70, wasteVolumeM3: 0.035, isHeavy: true },
+    'LUDO-L2400': { installTimeHours: 1.70, wasteVolumeM3: 0.035, isHeavy: true },
+    'LUDO-L2800': { installTimeHours: 1.70, wasteVolumeM3: 0.035, isHeavy: true },
+    'BADBOY-L1000': { installTimeHours: 1.60, wasteVolumeM3: 0.035, isHeavy: true },
+    'BADBOY-L2000': { installTimeHours: 1.60, wasteVolumeM3: 0.035, isHeavy: true },
+    'BADBOY-L3000': { installTimeHours: 1.60, wasteVolumeM3: 0.035, isHeavy: true },
+    'BADBOY-L4000': { installTimeHours: 1.60, wasteVolumeM3: 0.035, isHeavy: true },
+    'BADBOY-L4800': { installTimeHours: 1.60, wasteVolumeM3: 0.035, isHeavy: true },
+    'INDY-L1800': { installTimeHours: 1.60, wasteVolumeM3: 0.035, isHeavy: true },
+    'INDY-L2400': { installTimeHours: 1.60, wasteVolumeM3: 0.035, isHeavy: true },
+    'INDY-L3600': { installTimeHours: 1.60, wasteVolumeM3: 0.035, isHeavy: true },
+    'INDY-L4800': { installTimeHours: 1.60, wasteVolumeM3: 0.035, isHeavy: true },
+    'INDY-L5600': { installTimeHours: 1.60, wasteVolumeM3: 0.035, isHeavy: true },
+    'NAZ-CUPBOARD': { installTimeHours: 0.50, wasteVolumeM3: 0.035, isHeavy: false },
+    'NAZ-LOCKER': { installTimeHours: 0.50, wasteVolumeM3: 0.035, isHeavy: false },
+
+    // Glow Range
+    'GLOW-LAMP': { installTimeHours: 0.35, wasteVolumeM3: 0.035, isHeavy: false },
+    'GLOW-INTEGRATED': { installTimeHours: 1.90, wasteVolumeM3: 0.035, isHeavy: true }, // Frank + 0.3
+
+    // Power / Accessories
+    'POWER-TRAY': { installTimeHours: 0.20, wasteVolumeM3: 0.035, isHeavy: false },
+    'POWER-BAR': { installTimeHours: 0.20, wasteVolumeM3: 0.035, isHeavy: false },
+    'POWER-MODULE': { installTimeHours: 0.20, wasteVolumeM3: 0.035, isHeavy: false },
+    'NEOPRENE-CABLE-RISER': { installTimeHours: 0.05, wasteVolumeM3: 0.035, isHeavy: false },
+    'MESH-CABLE-RISER': { installTimeHours: 0.00, wasteVolumeM3: 0.035, isHeavy: false },
+    'CABLE-SPINE': { installTimeHours: 0.00, wasteVolumeM3: 0.035, isHeavy: false },
+    'DIVIDER-UNIVERSAL': { installTimeHours: 0.00, wasteVolumeM3: 0.035, isHeavy: false },
+    'SNAKEY-RISER-DUO': { installTimeHours: 0.05, wasteVolumeM3: 0.035, isHeavy: false },
+    'SNAKEY-RISER-SINGLE': { installTimeHours: 0.05, wasteVolumeM3: 0.035, isHeavy: false },
+
+    // Bespoke / Custom
+    'WOODY-MEETING-L2000': { installTimeHours: 1.30, wasteVolumeM3: 0.035, isHeavy: true },
+    'WOODY-MEETING-L3000': { installTimeHours: 1.70, wasteVolumeM3: 0.035, isHeavy: true },
+    'WOODY-MEETING-L4000': { installTimeHours: 2.00, wasteVolumeM3: 0.035, isHeavy: true },
+    'WOODY-MEETING-L5000': { installTimeHours: 2.20, wasteVolumeM3: 0.035, isHeavy: true },
+    'WOODY-MEETING-L7000': { installTimeHours: 2.40, wasteVolumeM3: 0.035, isHeavy: true },
+    'BESPOKE-DESK-END-PLANTER': { installTimeHours: 0.50, wasteVolumeM3: 0.035, isHeavy: false },
+    'CUSTOM-POWER-ADDON': { installTimeHours: 0.30, wasteVolumeM3: 0.035, isHeavy: false },
+
+    // Legacy codes (keep for backwards compatibility)
+    'T9b': { installTimeHours: 0.42, wasteVolumeM3: 0.035, isHeavy: false },
+    'D1': { installTimeHours: 0.33, wasteVolumeM3: 0.035, isHeavy: false },
+    'D2a': { installTimeHours: 0.50, wasteVolumeM3: 0.035, isHeavy: true },
+    'WK-S1': { installTimeHours: 0.25, wasteVolumeM3: 0.035, isHeavy: false },
+    'CH-01': { installTimeHours: 0.17, wasteVolumeM3: 0.035, isHeavy: false },
+    'CH-05': { installTimeHours: 0.20, wasteVolumeM3: 0.035, isHeavy: false },
+    'SOFA-3': { installTimeHours: 0.75, wasteVolumeM3: 0.035, isHeavy: true },
+    'ST-P1': { installTimeHours: 0.58, wasteVolumeM3: 0.035, isHeavy: false },
+    'ST-L2': { installTimeHours: 1.00, wasteVolumeM3: 0.035, isHeavy: true },
+    'DEFAULT': { installTimeHours: 0.33, wasteVolumeM3: 0.035, isHeavy: false },
+    'NAZ-LOCKER': createReferenceEntry('NAZ Locker', 17),
+    'SURF-L2000': createReferenceEntry('Surf Desk', 14),
+    'SURF-L2200': createReferenceEntry('Surf Desk', 14),
+    'SURF-L2400': createReferenceEntry('Surf Desk', 14),
+    'SURF-L2800': createReferenceEntry('Surf Desk', 16),
+    'SURF-L3200': createReferenceEntry('Surf Desk', 16),
+    'SURF-L3600': createReferenceEntry('Surf Desk', 18),
+    'SURF-L4000': createReferenceEntry('Surf Desk', 18),
+    'SURF-L4400': createReferenceEntry('Surf Desk', 18),
+    'SURF-L4800': createReferenceEntry('Surf Desk', 18),
+    'SURF-L5200': createReferenceEntry('Surf Desk', 2),
+    'SURF-L5600': createReferenceEntry('Surf Desk', 2),
+    'SURF-L6000': createReferenceEntry('Surf Desk', 2),
+    'BADBOY-L1000': createReferenceEntry('Bad Boy Desk', 65),
+    'BADBOY-L1200': createReferenceEntry('Bad Boy Desk', 65),
+    'BADBOY-L1400': createReferenceEntry('Bad Boy Desk', 65),
+    'BADBOY-L1800': createReferenceEntry('Bad Boy Desk', 8),
+    'BADBOY-L2000': createReferenceEntry('Bad Boy Desk', 8),
+    'BADBOY-L2200': createReferenceEntry('Bad Boy Desk', 9),
+    'BADBOY-L2400': createReferenceEntry('Bad Boy Desk', 9),
+    'BADBOY-L2800': createReferenceEntry('Bad Boy Desk', 14),
+    'BADBOY-L3200': createReferenceEntry('Bad Boy Desk', 14),
+    'BADBOY-L3600': createReferenceEntry('Bad Boy Desk', 14),
+    'BADBOY-L4000': createReferenceEntry('Bad Boy Desk', 14),
+    'BADBOY-L4400': createReferenceEntry('Bad Boy Desk', 14),
+    'BADBOY-L4800': createReferenceEntry('Bad Boy Desk', 16),
+    'BADBOY-L5200': createReferenceEntry('Bad Boy Desk', 16),
+    'BADBOY-L5600': createReferenceEntry('Bad Boy Desk', 16),
+    'DUKE-L1800': createReferenceEntry('Duke Desk', 1),
+    'DUKE-L2000': createReferenceEntry('Duke Desk', 1),
+    'DUKE-L2200': createReferenceEntry('Duke Desk', 1),
+    'DUKE-L2400': createReferenceEntry('Duke Desk', 1),
+    'DUKE-L2800': createReferenceEntry('Duke Desk', 15),
+    'DUKE-L3200': createReferenceEntry('Duke Desk', 15),
+    'DUKE-L3600': createReferenceEntry('Duke Desk', 17),
+    'DUKE-L4000': createReferenceEntry('Duke Desk', 17),
+    'FLX-L1200-H750': createReferenceEntry('FLX Desk', 4),
+    'FLX-L1400-H750': createReferenceEntry('FLX Desk', 4),
+    'FLX-L1600-H750': createReferenceEntry('FLX Desk', 4),
+    'FLX-COWORK-L1200': createReferenceEntry('FLX Co-Work Desk', 12),
+    'FLX-COWORK-L2400': createReferenceEntry('FLX Co-Work Desk', 14),
+    'FLX-COWORK-L3600': createReferenceEntry('FLX Co-Work Desk', 16),
+    'FLX-COWORK-L4800': createReferenceEntry('FLX Co-Work Desk', 18),
+    'FLX-COWORK-L6000': createReferenceEntry('FLX Co-Work Desk', 2),
+    'FLX-KD-L1200': createReferenceEntry('FLX KD Desk', 6),
+    'FLX-KD-L1400': createReferenceEntry('FLX KD Desk', 6),
+    'FLX-KD-L1600': createReferenceEntry('FLX KD Desk', 6),
+    'HI-LO-SINGLE-L1200': createReferenceEntry('Hi-Lo Single Desk', 12),
+    'HI-LO-SINGLE-L1400': createReferenceEntry('Hi-Lo Single Desk', 12),
+    'HI-LO-SINGLE-L1600': createReferenceEntry('Hi-Lo Single Desk', 12),
+    'HI-LO-DUO-L1200': createReferenceEntry('Hi-Lo Duo Desk', 16),
+    'HI-LO-DUO-L1400': createReferenceEntry('Hi-Lo Duo Desk', 16),
+    'HI-LO-DUO-L1600': createReferenceEntry('Hi-Lo Duo Desk', 16),
+    'BILLY-L1200-W700': createReferenceEntry('Billy Desk', 12),
+    'BILLY-L1400-W700': createReferenceEntry('Billy Desk', 12),
+    'BILLY-L1200-W1400': createReferenceEntry('Billy Desk', 2),
+    'BILLY-L1400-W1400': createReferenceEntry('Billy Desk', 2),
+    'BILLY-DEDICATED-1200': createReferenceEntry('Billy Dedicated Desk', 12),
+    'JUST-A-CHAIR': createReferenceEntry('Just-A-Chair', 3),
+    'CAT-L1800-H750': createReferenceEntry('Cat Table', 13),
+    'CAT-L2000-H750': createReferenceEntry('Cat Table', 13),
+    'CAT-L2200-H750': createReferenceEntry('Cat Table', 13),
+    'CAT-L2400-H750': createReferenceEntry('Cat Table', 13),
+    'CAT-L2800-H750': createReferenceEntry('Cat Table', 16),
+    'CAT-L3200-H750': createReferenceEntry('Cat Table', 16),
+    'CAT-L3600-H750': createReferenceEntry('Cat Table', 16),
+    'CAT-L4000-H750': createReferenceEntry('Cat Table', 16),
+    'CAT-L1500-H450': createReferenceEntry('Cat Low Table', 4),
+    'CAT-L1700-H450': createReferenceEntry('Cat Low Table', 4),
+    'CAT-L1900-H450': createReferenceEntry('Cat Low Table', 4),
+    'CAT-L1800-H1050': createReferenceEntry('Cat High Table', 13),
+    'CAT-L2000-H1050': createReferenceEntry('Cat High Table', 13),
+    'CAT-L2200-H1050': createReferenceEntry('Cat High Table', 13),
+    'CAT-L2800-H1050': createReferenceEntry('Cat High Table', 16),
+    'CAT-L3200-H1050': createReferenceEntry('Cat High Table', 16),
+    'CAT-L3600-H1050': createReferenceEntry('Cat High Table', 16),
+    'CAT-L4000-H1050': createReferenceEntry('Cat High Table', 16),
+    'CAT-L4800-H1050': createReferenceEntry('Cat High Table', 16),
+    'CAT-L5600-H1050': createReferenceEntry('Cat High Table', 18),
+    'TOPCAT-L1800': createReferenceEntry('Top Cat Desk', 18),
+    'TOPCAT-L2000': createReferenceEntry('Top Cat Desk', 18),
+    'TOPCAT-L2200': createReferenceEntry('Top Cat Desk', 18),
+    'TOPCAT-L2400': createReferenceEntry('Top Cat Desk', 18),
+    'TOPCAT-L2800': createReferenceEntry('Top Cat Desk', 2),
+    'TOPCAT-L3200': createReferenceEntry('Top Cat Desk', 2),
+    'INDY-L1800': createReferenceEntry('Indy Desk', 1),
+    'INDY-L2000': createReferenceEntry('Indy Desk', 1),
+    'INDY-L2200': createReferenceEntry('Indy Desk', 1),
+    'INDY-L2400': createReferenceEntry('Indy Desk', 1),
+    'INDY-L2800': createReferenceEntry('Indy Desk', 13),
+    'INDY-L3200': createReferenceEntry('Indy Desk', 13),
+    'INDY-L3600': createReferenceEntry('Indy Desk', 13),
+    'INDY-L4000': createReferenceEntry('Indy Desk', 13),
+    'INDY-L4800': createReferenceEntry('Indy Desk', 13),
+    'INDY-L5600': createReferenceEntry('Indy Desk', 15),
+    'INDY-L1500-H450': createReferenceEntry('Indy Low Table', 4),
+    'INDY-L1700-H450': createReferenceEntry('Indy Low Table', 4),
+    'INDY-L1900-H450': createReferenceEntry('Indy Low Table', 4),
+    'CAFE-L600': createReferenceEntry('Café Table', 4),
+    'CAFE-L800': createReferenceEntry('Café Table', 4),
+    'CAFE-L1000': createReferenceEntry('Café Table', 4),
+    'CAFE-L1200': createReferenceEntry('Café Table', 4),
+    'BOUNCE-L2740': createReferenceEntry('Bounce Ping Pong Table', 2),
+    'WIRED': createReferenceEntry('Wired Accessory', 0),
+    'LOCKERS': createReferenceEntry('Lockers', 5),
+    'LOCKERS-2-HIGH': createReferenceEntry('Lockers 2 High', 5),
+    'LOCKERS-3-HIGH': createReferenceEntry('Lockers 3 High', 5),
+    'LOCKERS-4-HIGH': createReferenceEntry('Lockers 4 High', 5),
+    'WORKSTORAGE-L1000': createReferenceEntry('Work Storage', 2),
+    'PITSTOP-L1170': createReferenceEntry('Pit Stop Unit', 12),
+    'PITSTOP-L1800': createReferenceEntry('Pit Stop Unit', 12),
+    'DESKEND-L1400-H1150': createReferenceEntry('Desk End Storage', 3),
+    'DESKEND-L1600-H1150': createReferenceEntry('Desk End Storage', 3),
+    'DESKEND-L1400-H950': createReferenceEntry('Desk End Storage', 3),
+    'DESKEND-L1600-H950': createReferenceEntry('Desk End Storage', 3),
+    'DESKEND-L1400-H1150-B': createReferenceEntry('Desk End Storage', 2),
+    'DESKEND-L1600-H1150-B': createReferenceEntry('Desk End Storage', 2),
+    'DESKEND-L1400-H950-B': createReferenceEntry('Desk End Storage', 2),
+    'DESKEND-L1600-H950-B': createReferenceEntry('Desk End Storage', 2),
+    'CAGE-L1800': createReferenceEntry('Cage Sofa', 5),
+    'CAGE-L2200': createReferenceEntry('Cage Sofa', 5),
+    'CAGE-L2400': createReferenceEntry('Cage Sofa', 5),
+    'CREDENZA-L1000': createReferenceEntry('Credenza', 2),
+    'CREDENZA-L1200': createReferenceEntry('Credenza', 2),
+    'CREDENZA-L1600': createReferenceEntry('Credenza', 2),
+    'CREDENZA-L1800': createReferenceEntry('Credenza', 2),
+    'CREDENZA-L2000': createReferenceEntry('Credenza', 2),
+    'CREDENZA-L2200': createReferenceEntry('Credenza', 2),
+    'CREDENZA-L2400': createReferenceEntry('Credenza', 2),
+};
+
+const DEFAULT_VEHICLES: Record<string, Vehicle> = {
+    'small-van': {
+        id: 'small-van',
+        name: 'Small Van (Transit)',
+        costPerDay: 325,
+        euroPalletCapacity: 4, // Euro pallets (1200mm x 800mm)
+        standardPalletCapacity: 3, // Standard pallets (1200mm x 1000mm)
+        isActive: true,
+    },
+    'large-van': {
+        id: 'large-van', 
+        name: 'Large Van (Sprinter)',
+        costPerDay: 550,
+        euroPalletCapacity: 8,
+        standardPalletCapacity: 6,
+        isActive: true,
+    },
+    'luton-van': {
+        id: 'luton-van',
+        name: 'Luton Van',
+        costPerDay: 685,
+        euroPalletCapacity: 12,
+        standardPalletCapacity: 10,
+        isActive: true,
+    },
+    '75t-lorry': {
+        id: '75t-lorry',
+        name: '7.5T Lorry',
+        costPerDay: 850,
+        euroPalletCapacity: 16,
+        standardPalletCapacity: 13,
+        isActive: true,
+    },
+};
+
+export const getDefaultConfig = (): AppConfig => ({
+    pricing: {
+        oneManVanDayRate: 325,
+        twoManVanDayRate: 550,
+        additionalFitterDayRate: 185,
+        supervisorDayRate: 245,
+        specialistReworkingFlatRate: 740,
+    },
+    laborCosts: {
+        oneManVanCostToCompany: 200,
+        twoManVanCostToCompany: 350,
+        additionalFitterCostToCompany: 120,
+        supervisorCostToCompany: 150,
+        specialistReworkingCostToCompany: 500,
+        useHourlyRate: false,
+        hourlyRateMultiplier: 0.125, // 8 hours per day
+    },
+    rules: {
+        hoursPerDay: 8,
+        vanCapacityM3: 13.6,
+        upliftStairsBufferPercent: 15,
+        extendedUpliftBufferPercent: 10,
+        defaultWasteVolumeM3: 0.035,
+        supervisorThresholdDays: 4,
+        preparedByOptions: [
+            'Rawside Contact',
+            'John Smith',
+            'Emily Jones',
+            'Chris Wilson',
+        ],
+    },
+    productCatalogue: DEFAULT_PRODUCT_REFERENCE_SHEET,
+    vehicles: DEFAULT_VEHICLES,
+});
+
+
+export const loadConfig = (): AppConfig => {
+    try {
+        if (typeof window === 'undefined') {
+            return getDefaultConfig();
+        }
+        const storedConfig = localStorage.getItem(CONFIG_STORAGE_KEY);
+        if (storedConfig) {
+            const parsedConfig = JSON.parse(storedConfig);
+            // Basic validation to ensure the stored config has the right shape
+            if (parsedConfig.pricing && parsedConfig.rules && parsedConfig.productCatalogue) {
+                // Merge with defaults to pick up any new properties not in storage
+                const defaultConfig = getDefaultConfig();
+                return {
+                    pricing: { ...defaultConfig.pricing, ...parsedConfig.pricing },
+                    laborCosts: { ...defaultConfig.laborCosts, ...parsedConfig.laborCosts },
+                    rules: { ...defaultConfig.rules, ...parsedConfig.rules },
+                    productCatalogue: { ...defaultConfig.productCatalogue, ...parsedConfig.productCatalogue },
+                    vehicles: { ...defaultConfig.vehicles, ...parsedConfig.vehicles },
+                };
+            }
+        }
+    } catch {
+        // Failed to load config from localStorage. Using default config.
+    }
+    return getDefaultConfig();
+};
+
+
+export const saveConfig = (config: AppConfig) => {
+    try {
+        if (typeof window === 'undefined') {
+            return; // Skip saving during SSR
+        }
+        localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(config));
+    } catch {
+        // Failed to save config to localStorage
+    }
+};

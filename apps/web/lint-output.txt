@@ -1,0 +1,337 @@
+
+> bhit-work-os-web@0.1.0 lint
+> eslint . --ext .ts,.tsx --max-warnings=0
+
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/modules/place-and-plan/hooks/useAiPlanner.ts
+   29:48  warning  Unexpected any. Specify a different type                                      @typescript-eslint/no-explicit-any
+   75:16  warning  'error' is defined but never used                                             @typescript-eslint/no-unused-vars
+  378:16  warning  'error' is defined but never used                                             @typescript-eslint/no-unused-vars
+  407:30  warning  Unexpected any. Specify a different type                                      @typescript-eslint/no-explicit-any
+  431:23  warning  Unexpected any. Specify a different type                                      @typescript-eslint/no-explicit-any
+  543:13  warning  'w' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  543:16  warning  'h' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  775:23  warning  Unexpected any. Specify a different type                                      @typescript-eslint/no-explicit-any
+  854:21  warning  Unexpected any. Specify a different type                                      @typescript-eslint/no-explicit-any
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/modules/place-and-plan/services/geminiService.ts
+  145:53  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/modules/place-and-plan/types.ts
+  25:14  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  84:15  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  85:34  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/modules/smartquote/App.tsx
+  106:22  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+  281:18  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/modules/smartquote/HomePage.tsx
+  91:21  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/modules/smartquote/components/AdminPanel.tsx
+  212:37  warning  'event' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+  276:86  warning  Unexpected any. Specify a different type                                 @typescript-eslint/no-explicit-any
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/modules/smartquote/components/ProductCrossCheck.tsx
+   83:10  warning  'selectedProduct' is assigned a value but never used. Allowed unused vars must match /^_/u     @typescript-eslint/no-unused-vars
+   83:27  warning  'setSelectedProduct' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  407:70  warning  'index' is defined but never used. Allowed unused args must match /^_/u                        @typescript-eslint/no-unused-vars
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/modules/smartquote/components/QuoteDetailsForm.tsx
+  8:10  warning  'StairsIcon' is defined but never used. Allowed unused vars must match /^_/u             @typescript-eslint/no-unused-vars
+  8:33  warning  'WrenchScrewdriverIcon' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  8:56  warning  'UsersIcon' is defined but never used. Allowed unused vars must match /^_/u              @typescript-eslint/no-unused-vars
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/modules/smartquote/components/ResultsDisplay.tsx
+  296:12  warning  'databaseProductsEnabled' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  912:42  warning  'lineNumber' is defined but never used. Allowed unused args must match /^_/u                        @typescript-eslint/no-unused-vars
+  912:54  warning  'validatedData' is defined but never used. Allowed unused args must match /^_/u                     @typescript-eslint/no-unused-vars
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/modules/smartquote/services/calculationService.ts
+    5:7   warning  'roundToNearest' is assigned a value but never used. Allowed unused vars must match /^_/u    @typescript-eslint/no-unused-vars
+  239:11  warning  'installationDays' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  279:79  warning  'config' is defined but never used. Allowed unused args must match /^_/u                     @typescript-eslint/no-unused-vars
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/modules/smartquote/services/configService.ts
+  296:14  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+  309:14  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/modules/smartquote/services/databaseStorageService.ts
+  17:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/modules/smartquote/services/enhancedConfigService.ts
+    8:7   warning  'createProductReference' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  125:14  warning  'error' is defined but never used                                                                  @typescript-eslint/no-unused-vars
+  147:14  warning  'error' is defined but never used                                                                  @typescript-eslint/no-unused-vars
+  249:14  warning  'error' is defined but never used                                                                  @typescript-eslint/no-unused-vars
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/modules/smartquote/services/exportService.ts
+   6:58  warning  Unexpected any. Specify a different type                                   @typescript-eslint/no-explicit-any
+   7:64  warning  Unexpected any. Specify a different type                                   @typescript-eslint/no-explicit-any
+   8:57  warning  Unexpected any. Specify a different type                                   @typescript-eslint/no-explicit-any
+  10:57  warning  'results' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+  28:56  warning  Unexpected any. Specify a different type                                   @typescript-eslint/no-explicit-any
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/modules/smartquote/services/geminiService.ts
+  103:15  warning  'lowerCode' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  286:14  warning  'error' is defined but never used                                                     @typescript-eslint/no-unused-vars
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/modules/smartquote/services/storageService.ts
+  19:14  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+  36:14  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+  50:14  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/modules/smartquote/utils/iconSizing.ts
+  136:38  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  145:22  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/_app.tsx
+  46:7  warning  `next/script`'s `beforeInteractive` strategy should not be used outside of `pages/_document.js`. See: https://nextjs.org/docs/messages/no-before-interactive-script-outside-document  @next/next/no-before-interactive-script-outside-document
+  48:7  warning  `next/script`'s `beforeInteractive` strategy should not be used outside of `pages/_document.js`. See: https://nextjs.org/docs/messages/no-before-interactive-script-outside-document  @next/next/no-before-interactive-script-outside-document
+  49:7  warning  `next/script`'s `beforeInteractive` strategy should not be used outside of `pages/_document.js`. See: https://nextjs.org/docs/messages/no-before-interactive-script-outside-document  @next/next/no-before-interactive-script-outside-document
+  50:7  warning  `next/script`'s `beforeInteractive` strategy should not be used outside of `pages/_document.js`. See: https://nextjs.org/docs/messages/no-before-interactive-script-outside-document  @next/next/no-before-interactive-script-outside-document
+  51:7  warning  `next/script`'s `beforeInteractive` strategy should not be used outside of `pages/_document.js`. See: https://nextjs.org/docs/messages/no-before-interactive-script-outside-document  @next/next/no-before-interactive-script-outside-document
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/admin-panel.tsx
+  335:120  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/api/debug-documents.ts
+  22:5  warning  Unexpected console statement  no-console
+  30:5  warning  Unexpected console statement  no-console
+  50:7  warning  Unexpected console statement  no-console
+  63:5  warning  Unexpected console statement  no-console
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/api/debug-jobs.ts
+  15:5   warning  Unexpected console statement                                                         no-console
+  18:19  warning  'testData' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  62:5   warning  Unexpected console statement                                                         no-console
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/api/debug-quote-data.ts
+   8:3  warning  Unexpected console statement  no-console
+  12:3  warning  Unexpected console statement  no-console
+  34:3  warning  Unexpected console statement  no-console
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/api/debug/test-tasks.ts
+   21:5   warning  Unexpected console statement                                                                no-console
+   24:5   warning  Unexpected console statement                                                                no-console
+   25:19  warning  'tasksCheck' is assigned a value but never used. Allowed unused vars must match /^_/u       @typescript-eslint/no-unused-vars
+   39:5   warning  Unexpected console statement                                                                no-console
+   42:5   warning  Unexpected console statement                                                                no-console
+   43:19  warning  'floorplansCheck' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+   49:7   warning  Unexpected console statement                                                                no-console
+   51:7   warning  Unexpected console statement                                                                no-console
+   55:5   warning  Unexpected console statement                                                                no-console
+   70:5   warning  Unexpected console statement                                                                no-console
+   80:5   warning  Unexpected console statement                                                                no-console
+  111:5   warning  Unexpected console statement                                                                no-console
+  114:5   warning  Unexpected console statement                                                                no-console
+  129:5   warning  Unexpected console statement                                                                no-console
+  149:19  warning  Unexpected any. Specify a different type                                                    @typescript-eslint/no-explicit-any
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/api/extract-pdf-text.ts
+  19:11  warning  'AIParseResult' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  39:5   warning  Unexpected console statement                                                     no-console
+  44:5   warning  Unexpected console statement                                                     no-console
+  56:61  warning  Unexpected any. Specify a different type                                         @typescript-eslint/no-explicit-any
+  68:60  warning  Unexpected any. Specify a different type                                         @typescript-eslint/no-explicit-any
+  90:5   warning  Unexpected console statement                                                     no-console
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/api/generate-tasks.ts
+    4:10  warning  'generateTasksFromSelectedDocuments' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+   24:5   warning  Unexpected console statement                                                                          no-console
+   38:5   warning  Unexpected console statement                                                                          no-console
+   51:7   warning  Unexpected console statement                                                                          no-console
+   54:24  warning  Unexpected any. Specify a different type                                                              @typescript-eslint/no-explicit-any
+   58:7   warning  Unexpected console statement                                                                          no-console
+   62:9   warning  Unexpected console statement                                                                          no-console
+   75:9   warning  Unexpected console statement                                                                          no-console
+  117:9   warning  Unexpected console statement                                                                          no-console
+  118:26  warning  Unexpected any. Specify a different type                                                              @typescript-eslint/no-explicit-any
+  125:9   warning  Unexpected console statement                                                                          no-console
+  127:56  warning  Unexpected any. Specify a different type                                                              @typescript-eslint/no-explicit-any
+  158:9   warning  Unexpected console statement                                                                          no-console
+  161:9   warning  Unexpected console statement                                                                          no-console
+  183:41  warning  Unexpected any. Specify a different type                                                              @typescript-eslint/no-explicit-any
+  219:5   warning  Unexpected console statement                                                                          no-console
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/api/generated-tasks/[id]/update.ts
+  22:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/api/guest/create-upload-url.ts
+  24:16  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  24:48  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  29:63  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  32:16  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  35:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/api/guest/list-photos.ts
+  13:16  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  13:48  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  18:63  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  21:16  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  24:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/api/job/[id]/export-schedule.ts
+   33:38  warning  'bankError' is assigned a value but never used. Allowed unused vars must match /^_/u           @typescript-eslint/no-unused-vars
+   67:40  warning  Unexpected any. Specify a different type                                                       @typescript-eslint/no-explicit-any
+   67:57  warning  Unexpected any. Specify a different type                                                       @typescript-eslint/no-explicit-any
+   67:75  warning  Unexpected any. Specify a different type                                                       @typescript-eslint/no-explicit-any
+  151:9   warning  'progressPercentage' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/api/jobs/[id]/delete.ts
+  21:5  warning  Unexpected console statement  no-console
+  30:5  warning  Unexpected console statement  no-console
+  42:5  warning  Unexpected console statement  no-console
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/api/jobs/create-share.ts
+  22:53   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  27:53   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  40:85   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  40:109  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/api/jobs/start.ts
+  17:14  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  20:59  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/api/parse-quote.ts
+    8:3   warning  Unexpected console statement                                                           no-console
+   26:7   warning  'lineNumber' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+   59:5   warning  Unexpected console statement                                                           no-console
+   63:21  warning  Unexpected any. Specify a different type                                               @typescript-eslint/no-explicit-any
+  110:5   warning  Unexpected console statement                                                           no-console
+  126:19  warning  Unexpected any. Specify a different type                                               @typescript-eslint/no-explicit-any
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/api/quotes/convert-to-job.ts
+   19:5  warning  Unexpected console statement  no-console
+   20:5  warning  Unexpected console statement  no-console
+   21:5  warning  Unexpected console statement  no-console
+   39:5  warning  Unexpected console statement  no-console
+   56:5  warning  Unexpected console statement  no-console
+   57:5  warning  Unexpected console statement  no-console
+   77:7  warning  Unexpected console statement  no-console
+  187:5  warning  Unexpected console statement  no-console
+  212:5  warning  Unexpected console statement  no-console
+  222:7  warning  Unexpected console statement  no-console
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/api/setup/apply-feature-flags-migration.ts
+   43:11  warning  Unexpected console statement                                                          no-console
+   99:32  warning  'stmtError' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  105:17  warning  Unexpected console statement                                                          no-console
+  106:24  warning  'err' is defined but never used                                                       @typescript-eslint/no-unused-vars
+  107:17  warning  Unexpected console statement                                                          no-console
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/api/setup/apply-product-catalogue-migration.ts
+  44:11  warning  Unexpected console statement  no-console
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/api/setup/apply-quote-migration.ts
+  60:26  warning  'err' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/api/setup/check-feature-flags-schema.ts
+  32:34  warning  'tableError' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/api/setup/database.ts
+   15:5   warning  Unexpected console statement                                                               no-console
+   59:5   warning  Unexpected console statement                                                               no-console
+   62:13  warning  'data' is assigned a value but never used. Allowed unused vars must match /^_/u            @typescript-eslint/no-unused-vars
+   70:7   warning  Unexpected console statement                                                               no-console
+  101:5   warning  Unexpected console statement                                                               no-console
+  104:19  warning  'testFloorplans' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  109:19  warning  'testTasks' is assigned a value but never used. Allowed unused vars must match /^_/u       @typescript-eslint/no-unused-vars
+  129:19  warning  Unexpected any. Specify a different type                                                   @typescript-eslint/no-explicit-any
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/api/setup/seed-feature-flags.ts
+   21:5   warning  Unexpected console statement              no-console
+   99:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  100:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/api/test-ai.ts
+  20:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/api/v2/products/[id]/quick-update.ts
+  44:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/api/v2/products/bulk-update.ts
+  73:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/api/v2/sync/batch.ts
+   31:20  warning  'device_id' is assigned a value but never used. Allowed unused vars must match /^_/u            @typescript-eslint/no-unused-vars
+   31:31  warning  'last_sync_timestamp' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  116:50  warning  'results' is defined but never used. Allowed unused args must match /^_/u                       @typescript-eslint/no-unused-vars
+  179:11  warning  'filters' is assigned a value but never used. Allowed unused vars must match /^_/u              @typescript-eslint/no-unused-vars
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/bhi-place-&-plan (1)/index.tsx
+  6:15  warning  'Project' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/close-day/[jobId].tsx
+   47:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   95:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  105:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/dashboard.tsx
+  185:48  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/dev/core-testing.tsx
+   136:19  warning  Unexpected any. Specify a different type                                                     @typescript-eslint/no-explicit-any
+   164:19  warning  Unexpected any. Specify a different type                                                     @typescript-eslint/no-explicit-any
+   457:19  warning  Unexpected any. Specify a different type                                                     @typescript-eslint/no-explicit-any
+   833:32  warning  Unexpected any. Specify a different type                                                     @typescript-eslint/no-explicit-any
+   842:14  warning  Unexpected any. Specify a different type                                                     @typescript-eslint/no-explicit-any
+   891:10  warning  'activeSubSection' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+   893:38  warning  'pwa' is assigned a value but never used. Allowed unused vars must match /^_/u               @typescript-eslint/no-unused-vars
+   898:9   warning  'imageUploadRef' is assigned a value but never used. Allowed unused vars must match /^_/u    @typescript-eslint/no-unused-vars
+  1138:19  warning  Unexpected console statement                                                                 no-console
+  1281:19  warning  Unexpected console statement                                                                 no-console
+  1444:19  warning  Unexpected console statement                                                                 no-console
+  2163:28  warning  'type' is defined but never used. Allowed unused args must match /^_/u                       @typescript-eslint/no-unused-vars
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/floor-planner.tsx
+  106:20  warning  '_saveError' is defined but never used       @typescript-eslint/no-unused-vars
+  116:14  warning  '_error' is defined but never used           @typescript-eslint/no-unused-vars
+  121:16  warning  '_clearError' is defined but never used      @typescript-eslint/no-unused-vars
+  183:16  warning  '_cleanupError' is defined but never used    @typescript-eslint/no-unused-vars
+  190:18  warning  '_emergencyError' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/invoicing/schedule.tsx
+  24:50  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/job/[id]/floorplan.tsx
+   83:35  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   84:39  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  111:15  warning  Unexpected console statement              no-console
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/job/[id]/index.tsx
+   90:3   warning  Unexpected console statement                                                                                                                                                          no-console
+  106:5   warning  Unexpected console statement                                                                                                                                                          no-console
+  108:7   warning  Unexpected console statement                                                                                                                                                          no-console
+  167:7   warning  Unexpected console statement                                                                                                                                                          no-console
+  255:7   warning  `next/script`'s `beforeInteractive` strategy should not be used outside of `pages/_document.js`. See: https://nextjs.org/docs/messages/no-before-interactive-script-outside-document  @next/next/no-before-interactive-script-outside-document
+  443:27  warning  Unexpected console statement                                                                                                                                                          no-console
+  453:27  warning  Unexpected console statement                                                                                                                                                          no-console
+  459:27  warning  Unexpected console statement                                                                                                                                                          no-console
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/job/[id]/targets.tsx
+   74:10  warning  'isAddingCompletion' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  642:25  warning  'remaining' is assigned a value but never used. Allowed unused vars must match /^_/u           @typescript-eslint/no-unused-vars
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/jobs/index.tsx
+  52:14  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/planning.tsx
+  11:5  warning  Unexpected console statement  no-console
+  18:5  warning  Unexpected console statement  no-console
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/settings/index.tsx
+  47:35  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/today/guest.tsx
+  37:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  81:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  90:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/benjaminhone_1/Desktop/BHIT WORK OS/apps/web/pages/today/index.tsx
+  15:7  warning  'LEGACY_STATUS_MAP' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  26:7  warning  'DB_STATUS_MAP' is assigned a value but never used. Allowed unused vars must match /^_/u      @typescript-eslint/no-unused-vars
+
+✖ 214 problems (0 errors, 214 warnings)
+
