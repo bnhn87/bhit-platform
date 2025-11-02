@@ -6,12 +6,45 @@ import OpenAI from 'openai';
 // Fallback mock parsing when API keys are not available
 const mockParseQuote = (text: string) => {
   // console.log('Using fallback mock parser for text:', text.substring(0, 100) + '...');
-  
+
   // Simple regex-based parsing for demonstration
   const lines = text.split('\n').filter(line => line.trim());
   const products = [];
   let _lineNumber = 1;
-  
+  let deliveryAddress = '';
+  let client = '';
+  let project = '';
+
+  // Try to extract delivery address with UK postcode pattern
+  const postcodeRegex = /\b([A-Z]{1,2}\d{1,2}[A-Z]?\s?\d[A-Z]{2})\b/i;
+  const addressRegex = /(?:deliver|address|site|location|postcode)[:\s]*(.*?)(?:\n|$)/i;
+  const clientRegex = /(?:client|customer|company)[:\s]*(.*?)(?:\n|$)/i;
+  const projectRegex = /(?:project|job|reference)[:\s]*(.*?)(?:\n|$)/i;
+
+  // Search for address and postcode
+  const fullText = text;
+  const addressMatch = fullText.match(addressRegex);
+  if (addressMatch) {
+    deliveryAddress = addressMatch[1].trim();
+  }
+
+  // If no delivery address found, try to find standalone postcode
+  const postcodeMatch = fullText.match(postcodeRegex);
+  if (!deliveryAddress && postcodeMatch) {
+    deliveryAddress = postcodeMatch[0];
+  }
+
+  // Extract client and project
+  const clientMatch = fullText.match(clientRegex);
+  if (clientMatch) {
+    client = clientMatch[1].trim();
+  }
+
+  const projectMatch = fullText.match(projectRegex);
+  if (projectMatch) {
+    project = projectMatch[1].trim();
+  }
+
   for (const line of lines) {
     // Look for quantity patterns like "2x", "3 x", "5"
     const qtyMatch = line.match(/(\d+)\s*[x×]?\s+([A-Za-z]\w+)/i);
@@ -26,7 +59,7 @@ const mockParseQuote = (text: string) => {
       _lineNumber++;
     }
   }
-  
+
   // If no products found, create a sample one
   if (products.length === 0) {
     products.push({
@@ -35,8 +68,13 @@ const mockParseQuote = (text: string) => {
       cleanDescription: 'Sample Item (Demo Mode)',
     });
   }
-  
-  return { products };
+
+  return {
+    products,
+    deliveryAddress,
+    client,
+    project
+  };
 };
 
 const openai = process.env.OPENAI_API_KEY ? new OpenAI({
@@ -71,9 +109,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const prompt = `
       You are a quoting expert for Rawside/BH Installation & Transport.
-      Extract product lines from the input and return ONLY valid JSON.
+      Extract quote details AND product lines from the input and return ONLY valid JSON.
 
-      Rules:
+      Extract these details:
+      1. Delivery Address/Postcode (UK postcode format: XX## #XX)
+      2. Client/Company name
+      3. Project/Job reference
+      4. Product lines
+
+      Product Rules:
       - Include: lines with product code or SKU
       - Exclude: "tray", "cable tray", "access door"
       - Pedestals: include, time = 0.00
@@ -93,7 +137,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       If time not resolvable, use "TBC".
 
-      Return ONLY JSON: { "products": [ { "productCode": "", "quantity": 0, "cleanDescription": "", "timeHoursPerUnit": 0.6 } ] }
+      Return ONLY JSON: {
+        "products": [ { "productCode": "", "quantity": 0, "cleanDescription": "", "timeHoursPerUnit": 0.6 } ],
+        "deliveryAddress": "",
+        "client": "",
+        "project": ""
+      }
 
       Input: ${text}
     `;

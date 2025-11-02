@@ -25,6 +25,7 @@ const responseSchema = {
                 client: { type: Type.STRING, description: "The client's name, if found." },
                 project: { type: Type.STRING, description: "The project name, if found." },
                 quoteRef: { type: Type.STRING, description: "The quote reference number, if found." },
+                deliveryAddress: { type: Type.STRING, description: "The delivery address or postcode (UK format: XX## #XX), if found." },
             }
         },
         products: {
@@ -62,7 +63,11 @@ const responseSchema = {
 
 const systemInstruction = `Extract furniture quote data into JSON. Parse product lines and quote metadata.
 
-**Quote Details:** Extract client, project, quoteRef (if present).
+**Quote Details:** Extract:
+- client: Company/customer name
+- project: Project/job reference
+- quoteRef: Quote reference number
+- deliveryAddress: IMPORTANT - Extract delivery address or postcode. Look for UK postcodes (format: XX## #XX like SW1A 1AA, EC1V 9HX, etc.)
 
 **Product Extraction:**
 1. Extract items with product codes (in brackets/parentheses or at line start)
