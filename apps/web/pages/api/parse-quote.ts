@@ -17,15 +17,26 @@ const mockParseQuote = (text: string) => {
 
   // Try to extract delivery address with UK postcode pattern
   const postcodeRegex = /\b([A-Z]{1,2}\d{1,2}[A-Z]?\s?\d[A-Z]{2})\b/i;
-  const addressRegex = /(?:deliver|address|site|location|postcode)[:\s]*(.*?)(?:\n|$)/i;
+  // Prioritize site/installation address over general address
+  const siteAddressRegex = /(?:site|install\s*at|installation\s*address|delivery\s*to|deliver\s*to)[:\s]*(.*?)(?:\n|$)/i;
+  const generalAddressRegex = /(?:address|location|postcode)[:\s]*(.*?)(?:\n|$)/i;
   const clientRegex = /(?:client|customer|company)[:\s]*(.*?)(?:\n|$)/i;
-  const projectRegex = /(?:project|job|reference)[:\s]*(.*?)(?:\n|$)/i;
+  const projectRegex = /(?:project|job|reference|site\s*name)[:\s]*(.*?)(?:\n|$)/i;
 
   // Search for address and postcode
   const fullText = text;
-  const addressMatch = fullText.match(addressRegex);
-  if (addressMatch) {
-    deliveryAddress = addressMatch[1].trim();
+  // First try site-specific address patterns
+  const siteMatch = fullText.match(siteAddressRegex);
+  if (siteMatch) {
+    deliveryAddress = siteMatch[1].trim();
+  }
+
+  // If no site address, try general address patterns
+  if (!deliveryAddress) {
+    const addressMatch = fullText.match(generalAddressRegex);
+    if (addressMatch) {
+      deliveryAddress = addressMatch[1].trim();
+    }
   }
 
   // If no delivery address found, try to find standalone postcode
@@ -112,9 +123,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       Extract quote details AND product lines from the input and return ONLY valid JSON.
 
       Extract these details:
-      1. Delivery Address/Postcode (UK postcode format: XX## #XX)
+      1. Delivery Address/Postcode - The SITE/INSTALLATION address (NOT client office)
+         - Look for: "Site:", "Installation at:", "Deliver to:", "Location:"
+         - UK postcode format: XX## #XX
       2. Client/Company name
-      3. Project/Job reference
+      3. Project/Job reference or site name
       4. Product lines
 
       Product Rules:

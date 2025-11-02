@@ -22,7 +22,7 @@ export const QuoteDetailsForm: React.FC<QuoteDetailsFormProps> = ({ details, onD
     const { getFieldError, validateFieldOnBlur, validateForm } = useFormValidation<QuoteDetails>({
         client: [required('Client name is required')],
         project: [required('Project name is required')],
-        deliveryAddress: [required('Delivery address is required')]
+        deliveryAddress: [required('Site/installation address is required')]
     });
 
     const handleDetailChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -181,7 +181,7 @@ export const QuoteDetailsForm: React.FC<QuoteDetailsFormProps> = ({ details, onD
                 </div>
                 <div>
                     <label htmlFor="deliveryAddress" style={{ display: "block", fontSize: 14, fontWeight: 500, color: theme.colors.text, marginBottom: 4 }}>
-                        Delivery Address <span style={{ color: theme.colors.danger }}>*</span>
+                        Site/Installation Address <span style={{ color: theme.colors.danger }}>*</span>
                     </label>
                     <input
                         type="text"
@@ -190,7 +190,7 @@ export const QuoteDetailsForm: React.FC<QuoteDetailsFormProps> = ({ details, onD
                         value={details.deliveryAddress}
                         onChange={handleDetailChange}
                         onBlur={() => validateFieldOnBlur('deliveryAddress', details.deliveryAddress, details)}
-                        placeholder="Postcode is required"
+                        placeholder="Site postcode (where work will be done)"
                         style={{
                             display: "block",
                             width: "100%",

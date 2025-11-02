@@ -67,7 +67,10 @@ const systemInstruction = `Extract furniture quote data into JSON. Parse product
 - client: Company/customer name
 - project: Project/job reference
 - quoteRef: Quote reference number
-- deliveryAddress: IMPORTANT - Extract delivery address or postcode. Look for UK postcodes (format: XX## #XX like SW1A 1AA, EC1V 9HX, etc.)
+- deliveryAddress: IMPORTANT - Extract SITE/INSTALLATION address or postcode (NOT client office). Look for:
+  * "Site:", "Delivery:", "Install at:", "Location:", "Address:"
+  * UK postcodes (format: XX## #XX like SW1A 1AA, EC1V 9HX, etc.)
+  * This is WHERE THE WORK WILL BE DONE, not billing address
 
 **Product Extraction:**
 1. Extract items with product codes (in brackets/parentheses or at line start)
