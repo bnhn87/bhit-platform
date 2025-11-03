@@ -1,6 +1,23 @@
-// API Route to fetch invoices - Bypasses PostgREST cache issue
+// API Route to fetch invoices - Uses direct PostgreSQL connection
+// This COMPLETELY bypasses PostgREST and its schema cache issues
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { createClient } from '@supabase/supabase-js';
+import { Pool } from 'pg';
+
+// Create connection pool (reuses connections for efficiency)
+let pool: Pool | null = null;
+
+function getPool() {
+  if (!pool) {
+    pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+      ssl: { rejectUnauthorized: false },
+      max: 20, // Maximum number of clients in the pool
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 2000,
+    });
+  }
+  return pool;
+}
 
 export default async function handler(
   req: NextApiRequest,
@@ -11,30 +28,12 @@ export default async function handler(
   }
 
   try {
-    // Use service role to bypass PostgREST entirely
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
-      {
-        auth: {
-          persistSession: false,
-          autoRefreshToken: false,
-        },
-      }
+    // Direct PostgreSQL query - bypasses PostgREST entirely
+    const result = await getPool().query(
+      'SELECT * FROM invoices ORDER BY invoice_date DESC'
     );
 
-    // Query directly using service role (bypasses PostgREST schema cache)
-    const { data, error } = await supabase
-      .from('invoices')
-      .select('*')
-      .order('invoice_date', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching invoices:', error);
-      return res.status(500).json({ error: error.message });
-    }
-
-    return res.status(200).json(data || []);
+    return res.status(200).json(result.rows);
   } catch (error) {
     console.error('Invoices API error:', error);
     return res.status(500).json({
