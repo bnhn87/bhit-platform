@@ -83,18 +83,18 @@ export const ClientPDFLayout: React.FC<ClientPDFLayoutProps> = ({ quoteDetails, 
                 <div className="grid grid-cols-3 gap-4 mb-6">
                     <div className="bg-white border border-gray-200 rounded-lg p-4">
                         <h4 className="text-xs uppercase font-bold text-gray-500 tracking-wider mb-2">Duration</h4>
-                        <p className="text-xl font-bold text-gray-900">{crew.projectDuration.toFixed(1)} days</p>
+                        <p className="text-xl font-bold text-gray-900">{crew.totalProjectDays.toFixed(1)} days</p>
                         <p className="text-xs text-gray-600">{labour.bufferedHours.toFixed(1)} total hours</p>
                     </div>
                     <div className="bg-white border border-gray-200 rounded-lg p-4">
                         <h4 className="text-xs uppercase font-bold text-gray-500 tracking-wider mb-2">Transport</h4>
-                        <p className="text-xl font-bold text-gray-900">{crew.vanType === 'twoMan' ? '2-Man' : '1-Man'} Van</p>
+                        <p className="text-xl font-bold text-gray-900">{crew.isTwoManVanRequired ? '2-Man' : '1-Man'} Van</p>
                         <p className="text-xs text-gray-600">{crew.vanCount} vehicle{crew.vanCount > 1 ? 's' : ''}</p>
                     </div>
                     <div className="bg-white border border-gray-200 rounded-lg p-4">
                         <h4 className="text-xs uppercase font-bold text-gray-500 tracking-wider mb-2">Waste Removal</h4>
                         <p className="text-xl font-bold text-gray-900">{waste.loadsRequired > 0 ? `${waste.loadsRequired.toFixed(1)} loads` : 'Minimal'}</p>
-                        <p className="text-xs text-gray-600">{waste.totalWasteM3.toFixed(2)}m³ total</p>
+                        <p className="text-xs text-gray-600">{waste.totalVolumeM3.toFixed(2)}m³ total</p>
                     </div>
                 </div>
 

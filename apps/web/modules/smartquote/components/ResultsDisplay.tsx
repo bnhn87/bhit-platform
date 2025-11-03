@@ -369,51 +369,83 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ products, result
     return (
         <>
             {/* Enhanced Quote Summary Card */}
-            <div className="space-y-6">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
                 <QuoteSummaryCard
                     results={results}
                     details={quoteDetails}
                 />
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 16 }}>
                 <StatCard title="Total Install Time" value={`${labour.bufferedHours.toFixed(2)} hrs`} description={`Incl. uplift & duration buffers`}>
-                    <ClockIcon {...getIconProps('feature', { color: '#3b82f6' })} />
+                    <ClockIcon {...getIconProps('feature', { color: theme.colors.accent })} />
                 </StatCard>
-                
-                <div className="md:col-span-1">
+
+                <div>
                    <CrewCard results={results} details={quoteDetails} onDetailsChange={onDetailsChange} />
                 </div>
-                
+
                 <StatCard title="Waste Removal" value={`${waste.loadsRequired.toFixed(2)} loads`} description={`${waste.totalVolumeM3.toFixed(2)} m³ total`}>
-                    <TrashIcon {...getIconProps('feature', { color: '#f97316' })} />
+                    <TrashIcon {...getIconProps('feature', { color: theme.colors.warn })} />
                 </StatCard>
             </div>
-            
-             <div className="space-y-3">
-                <div className="flex flex-wrap gap-3">
+
+             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
                     {results.crew.isTwoManVanRequired && !quoteDetails.overrideVanType && (
-                        <div className="flex items-center bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-1.5 rounded-full">
-                            <ExclamationTriangleIcon className="h-5 w-5 mr-2"/> Auto: 2-Man Van Required
+                        <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            background: `${theme.colors.warn}20`,
+                            color: theme.colors.warn,
+                            fontSize: 14,
+                            fontWeight: 500,
+                            padding: '6px 12px',
+                            borderRadius: theme.radii.full
+                        }}>
+                            <ExclamationTriangleIcon style={{ height: 20, width: 20, marginRight: 8 }}/> Auto: 2-Man Van Required
                         </div>
                     )}
                     {waste.isFlagged && (
-                        <div className="flex items-center bg-red-100 text-red-800 text-sm font-medium px-3 py-1.5 rounded-full">
-                            <ExclamationTriangleIcon className="h-5 w-5 mr-2"/> High Waste Volume Flagged
+                        <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            background: `${theme.colors.danger}20`,
+                            color: theme.colors.danger,
+                            fontSize: 14,
+                            fontWeight: 500,
+                            padding: '6px 12px',
+                            borderRadius: theme.radii.full
+                        }}>
+                            <ExclamationTriangleIcon style={{ height: 20, width: 20, marginRight: 8 }}/> High Waste Volume Flagged
                         </div>
                     )}
                      {results.crew.supervisorCount > 0 && quoteDetails.overrideSupervisorCount === null && (
-                        <div className="flex items-center bg-purple-100 text-purple-800 text-sm font-medium px-3 py-1.5 rounded-full">
-                            <UsersIcon className="h-5 w-5 mr-2"/> Auto: Supervisor Included
+                        <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            background: `${theme.colors.accentAlt}20`,
+                            color: theme.colors.accentAlt,
+                            fontSize: 14,
+                            fontWeight: 500,
+                            padding: '6px 12px',
+                            borderRadius: theme.radii.full
+                        }}>
+                            <UsersIcon style={{ height: 20, width: 20, marginRight: 8 }}/> Auto: Supervisor Included
                         </div>
                     )}
                 </div>
                  {(quoteDetails.upliftViaStairs || quoteDetails.extendedUplift || quoteDetails.specialistReworking) && (
-                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                        <h4 className="font-semibold text-blue-800">Services & Conditions Applied:</h4>
-                        <div className="flex flex-wrap gap-x-4 gap-y-2 mt-2">
-                             {quoteDetails.upliftViaStairs && <div className="flex items-center text-blue-700 text-sm font-medium"><StairsIcon className="h-5 w-5 mr-1.5"/> Uplift via stairs</div>}
-                            {quoteDetails.extendedUplift && <div className="flex items-center text-blue-700 text-sm font-medium"><TruckIcon className="h-5 w-5 mr-1.5"/> Extended uplift</div>}
-                            {quoteDetails.specialistReworking && <div className="flex items-center text-blue-700 text-sm font-medium"><WrenchScrewdriverIcon className="h-5 w-5 mr-1.5"/> Specialist Reworking</div>}
+                 <div style={{
+                     background: `${theme.colors.accent}10`,
+                     border: `1px solid ${theme.colors.accent}30`,
+                     borderRadius: theme.radii.lg,
+                     padding: 16
+                 }}>
+                        <h4 style={{ fontWeight: 600, color: theme.colors.accent, margin: 0 }}>Services & Conditions Applied:</h4>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, marginTop: 8 }}>
+                             {quoteDetails.upliftViaStairs && <div style={{ display: 'flex', alignItems: 'center', color: theme.colors.accent, fontSize: 14, fontWeight: 500 }}><StairsIcon style={{ height: 20, width: 20, marginRight: 6 }}/> Uplift via stairs</div>}
+                            {quoteDetails.extendedUplift && <div style={{ display: 'flex', alignItems: 'center', color: theme.colors.accent, fontSize: 14, fontWeight: 500 }}><TruckIcon style={{ height: 20, width: 20, marginRight: 6 }}/> Extended uplift</div>}
+                            {quoteDetails.specialistReworking && <div style={{ display: 'flex', alignItems: 'center', color: theme.colors.accent, fontSize: 14, fontWeight: 500 }}><WrenchScrewdriverIcon style={{ height: 20, width: 20, marginRight: 6 }}/> Specialist Reworking</div>}
                         </div>
                     </div>
                 )}
@@ -668,111 +700,194 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ products, result
             </div>
 
             {/* Labour Breakdown */}
-            <div className="bg-white rounded-lg shadow border border-gray-200">
-                <div className="p-4 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-800">Labour Analysis</h3>
-                    <p className="text-sm text-gray-500">Team composition and workload distribution.</p>
+            <div style={{
+                ...getDashboardCardStyle('standard'),
+                maxWidth: 'none'
+            }}>
+                <div style={{
+                    padding: 16,
+                    borderBottom: `1px solid ${theme.colors.border}`
+                }}>
+                    <h3 style={{
+                        ...getDashboardTypographyStyle('sectionHeader'),
+                        color: theme.colors.text,
+                        margin: 0
+                    }}>Labour Analysis</h3>
+                    <p style={{
+                        ...getDashboardTypographyStyle('smallText'),
+                        color: theme.colors.textSubtle,
+                        margin: '4px 0 0 0'
+                    }}>Team composition and workload distribution.</p>
                 </div>
-                <div className="p-4 space-y-4">
+                <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 16 }}>
                     {/* Hours vs Team Summary */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-3 bg-gray-50 rounded-lg">
-                        <div className="text-center">
-                            <div className="text-2xl font-bold text-blue-600">{labour.bufferedHours.toFixed(1)}</div>
-                            <div className="text-sm text-gray-600">Total Hours Required</div>
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+                        gap: 16,
+                        padding: 12,
+                        background: theme.colors.panelAlt,
+                        borderRadius: theme.radii.lg
+                    }}>
+                        <div style={{ textAlign: 'center' }}>
+                            <div style={{ fontSize: 28, fontWeight: 700, color: theme.colors.accent }}>{labour.bufferedHours.toFixed(1)}</div>
+                            <div style={{ fontSize: 14, color: theme.colors.textSubtle }}>Total Hours Required</div>
                         </div>
-                        <div className="text-center">
-                            <div className="text-2xl font-bold text-green-600">{results.crew.crewSize}</div>
-                            <div className="text-sm text-gray-600">Total Team Size</div>
+                        <div style={{ textAlign: 'center' }}>
+                            <div style={{ fontSize: 28, fontWeight: 700, color: theme.colors.accentAlt }}>{results.crew.crewSize}</div>
+                            <div style={{ fontSize: 14, color: theme.colors.textSubtle }}>Total Team Size</div>
                         </div>
-                        <div className="text-center">
-                            <div className="text-2xl font-bold text-orange-600">{(results.crew.totalProjectDays || 0).toFixed(1)}</div>
-                            <div className="text-sm text-gray-600">Total Project Days</div>
+                        <div style={{ textAlign: 'center' }}>
+                            <div style={{ fontSize: 28, fontWeight: 700, color: theme.colors.warn }}>{(results.crew.totalProjectDays || 0).toFixed(1)}</div>
+                            <div style={{ fontSize: 14, color: theme.colors.textSubtle }}>Total Project Days</div>
                         </div>
                     </div>
 
                     {/* Individual Labour Split */}
-                    <div className="space-y-3">
-                        <h4 className="font-semibold text-gray-800">Individual Labour Split</h4>
-                        <div className="space-y-2">
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                        <h4 style={{
+                            fontWeight: 600,
+                            color: theme.colors.text,
+                            margin: 0
+                        }}>Individual Labour Split</h4>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                             {/* Van Fitters */}
                             {results.crew.vanFitters > 0 && (
-                                <div className="flex justify-between items-center p-2 bg-blue-50 rounded">
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                                        <span className="font-medium text-gray-700">Van Fitters ({results.crew.vanFitters})</span>
+                                <div style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    padding: 8,
+                                    background: `${theme.colors.accent}10`,
+                                    borderRadius: theme.radii.md
+                                }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                        <div style={{
+                                            width: 12,
+                                            height: 12,
+                                            background: theme.colors.accent,
+                                            borderRadius: '50%'
+                                        }}></div>
+                                        <span style={{ fontWeight: 500, color: theme.colors.text }}>Van Fitters ({results.crew.vanFitters})</span>
                                     </div>
-                                    <div className="text-right">
-                                        <div className="font-semibold">{(results.crew.hourLoadPerPerson || 0).toFixed(1)} hrs each</div>
-                                        <div className="text-sm text-gray-600">{((results.crew.hourLoadPerPerson || 0) * (results.crew.vanFitters || 0)).toFixed(1)} total hrs</div>
+                                    <div style={{ textAlign: 'right' }}>
+                                        <div style={{ fontWeight: 600, color: theme.colors.text }}>{(results.crew.hourLoadPerPerson || 0).toFixed(1)} hrs each</div>
+                                        <div style={{ fontSize: 14, color: theme.colors.textSubtle }}>{((results.crew.hourLoadPerPerson || 0) * (results.crew.vanFitters || 0)).toFixed(1)} total hrs</div>
                                     </div>
                                 </div>
                             )}
 
                             {/* On-foot Fitters */}
                             {results.crew.onFootFitters > 0 && (
-                                <div className="flex justify-between items-center p-2 bg-green-50 rounded">
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                                        <span className="font-medium text-gray-700">Walking Fitters ({results.crew.onFootFitters})</span>
+                                <div style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    padding: 8,
+                                    background: `${theme.colors.accentAlt}10`,
+                                    borderRadius: theme.radii.md
+                                }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                        <div style={{
+                                            width: 12,
+                                            height: 12,
+                                            background: theme.colors.accentAlt,
+                                            borderRadius: '50%'
+                                        }}></div>
+                                        <span style={{ fontWeight: 500, color: theme.colors.text }}>Walking Fitters ({results.crew.onFootFitters})</span>
                                     </div>
-                                    <div className="text-right">
-                                        <div className="font-semibold">{(results.crew.hourLoadPerPerson || 0).toFixed(1)} hrs each</div>
-                                        <div className="text-sm text-gray-600">{((results.crew.hourLoadPerPerson || 0) * (results.crew.onFootFitters || 0)).toFixed(1)} total hrs</div>
+                                    <div style={{ textAlign: 'right' }}>
+                                        <div style={{ fontWeight: 600, color: theme.colors.text }}>{(results.crew.hourLoadPerPerson || 0).toFixed(1)} hrs each</div>
+                                        <div style={{ fontSize: 14, color: theme.colors.textSubtle }}>{((results.crew.hourLoadPerPerson || 0) * (results.crew.onFootFitters || 0)).toFixed(1)} total hrs</div>
                                     </div>
                                 </div>
                             )}
 
                             {/* Supervisors */}
                             {results.crew.supervisorCount > 0 && (
-                                <div className="flex justify-between items-center p-2 bg-purple-50 rounded">
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
-                                        <span className="font-medium text-gray-700">Supervisors ({results.crew.supervisorCount})</span>
+                                <div style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    padding: 8,
+                                    background: `${theme.colors.accentAlt}10`,
+                                    borderRadius: theme.radii.md
+                                }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                        <div style={{
+                                            width: 12,
+                                            height: 12,
+                                            background: theme.colors.accentAlt,
+                                            borderRadius: '50%'
+                                        }}></div>
+                                        <span style={{ fontWeight: 500, color: theme.colors.text }}>Supervisors ({results.crew.supervisorCount})</span>
                                     </div>
-                                    <div className="text-right">
-                                        <div className="font-semibold">{(results.crew.hourLoadPerPerson || 0).toFixed(1)} hrs each</div>
-                                        <div className="text-sm text-gray-600">{((results.crew.hourLoadPerPerson || 0) * (results.crew.supervisorCount || 0)).toFixed(1)} total hrs</div>
+                                    <div style={{ textAlign: 'right' }}>
+                                        <div style={{ fontWeight: 600, color: theme.colors.text }}>{(results.crew.hourLoadPerPerson || 0).toFixed(1)} hrs each</div>
+                                        <div style={{ fontSize: 14, color: theme.colors.textSubtle }}>{((results.crew.hourLoadPerPerson || 0) * (results.crew.supervisorCount || 0)).toFixed(1)} total hrs</div>
                                     </div>
                                 </div>
                             )}
 
                             {/* Specialists */}
                             {results.crew.specialistCount > 0 && (
-                                <div className="flex justify-between items-center p-2 bg-yellow-50 rounded">
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                                        <span className="font-medium text-gray-700">Specialists ({results.crew.specialistCount})</span>
+                                <div style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    padding: 8,
+                                    background: `${theme.colors.warn}10`,
+                                    borderRadius: theme.radii.md
+                                }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                        <div style={{
+                                            width: 12,
+                                            height: 12,
+                                            background: theme.colors.warn,
+                                            borderRadius: '50%'
+                                        }}></div>
+                                        <span style={{ fontWeight: 500, color: theme.colors.text }}>Specialists ({results.crew.specialistCount})</span>
                                     </div>
-                                    <div className="text-right">
-                                        <div className="font-semibold">{(results.crew.hourLoadPerPerson || 0).toFixed(1)} hrs each</div>
-                                        <div className="text-sm text-gray-600">{((results.crew.hourLoadPerPerson || 0) * (results.crew.specialistCount || 0)).toFixed(1)} total hrs</div>
+                                    <div style={{ textAlign: 'right' }}>
+                                        <div style={{ fontWeight: 600, color: theme.colors.text }}>{(results.crew.hourLoadPerPerson || 0).toFixed(1)} hrs each</div>
+                                        <div style={{ fontSize: 14, color: theme.colors.textSubtle }}>{((results.crew.hourLoadPerPerson || 0) * (results.crew.specialistCount || 0)).toFixed(1)} total hrs</div>
                                     </div>
                                 </div>
                             )}
                         </div>
 
                         {/* Time Analysis */}
-                        <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                            <h5 className="font-medium text-gray-700 mb-2">Time Analysis</h5>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                                <div className="space-y-1">
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-600">Base Install Time:</span>
-                                        <span className="font-medium">{labour.totalHours.toFixed(1)} hrs</span>
+                        <div style={{
+                            marginTop: 16,
+                            padding: 12,
+                            background: theme.colors.panelAlt,
+                            borderRadius: theme.radii.lg
+                        }}>
+                            <h5 style={{ fontWeight: 500, color: theme.colors.text, marginBottom: 8, margin: 0 }}>Time Analysis</h5>
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                                gap: 16,
+                                fontSize: 14
+                            }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <span style={{ color: theme.colors.textSubtle }}>Base Install Time:</span>
+                                        <span style={{ fontWeight: 500, color: theme.colors.text }}>{labour.totalHours.toFixed(1)} hrs</span>
                                     </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-600">Uplift Buffer ({labour.upliftBufferPercentage}%):</span>
-                                        <span className="font-medium">+{(labour.hoursAfterUplift - labour.totalHours).toFixed(1)} hrs</span>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <span style={{ color: theme.colors.textSubtle }}>Uplift Buffer ({labour.upliftBufferPercentage}%):</span>
+                                        <span style={{ fontWeight: 500, color: theme.colors.text }}>+{(labour.hoursAfterUplift - labour.totalHours).toFixed(1)} hrs</span>
                                     </div>
                                 </div>
-                                <div className="space-y-1">
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-600">Duration Buffer ({labour.durationBufferPercentage}%):</span>
-                                        <span className="font-medium">+{(labour.bufferedHours - labour.hoursAfterUplift).toFixed(1)} hrs</span>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <span style={{ color: theme.colors.textSubtle }}>Duration Buffer ({labour.durationBufferPercentage}%):</span>
+                                        <span style={{ fontWeight: 500, color: theme.colors.text }}>+{(labour.bufferedHours - labour.hoursAfterUplift).toFixed(1)} hrs</span>
                                     </div>
-                                    <div className="flex justify-between font-semibold">
-                                        <span className="text-gray-700">Total Buffered:</span>
-                                        <span>{labour.bufferedHours.toFixed(1)} hrs</span>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 600 }}>
+                                        <span style={{ color: theme.colors.text }}>Total Buffered:</span>
+                                        <span style={{ color: theme.colors.accent }}>{labour.bufferedHours.toFixed(1)} hrs</span>
                                     </div>
                                 </div>
                             </div>
@@ -789,87 +904,232 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ products, result
             />
 
             {/* Editable Installation Times Section */}
-            <div className="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
-                <div className="p-4 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-800">Edit Installation Times</h3>
-                    <p className="text-sm text-gray-500">Adjust individual product installation times if needed.</p>
+            <div style={{
+                ...getDashboardCardStyle('standard'),
+                overflow: 'hidden',
+                maxWidth: 'none'
+            }}>
+                <div style={{
+                    padding: 16,
+                    borderBottom: `1px solid ${theme.colors.border}`
+                }}>
+                    <h3 style={{
+                        ...getDashboardTypographyStyle('sectionHeader'),
+                        color: theme.colors.text,
+                        margin: 0
+                    }}>Edit Installation Times</h3>
+                    <p style={{
+                        ...getDashboardTypographyStyle('smallText'),
+                        color: theme.colors.textSubtle,
+                        margin: '4px 0 0 0'
+                    }}>Adjust individual product installation times if needed.</p>
                 </div>
-                <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
+                <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                        <thead style={{ background: theme.colors.panelAlt }}>
                             <tr>
-                                <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Line</th>
-                                <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product Code</th>
-                                <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qty</th>
-                                <th scope="col" className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Source</th>
-                                <th scope="col" className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Time/Unit (hrs)</th>
-                                <th scope="col" className="relative px-4 py-3"><span className="sr-only">Actions</span></th>
+                                <th style={{
+                                    padding: '12px 16px',
+                                    textAlign: 'left',
+                                    fontSize: 12,
+                                    fontWeight: 500,
+                                    color: theme.colors.textSubtle,
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.5px',
+                                    borderBottom: `1px solid ${theme.colors.border}`
+                                }}>Line</th>
+                                <th style={{
+                                    padding: '12px 16px',
+                                    textAlign: 'left',
+                                    fontSize: 12,
+                                    fontWeight: 500,
+                                    color: theme.colors.textSubtle,
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.5px',
+                                    borderBottom: `1px solid ${theme.colors.border}`
+                                }}>Product Code</th>
+                                <th style={{
+                                    padding: '12px 16px',
+                                    textAlign: 'left',
+                                    fontSize: 12,
+                                    fontWeight: 500,
+                                    color: theme.colors.textSubtle,
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.5px',
+                                    borderBottom: `1px solid ${theme.colors.border}`
+                                }}>Qty</th>
+                                <th style={{
+                                    padding: '12px 16px',
+                                    textAlign: 'center',
+                                    fontSize: 12,
+                                    fontWeight: 500,
+                                    color: theme.colors.textSubtle,
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.5px',
+                                    borderBottom: `1px solid ${theme.colors.border}`
+                                }}>Source</th>
+                                <th style={{
+                                    padding: '12px 16px',
+                                    textAlign: 'center',
+                                    fontSize: 12,
+                                    fontWeight: 500,
+                                    color: theme.colors.textSubtle,
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.5px',
+                                    borderBottom: `1px solid ${theme.colors.border}`
+                                }}>Time/Unit (hrs)</th>
+                                <th style={{
+                                    padding: '12px 16px',
+                                    borderBottom: `1px solid ${theme.colors.border}`
+                                }}><span style={{ visibility: 'hidden' }}>Actions</span></th>
                             </tr>
                         </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
+                        <tbody style={{ background: theme.colors.panel }}>
                             {sortedProducts.map((item) => {
                                 let sourceIcon;
                                 let sourceTitle = '';
                                 switch(item.source) {
                                     case 'catalogue':
-                                        sourceIcon = <BookOpenIcon className="h-5 w-5 text-blue-500" />;
+                                        sourceIcon = <BookOpenIcon style={{ height: 20, width: 20, color: theme.colors.accent }} />;
                                         sourceTitle = 'From Product Catalogue';
                                         break;
                                     case 'learned':
-                                        sourceIcon = <BrainIcon className="h-5 w-5 text-purple-500" />;
+                                        sourceIcon = <BrainIcon style={{ height: 20, width: 20, color: theme.colors.accentAlt }} />;
                                         sourceTitle = 'From Learned Data';
                                         break;
                                     case 'user-inputted':
-                                        sourceIcon = <PencilIcon className="h-5 w-5 text-yellow-600" />;
+                                        sourceIcon = <PencilIcon style={{ height: 20, width: 20, color: theme.colors.warn }} />;
                                         sourceTitle = 'Manually Edited/Entered';
                                         break;
                                     default:
-                                        sourceIcon = <HelpCircleIcon className="h-5 w-5 text-gray-400" />;
+                                        sourceIcon = <HelpCircleIcon style={{ height: 20, width: 20, color: theme.colors.textSubtle }} />;
                                         sourceTitle = 'Default/Unknown';
                                         break;
                                 }
                                 const isEditing = editingTimes[item.lineNumber] !== undefined;
 
                                 return (
-                                <tr key={item.lineNumber}>
-                                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <tr key={item.lineNumber} style={{ borderBottom: `1px solid ${theme.colors.border}` }}>
+                                    <td style={{
+                                        padding: '16px',
+                                        whiteSpace: 'nowrap',
+                                        fontSize: 14,
+                                        color: theme.colors.textSubtle
+                                    }}>
                                         {item.lineNumber === 999 ? 'END' : item.lineNumber}
                                     </td>
-                                    <td className="px-4 py-4 whitespace-nowrap text-sm font-mono text-gray-700">{item.productCode}</td>
-                                    <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.quantity}</td>
-                                    <td className="px-4 py-4 whitespace-nowrap text-center">
-                                        <div title={sourceTitle} className="flex justify-center">
+                                    <td style={{
+                                        padding: '16px',
+                                        whiteSpace: 'nowrap',
+                                        fontSize: 14,
+                                        fontFamily: 'monospace',
+                                        color: theme.colors.text
+                                    }}>{item.productCode}</td>
+                                    <td style={{
+                                        padding: '16px',
+                                        whiteSpace: 'nowrap',
+                                        fontSize: 14,
+                                        fontWeight: 500,
+                                        color: theme.colors.text
+                                    }}>{item.quantity}</td>
+                                    <td style={{
+                                        padding: '16px',
+                                        whiteSpace: 'nowrap',
+                                        textAlign: 'center'
+                                    }}>
+                                        <div title={sourceTitle} style={{ display: 'flex', justifyContent: 'center' }}>
                                             {sourceIcon}
                                         </div>
                                     </td>
-                                    <td className="px-4 py-4 whitespace-nowrap text-center">
-                                        <div className="flex items-center justify-center space-x-2">
+                                    <td style={{
+                                        padding: '16px',
+                                        whiteSpace: 'nowrap',
+                                        textAlign: 'center'
+                                    }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
                                             <input
                                                 type="text"
                                                 inputMode="decimal"
                                                 value={editingTimes[item.lineNumber] ?? item.timePerUnit.toFixed(2)}
                                                 onChange={(e) => handleTimeChange(item.lineNumber, e.target.value)}
                                                 onBlur={() => handleTimeBlur(item.lineNumber)}
-                                                className={`w-24 px-2 py-1 border rounded-md shadow-sm text-center text-sm ${item.isManuallyEdited || isEditing ? 'bg-yellow-100 border-yellow-400 font-semibold' : 'border-gray-300'}`}
+                                                style={{
+                                                    width: 96,
+                                                    padding: '4px 8px',
+                                                    border: item.isManuallyEdited || isEditing
+                                                        ? `2px solid ${theme.colors.warn}`
+                                                        : `1px solid ${theme.colors.border}`,
+                                                    borderRadius: theme.radii.md,
+                                                    boxShadow: theme.shadow,
+                                                    textAlign: 'center',
+                                                    fontSize: 14,
+                                                    background: item.isManuallyEdited || isEditing
+                                                        ? `${theme.colors.warn}20`
+                                                        : theme.colors.panel,
+                                                    fontWeight: item.isManuallyEdited || isEditing ? 600 : 400,
+                                                    color: theme.colors.text,
+                                                    outline: 'none',
+                                                    transition: 'all 0.2s ease'
+                                                }}
+                                                onFocus={(e) => {
+                                                    e.target.style.borderColor = theme.colors.accent;
+                                                    e.target.style.boxShadow = `0 0 0 2px ${theme.colors.accent}20`;
+                                                }}
                                             />
                                             {item.isManuallyEdited && (
                                                 <button
                                                     onClick={() => onSaveLearnedProduct(item)}
-                                                    className="text-gray-400 hover:text-blue-600 p-1 rounded-full hover:bg-blue-100 transition-colors"
                                                     title={`Save ${item.timePerUnit.toFixed(2)}h for ${item.productCode}`}
+                                                    style={{
+                                                        color: theme.colors.textSubtle,
+                                                        padding: 4,
+                                                        borderRadius: '50%',
+                                                        background: 'transparent',
+                                                        border: 'none',
+                                                        cursor: 'pointer',
+                                                        transition: 'all 0.3s ease'
+                                                    }}
+                                                    onMouseOver={(e) => {
+                                                        e.currentTarget.style.color = theme.colors.accent;
+                                                        e.currentTarget.style.background = `${theme.colors.accent}10`;
+                                                    }}
+                                                    onMouseOut={(e) => {
+                                                        e.currentTarget.style.color = theme.colors.textSubtle;
+                                                        e.currentTarget.style.background = 'transparent';
+                                                    }}
                                                 >
-                                                    <SaveIcon className="h-5 w-5" />
+                                                    <SaveIcon style={{ height: 20, width: 20 }} />
                                                 </button>
                                             )}
                                         </div>
                                     </td>
-                                    <td className="px-4 py-4 whitespace-nowrap text-center">
+                                    <td style={{
+                                        padding: '16px',
+                                        whiteSpace: 'nowrap',
+                                        textAlign: 'center'
+                                    }}>
                                         <button
                                             onClick={() => handleRemoveProduct(item.lineNumber)}
-                                            className="text-gray-400 hover:text-red-600 p-1 rounded-full hover:bg-red-100 transition-colors"
                                             title="Remove Item"
+                                            style={{
+                                                color: theme.colors.textSubtle,
+                                                padding: 4,
+                                                borderRadius: '50%',
+                                                background: 'transparent',
+                                                border: 'none',
+                                                cursor: 'pointer',
+                                                transition: 'all 0.3s ease'
+                                            }}
+                                            onMouseOver={(e) => {
+                                                e.currentTarget.style.color = theme.colors.danger;
+                                                e.currentTarget.style.background = `${theme.colors.danger}10`;
+                                            }}
+                                            onMouseOut={(e) => {
+                                                e.currentTarget.style.color = theme.colors.textSubtle;
+                                                e.currentTarget.style.background = 'transparent';
+                                            }}
                                         >
-                                            <TrashIcon className="h-5 w-5" />
+                                            <TrashIcon style={{ height: 20, width: 20 }} />
                                         </button>
                                     </td>
                                 </tr>
@@ -877,7 +1137,11 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ products, result
                         </tbody>
                     </table>
                 </div>
-                 {products.length === 0 && <p className="p-4 text-center text-gray-500">No valid product lines were found.</p>}
+                 {products.length === 0 && <p style={{
+                     padding: 16,
+                     textAlign: 'center',
+                     color: theme.colors.textSubtle
+                 }}>No valid product lines were found.</p>}
             </div>
 
             {/* Product Cross-Check Section */}

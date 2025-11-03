@@ -29,11 +29,13 @@ const EXTRAS_BY_ROLE: Record<UserRole, { label: string; href: string }[]> = {
   supervisor: [],
   ops: [
     { label: "Smart Quote", href: "/smart-quote" },
+    { label: "SmartInvoice", href: "/smart-invoice" },
     { label: "Floor Planner", href: "/floor-planner" },
     { label: "Settings", href: "/settings" }
   ],
   director: [
     { label: "Smart Quote", href: "/smart-quote" },
+    { label: "SmartInvoice", href: "/smart-invoice" },
     { label: "Floor Planner", href: "/floor-planner" },
     { label: "Admin Panel", href: "/admin-panel" },
     { label: "Costing", href: "/admin/costing" },
@@ -41,6 +43,7 @@ const EXTRAS_BY_ROLE: Record<UserRole, { label: string; href: string }[]> = {
   ],
   admin: [
     { label: "Smart Quote", href: "/smart-quote" },
+    { label: "SmartInvoice", href: "/smart-invoice" },
     { label: "Floor Planner", href: "/floor-planner" },
     { label: "Admin Panel", href: "/admin-panel" },
     { label: "Costing", href: "/admin/costing" },

@@ -25,7 +25,19 @@ const responseSchema = {
                 client: { type: Type.STRING, description: "The client's name, if found." },
                 project: { type: Type.STRING, description: "The project name, if found." },
                 quoteRef: { type: Type.STRING, description: "The quote reference number, if found." },
-                deliveryAddress: { type: Type.STRING, description: "The delivery address or postcode (UK format: XX## #XX), if found." },
+                deliveryAddress: { type: Type.STRING, description: "The SITE/INSTALLATION address or postcode (UK format: XX## #XX), if found." },
+                collectionAddress: { type: Type.STRING, description: "The COLLECTION/WAREHOUSE address if different from site, if found." },
+                allAddresses: {
+                    type: Type.ARRAY,
+                    description: "All addresses found in the quote with their types",
+                    items: {
+                        type: Type.OBJECT,
+                        properties: {
+                            type: { type: Type.STRING, description: "Address type: site, collection, client, or other" },
+                            address: { type: Type.STRING, description: "The full address including postcode" }
+                        }
+                    }
+                }
             }
         },
         products: {
@@ -63,14 +75,16 @@ const responseSchema = {
 
 const systemInstruction = `Extract furniture quote data into JSON. Parse product lines and quote metadata.
 
-**Quote Details:** Extract:
+**Quote Details:** Extract ALL addresses found:
 - client: Company/customer name
 - project: Project/job reference
 - quoteRef: Quote reference number
-- deliveryAddress: IMPORTANT - Extract SITE/INSTALLATION address or postcode (NOT client office). Look for:
-  * "Site:", "Delivery:", "Install at:", "Location:", "Address:"
-  * UK postcodes (format: XX## #XX like SW1A 1AA, EC1V 9HX, etc.)
-  * This is WHERE THE WORK WILL BE DONE, not billing address
+- deliveryAddress: The SITE/INSTALLATION address (WHERE WORK WILL BE DONE)
+  * Look for: "Site:", "Installation at:", "Install at:", "Delivery to:"
+- collectionAddress: The COLLECTION/WAREHOUSE address if different from site
+  * Look for: "Collection:", "Collect from:", "Warehouse:", "Dispatch from:"
+- allAddresses: Array of ALL addresses found with types (site/collection/client/other)
+  * Include full address with UK postcode (format: XX## #XX)
 
 **Product Extraction:**
 1. Extract items with product codes (in brackets/parentheses or at line start)

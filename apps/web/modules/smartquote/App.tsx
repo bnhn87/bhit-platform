@@ -246,15 +246,11 @@ const App: React.FC = () => {
         })();
     }, []); // Only run once on mount
 
-    useEffect(() => {
-        // When config changes, update details that depend on it
-        setQuoteDetails(prev => ({
-            ...prev,
-            preparedBy: appConfig.rules.preparedByOptions.includes(prev.preparedBy)
-                ? prev.preparedBy
-                : appConfig.rules.preparedByOptions[0],
-        }));
-    }, [appConfig]);
+    // Removed destructive useEffect that was resetting preparedBy field
+    // The preparedBy field should only be set:
+    // 1. On initial load from saved data
+    // 2. When user explicitly changes it
+    // 3. When resetting the app
     
     const displaySuccessMessage = (message: string) => {
         setShowSuccessMessage(message);
@@ -336,7 +332,24 @@ const App: React.FC = () => {
                 throw new Error("No valid product lines were found. Check if items have product codes and are not on the exclusion list.");
             }
             
-            setQuoteDetails(prev => ({ ...prev, ...extractedDetails }));
+            // Extract addresses for the selector
+            const parsedAddresses: string[] = [];
+            if (extractedDetails.deliveryAddress) {
+                parsedAddresses.push(extractedDetails.deliveryAddress);
+            }
+            if (extractedDetails.collectionAddress) {
+                parsedAddresses.push(extractedDetails.collectionAddress);
+            }
+            // Add any additional addresses from allAddresses if available
+            if ((extractedDetails as any).allAddresses) {
+                for (const addr of (extractedDetails as any).allAddresses) {
+                    if (addr.address && !parsedAddresses.includes(addr.address)) {
+                        parsedAddresses.push(addr.address);
+                    }
+                }
+            }
+
+            setQuoteDetails(prev => ({ ...prev, ...extractedDetails, parsedAddresses }));
 
             // Step 3: Group power items FIRST.
             const { groupedItems, powerItemsConsolidated } = groupPowerItems(validRawProducts);
@@ -353,7 +366,7 @@ const App: React.FC = () => {
             }));
 
             // Step 5: Resolve all products against the catalogue.
-            const { resolved, unresolved } = resolveProductDetails(productsWithStandardDescription, appConfig, {}, {});
+            const { resolved, unresolved } = await resolveProductDetails(productsWithStandardDescription, appConfig, {}, {});
 
             setResolvedProducts(resolved);
 
@@ -375,8 +388,8 @@ const App: React.FC = () => {
         }
     }, [appConfig]);
 
-    const handleUnknownProductsSubmit = useCallback((newProductData: Record<string, ProductReference>) => {
-        
+    const handleUnknownProductsSubmit = useCallback(async (newProductData: Record<string, ProductReference>) => {
+
         // Save new product times directly to the persistent catalogue
         const updatedConfig = {
             ...appConfig,
@@ -385,15 +398,15 @@ const App: React.FC = () => {
                 ...newProductData
             }
         };
-        
+
         // Update the config and persist it
         saveConfig(updatedConfig);
         setAppConfig(updatedConfig);
-        
+
         displaySuccessMessage(`Added ${Object.keys(newProductData).length} product(s) to catalogue permanently.`);
-    
+
         // Resolve products using the updated catalogue
-        const { resolved: newlyResolved, unresolved: stillUnresolved } = resolveProductDetails(
+        const { resolved: newlyResolved, unresolved: stillUnresolved } = await resolveProductDetails(
             unresolvedProducts,
             updatedConfig,  // Use updated config with new products
             {},             // No session data needed - products now in catalogue

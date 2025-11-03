@@ -5,6 +5,7 @@ import { getGlassmorphicStyle } from '../../../components/ui/GlassmorphicStyles'
 import { theme } from '../../../lib/theme';
 import { useFormValidation, required } from '../hooks/useFormValidation';
 import { QuoteDetails, AppConfig } from '../types';
+import { SimpleAddressSelector } from './SimpleAddressSelector';
 
 import { TruckIcon, TrashIcon, BuildingIcon, ArrowTrendingUpIcon, WrenchIcon, UserGroupIcon } from './icons';
 
@@ -183,24 +184,15 @@ export const QuoteDetailsForm: React.FC<QuoteDetailsFormProps> = ({ details, onD
                     <label htmlFor="deliveryAddress" style={{ display: "block", fontSize: 14, fontWeight: 500, color: theme.colors.text, marginBottom: 4 }}>
                         Site/Installation Address <span style={{ color: theme.colors.danger }}>*</span>
                     </label>
-                    <input
-                        type="text"
-                        name="deliveryAddress"
-                        id="deliveryAddress"
+                    <SimpleAddressSelector
                         value={details.deliveryAddress}
-                        onChange={handleDetailChange}
-                        onBlur={() => validateFieldOnBlur('deliveryAddress', details.deliveryAddress, details)}
-                        placeholder="Site postcode (where work will be done)"
-                        style={{
-                            display: "block",
-                            width: "100%",
-                            padding: "8px 12px",
-                            background: theme.colors.panelAlt,
-                            border: `1px solid ${getFieldError('deliveryAddress') ? theme.colors.danger : theme.colors.border}`,
-                            borderRadius: theme.radii.md,
-                            color: theme.colors.text,
-                            fontSize: 14
+                        onChange={(value) => {
+                            onDetailsChange({ ...details, deliveryAddress: value });
                         }}
+                        onBlur={() => validateFieldOnBlur('deliveryAddress', details.deliveryAddress, details)}
+                        error={getFieldError('deliveryAddress')}
+                        placeholder="Site postcode (where work will be done)"
+                        parsedAddresses={details.parsedAddresses || []}
                     />
                     <ErrorMessage message={getFieldError('deliveryAddress')} />
                 </div>

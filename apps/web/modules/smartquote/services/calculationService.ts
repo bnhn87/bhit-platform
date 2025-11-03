@@ -1,6 +1,7 @@
 
 
 import { ParsedProduct, CalculationResults, CalculatedProduct, LabourResults, CrewResults, WasteResults, ProductReference, QuoteDetails, PricingResults, AppConfig } from '../types';
+import { catalogueService } from './catalogueService';
 
 const _roundToNearest = (value: number, nearest: number): number => {
     return Math.round(value / nearest) * nearest;
@@ -51,6 +52,62 @@ const findBestMatchKey = (productCodeOrDesc: string, referenceKeys: string[]): s
     // Strategy 1: Direct exact match (O(1) lookup)
     const directMatch = productLookupCache.get(lookupCode);
     if (directMatch) return directMatch;
+
+    // Strategy 1.5: Special handling for FLX-#P-####-X format (e.g., FLX-4P-2816-A)
+    // Check both the original code and the stripped version
+    const upperCode = productCodeOrDesc.toUpperCase();
+    const strippedCode = upperCode.replace(/[\s()-_]/g, '');
+
+    // Try to match FLX#P pattern in both versions
+    let flxPatternMatch = upperCode.match(/FLX[-_]*(\d+)P/);
+    if (!flxPatternMatch && strippedCode.match(/FLX(\d+)P/)) {
+        flxPatternMatch = strippedCode.match(/FLX(\d+)P/);
+    }
+
+    if (flxPatternMatch) {
+        const personCount = flxPatternMatch[1];
+
+        // First try specific size variant (e.g., FLX-COWORK-4P-L2400)
+        const sizeMatch = upperCode.match(/L?(\d{4})/);
+        if (!sizeMatch && strippedCode) {
+            // Try on stripped version too
+            const strippedSizeMatch = strippedCode.match(/(\d{4})/);
+            if (strippedSizeMatch) {
+                const size = strippedSizeMatch[1];
+                // Only use if it's a plausible size (2000-5000 range typically)
+                if (parseInt(size) >= 1000 && parseInt(size) <= 5000) {
+                    const specificKey = `FLX-COWORK-${personCount}P-L${size}`;
+                    // Check if this specific variant exists in catalogue
+                    for (const key of referenceKeys) {
+                        if (key === specificKey) return key;
+                    }
+                }
+            }
+        } else if (sizeMatch && personCount !== '1') {
+            const size = sizeMatch[1];
+            const specificKey = `FLX-COWORK-${personCount}P-L${size}`;
+            // Check if this specific variant exists
+            for (const key of referenceKeys) {
+                if (key === specificKey) return key;
+            }
+        }
+
+        // Then try generic variants - check all possible formats in catalogue
+        const possibleKeys = [
+            `FLX ${personCount}P`,
+            `${personCount}P FLX`,
+            `FLX-${personCount}P`,
+            `FLX-COWORK-${personCount}P`
+        ];
+
+        for (const possibleKey of possibleKeys) {
+            for (const catalogueKey of referenceKeys) {
+                if (catalogueKey === possibleKey) {
+                    return catalogueKey;
+                }
+            }
+        }
+    }
 
     // Strategy 2: Token-based matching for FLX and other products
     // Split the input into tokens for flexible matching
@@ -208,49 +265,57 @@ export const groupPowerItems = (products: ParsedProduct[]): { groupedItems: Pars
     return { groupedItems, powerItemsConsolidated };
 };
 
-export const resolveProductDetails = (
+export const resolveProductDetails = async (
     products: ParsedProduct[],
     config: AppConfig,
     sessionLearnedData: Record<string, ProductReference>,
     manuallyAddedData: Record<string, ProductReference>
-): { resolved: CalculatedProduct[], unresolved: ParsedProduct[] } => {
+): Promise<{ resolved: CalculatedProduct[], unresolved: ParsedProduct[] }> => {
     const resolved: CalculatedProduct[] = [];
     const unresolved: ParsedProduct[] = [];
 
     const productCatalogueKeys = Object.keys(config.productCatalogue);
     const manualDataKeys = Object.keys(manuallyAddedData);
-    
-    products.forEach(product => {
+
+    for (const product of products) {
         let reference: ProductReference | null = null;
         let source: CalculatedProduct['source'] | null = null;
         let matchKey: string | undefined;
 
         // Normalize the product code once for matching
         const normalizedProductCode = product.productCode.toUpperCase().replace(/[\s()-_]/g, '');
-        
 
-        // Precedence: manual, session-learned, catalogue
-        // TBC handling: Products that don't match any source go to unresolved array for user input
-        matchKey = findBestMatchKey(normalizedProductCode, manualDataKeys);
-        if (matchKey) {
-            reference = manuallyAddedData[matchKey];
-            source = 'user-inputted';
-        } else if (sessionLearnedData[normalizedProductCode]) {
-            // For session-learned data, keys are normalized. A direct lookup is cleaner and more reliable.
-            reference = sessionLearnedData[normalizedProductCode];
-            source = 'learned';
+        // First check database catalogue
+        const dbLookup = await catalogueService.findProduct(product.productCode);
+        if (dbLookup.found && dbLookup.product) {
+            reference = {
+                installTimeHours: dbLookup.product.installTimeHours,
+                wasteVolumeM3: dbLookup.product.wasteVolumeM3
+            };
+            source = 'catalogue';
         } else {
-            // Fallback to the main catalogue with fuzzy matching AND direct normalized key lookup
-            matchKey = findBestMatchKey(normalizedProductCode, productCatalogueKeys);
+            // Precedence: manual, session-learned, config catalogue
+            matchKey = findBestMatchKey(normalizedProductCode, manualDataKeys);
             if (matchKey) {
-                reference = config.productCatalogue[matchKey];
-                source = 'catalogue';
+                reference = manuallyAddedData[matchKey];
+                source = 'user-inputted';
+            } else if (sessionLearnedData[normalizedProductCode]) {
+                // For session-learned data, keys are normalized. A direct lookup is cleaner and more reliable.
+                reference = sessionLearnedData[normalizedProductCode];
+                source = 'learned';
             } else {
-                // Try direct lookup with normalized key (for user-added products)
-                if (config.productCatalogue[normalizedProductCode]) {
-                    reference = config.productCatalogue[normalizedProductCode];
+                // Fallback to the main catalogue with fuzzy matching AND direct normalized key lookup
+                matchKey = findBestMatchKey(normalizedProductCode, productCatalogueKeys);
+                if (matchKey) {
+                    reference = config.productCatalogue[matchKey];
                     source = 'catalogue';
                 } else {
+                    // Try direct lookup with normalized key (for user-added products)
+                    if (config.productCatalogue[normalizedProductCode]) {
+                        reference = config.productCatalogue[normalizedProductCode];
+                        source = 'catalogue';
+                    } else {
+                    }
                 }
             }
         }
@@ -319,7 +384,7 @@ export const resolveProductDetails = (
         } else {
             unresolved.push(product);
         }
-    });
+    }
 
     return { resolved, unresolved };
 };

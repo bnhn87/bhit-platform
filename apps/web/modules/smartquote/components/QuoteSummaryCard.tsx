@@ -31,7 +31,7 @@ export const QuoteSummaryCard: React.FC<QuoteSummaryCardProps> = ({ results, det
         {
             icon: CalendarIcon,
             label: 'Project Duration',
-            value: `${crew.projectDuration.toFixed(1)} days`,
+            value: `${crew.totalProjectDays.toFixed(1)} days`,
             sublabel: `${labour.bufferedHours.toFixed(2)} total hours`
         },
         {
@@ -50,7 +50,7 @@ export const QuoteSummaryCard: React.FC<QuoteSummaryCardProps> = ({ results, det
             icon: TruckIcon,
             label: 'Waste Removal',
             value: waste.loadsRequired > 0 ? `${waste.loadsRequired.toFixed(1)} loads` : 'Minimal',
-            sublabel: `${waste.totalWasteM3.toFixed(2)}m³ total`
+            sublabel: `${waste.totalVolumeM3.toFixed(2)}m³ total`
         }
     ];
 

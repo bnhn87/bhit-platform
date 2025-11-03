@@ -345,6 +345,167 @@ export default function Dashboard() {
         <MetricCard value={(dashboardData?.netMargin || 0) / 1000} label="Net Margin" currency accent />
       </div>
 
+      {/* Quick Access Tools */}
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(min(180px, 100%), 1fr))",
+        gap: 16,
+        marginBottom: 24,
+        width: '100%'
+      }}>
+        <button
+          onClick={() => router.push('/smart-quote')}
+          className="glassmorphic-panel glassmorphic-base"
+          style={{
+            padding: 20,
+            textAlign: 'center',
+            cursor: 'pointer',
+            border: 'none',
+            background: 'transparent',
+            transition: 'all 0.3s ease',
+            position: 'relative',
+            overflow: 'hidden'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = `0 8px 24px ${theme.colors.accent}40`;
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = 'none';
+          }}
+        >
+          <div style={{ fontSize: 32, marginBottom: 8 }}>📊</div>
+          <div style={{
+            fontSize: 16,
+            fontWeight: 600,
+            color: theme.colors.text,
+            marginBottom: 4
+          }}>
+            Smart Quote
+          </div>
+          <div style={{
+            fontSize: 12,
+            color: theme.colors.textSubtle
+          }}>
+            AI Quote Processing
+          </div>
+        </button>
+
+        <button
+          onClick={() => router.push('/smart-invoice')}
+          className="glassmorphic-panel glassmorphic-base"
+          style={{
+            padding: 20,
+            textAlign: 'center',
+            cursor: 'pointer',
+            border: 'none',
+            background: 'transparent',
+            transition: 'all 0.3s ease',
+            position: 'relative',
+            overflow: 'hidden'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = `0 8px 24px ${theme.colors.accentAlt}40`;
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = 'none';
+          }}
+        >
+          <div style={{ fontSize: 32, marginBottom: 8 }}>💰</div>
+          <div style={{
+            fontSize: 16,
+            fontWeight: 600,
+            color: theme.colors.text,
+            marginBottom: 4
+          }}>
+            SmartInvoice
+          </div>
+          <div style={{
+            fontSize: 12,
+            color: theme.colors.textSubtle
+          }}>
+            AI Invoice Management
+          </div>
+        </button>
+
+        <button
+          onClick={() => router.push('/floor-planner')}
+          className="glassmorphic-panel glassmorphic-base"
+          style={{
+            padding: 20,
+            textAlign: 'center',
+            cursor: 'pointer',
+            border: 'none',
+            background: 'transparent',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = `0 8px 24px ${theme.colors.accent}40`;
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = 'none';
+          }}
+        >
+          <div style={{ fontSize: 32, marginBottom: 8 }}>📐</div>
+          <div style={{
+            fontSize: 16,
+            fontWeight: 600,
+            color: theme.colors.text,
+            marginBottom: 4
+          }}>
+            Floor Planner
+          </div>
+          <div style={{
+            fontSize: 12,
+            color: theme.colors.textSubtle
+          }}>
+            AI Layout Planning
+          </div>
+        </button>
+
+        <button
+          onClick={() => router.push('/jobs')}
+          className="glassmorphic-panel glassmorphic-base"
+          style={{
+            padding: 20,
+            textAlign: 'center',
+            cursor: 'pointer',
+            border: 'none',
+            background: 'transparent',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = `0 8px 24px ${theme.colors.accent}40`;
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = 'none';
+          }}
+        >
+          <div style={{ fontSize: 32, marginBottom: 8 }}>🔨</div>
+          <div style={{
+            fontSize: 16,
+            fontWeight: 600,
+            color: theme.colors.text,
+            marginBottom: 4
+          }}>
+            All Jobs
+          </div>
+          <div style={{
+            fontSize: 12,
+            color: theme.colors.textSubtle
+          }}>
+            Job Management
+          </div>
+        </button>
+      </div>
+
       {/* Main Content Grid */}
       <div style={{
         display: "grid",

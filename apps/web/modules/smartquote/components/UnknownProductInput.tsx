@@ -5,6 +5,7 @@ import { theme } from '../../../lib/theme';
 import { ParsedProduct, ProductReference, AppConfig } from '../types';
 import { getDashboardCardStyle, getDashboardButtonStyle, getDashboardTypographyStyle, getDashboardInputStyle, spacing as _spacing } from '../utils/dashboardStyles';
 import { getIconProps } from '../utils/iconSizing';
+import ProductAliasAttacher from './ProductAliasAttacher';
 
 import { HelpCircleIcon } from './icons';
 
@@ -32,6 +33,7 @@ export const UnknownProductInput: React.FC<UnknownProductInputProps> = ({ produc
     }, {} as FormData), [products]);
 
     const [formData, setFormData] = useState<FormData>(initialFormData);
+    const [resolvedProducts, setResolvedProducts] = useState<Record<string, ProductReference>>({});
     
     const handleChange = (productCode: string, field: string, value: string | boolean) => {
         const key = normalizeCode(productCode);
@@ -44,15 +46,33 @@ export const UnknownProductInput: React.FC<UnknownProductInputProps> = ({ produc
         }));
     };
 
+    const handleProductResolved = (productCode: string, installTimeHours: number, wasteVolumeM3: number) => {
+        const key = normalizeCode(productCode);
+        setResolvedProducts(prev => ({
+            ...prev,
+            [key]: {
+                installTimeHours,
+                wasteVolumeM3,
+                isHeavy: formData[key]?.isHeavy || false
+            }
+        }));
+    };
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        
-        const submittedData: Record<string, ProductReference> = {};
+
+        const submittedData: Record<string, ProductReference> = { ...resolvedProducts };
         let allValid = true;
 
         // Iterate over unique products to validate and build submission data
         for (const product of uniqueProducts) {
             const key = normalizeCode(product.productCode);
+
+            // Skip if already resolved via alias attacher
+            if (resolvedProducts[key]) {
+                continue;
+            }
+
             const data = formData[key];
             const installTime = parseFloat(data.installTimeHours);
 
@@ -116,6 +136,32 @@ export const UnknownProductInput: React.FC<UnknownProductInputProps> = ({ produc
                     const productInstances = products.filter(p => normalizeCode(p.productCode) === key);
                     const totalQuantity = productInstances.reduce((sum, p) => sum + p.quantity, 0);
 
+                    // Check if product is already resolved
+                    if (resolvedProducts[key]) {
+                        return (
+                            <div key={key} style={{
+                                ...getDashboardCardStyle('standard'),
+                                background: theme.colors.muted,
+                                opacity: 0.7
+                            }}>
+                                <p style={{
+                                    ...getDashboardTypographyStyle('cardTitle'),
+                                    color: theme.colors.text,
+                                    margin: 0
+                                }}>
+                                    ✅ Product Code: <span style={{ fontWeight: 700, color: theme.colors.accent }}>{product.productCode}</span>
+                                </p>
+                                <p style={{
+                                    ...getDashboardTypographyStyle('bodyText'),
+                                    color: theme.colors.textSubtle,
+                                    margin: '4px 0'
+                                }}>
+                                    {product.description} (Qty: {totalQuantity}) - {resolvedProducts[key].installTimeHours}h per unit
+                                </p>
+                            </div>
+                        );
+                    }
+
                     return (
                         <div key={key} style={{
                             ...getDashboardCardStyle('standard'),
@@ -133,85 +179,38 @@ export const UnknownProductInput: React.FC<UnknownProductInputProps> = ({ produc
                                 color: theme.colors.textSubtle,
                                 margin: '4px 0 16px 0'
                             }}>{product.description} (Total Qty: {totalQuantity})</p>
-                            <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 16, alignItems: "end" }}>
-                                <div>
-                                    <label htmlFor={`time-${key}`} style={{
-                                        ...getDashboardTypographyStyle('labelText'),
-                                        display: "block",
-                                        color: theme.colors.text,
-                                        marginBottom: 4
-                                    }}>Install Time (hours)</label>
+
+                            <ProductAliasAttacher
+                                productCode={product.productCode}
+                                productDescription={product.description}
+                                defaultTime={parseFloat(formData[key]?.installTimeHours) || 0}
+                                defaultWaste={config.rules.defaultWasteVolumeM3}
+                                onAttached={(productId, canonicalName) => {
+                                    // When attached to existing product, we don't get times back
+                                    // We need to fetch them from catalogue
+                                    console.log(`Product ${product.productCode} attached to ${canonicalName}`);
+                                }}
+                                onSaveNew={(installTimeHours, wasteVolumeM3) => {
+                                    handleProductResolved(product.productCode, installTimeHours, wasteVolumeM3);
+                                }}
+                            />
+
+                            <div style={{ marginTop: 16, paddingTop: 16, borderTop: `1px solid ${theme.colors.border}` }}>
+                                <label style={{
+                                    ...getDashboardTypographyStyle('labelText'),
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 8,
+                                    cursor: "pointer"
+                                }}>
                                     <input
-                                        type="number"
-                                        step="0.01"
-                                        id={`time-${key}`}
-                                        value={formData[key]?.installTimeHours || ''}
-                                        onChange={(e) => handleChange(product.productCode, 'installTimeHours', e.target.value)}
-                                        placeholder="e.g., 1.65"
-                                        required
-                                        min="0"
-                                        style={{
-                                            ...getDashboardInputStyle(),
-                                            display: "block",
-                                            width: "100%",
-                                            fontSize: 16,
-                                            fontWeight: 500
-                                        }}
+                                        type="checkbox"
+                                        checked={formData[key]?.isHeavy || false}
+                                        onChange={(e) => handleChange(product.productCode, 'isHeavy', e.target.checked)}
+                                        style={{ width: 18, height: 18 }}
                                     />
-                                </div>
-                                <div>
-                                    <label style={{
-                                        ...getDashboardTypographyStyle('labelText'),
-                                        display: "block",
-                                        color: theme.colors.text,
-                                        marginBottom: 4
-                                    }}>Item Type</label>
-                                    <button
-                                        type="button"
-                                        onClick={() => handleChange(product.productCode, 'isHeavy', !formData[key]?.isHeavy)}
-                                        style={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                            gap: 8,
-                                            padding: "12px 16px",
-                                            border: `1px solid ${formData[key]?.isHeavy ? theme.colors.accent : theme.colors.border}`,
-                                            borderRadius: theme.radii.md,
-                                            background: formData[key]?.isHeavy ? theme.colors.accent : theme.colors.panelAlt,
-                                            color: formData[key]?.isHeavy ? "white" : theme.colors.text,
-                                            cursor: "pointer",
-                                            fontSize: 14,
-                                            fontWeight: 500,
-                                            transition: "all 0.2s ease",
-                                            whiteSpace: "nowrap"
-                                        }}
-                                        onMouseOver={(e) => {
-                                            if (!formData[key]?.isHeavy) {
-                                                e.currentTarget.style.background = theme.colors.muted;
-                                                e.currentTarget.style.borderColor = theme.colors.accent;
-                                            }
-                                        }}
-                                        onMouseOut={(e) => {
-                                            if (!formData[key]?.isHeavy) {
-                                                e.currentTarget.style.background = theme.colors.panelAlt;
-                                                e.currentTarget.style.borderColor = theme.colors.border;
-                                            }
-                                        }}
-                                    >
-                                        <div style={{
-                                            width: 16,
-                                            height: 16,
-                                            borderRadius: "50%",
-                                            background: formData[key]?.isHeavy ? "white" : "transparent",
-                                            border: `2px solid ${formData[key]?.isHeavy ? "white" : theme.colors.border}`,
-                                            display: "flex",
-                                            alignItems: "center",
-                                            justifyContent: "center"
-                                        }}>
-                                            {formData[key]?.isHeavy && <div style={{ width: 6, height: 6, borderRadius: "50%", background: theme.colors.accent }} />}
-                                        </div>
-                                        Heavy / 2-person
-                                    </button>
-                                 </div>
+                                    Heavy / 2-person lift required
+                                </label>
                             </div>
                         </div>
                     )

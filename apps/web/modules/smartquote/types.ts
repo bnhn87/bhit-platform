@@ -15,6 +15,8 @@ export interface QuoteDetails {
     client: string;
     project: string;
     deliveryAddress: string;
+    collectionAddress?: string; // Optional collection/warehouse address
+    parsedAddresses?: string[]; // Addresses detected from parsed quote
     preparedBy: string;
     upliftViaStairs: boolean;
     extendedUplift: boolean;
