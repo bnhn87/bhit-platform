@@ -330,8 +330,8 @@ export default function SmartInvoice() {
       const aVal = a[sortField];
       const bVal = b[sortField];
 
-      if (aVal === null) return 1;
-      if (bVal === null) return -1;
+      if (aVal === null || aVal === undefined) return 1;
+      if (bVal === null || bVal === undefined) return -1;
 
       if (sortDirection === 'asc') {
         return aVal > bVal ? 1 : -1;

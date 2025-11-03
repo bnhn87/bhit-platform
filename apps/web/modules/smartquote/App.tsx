@@ -334,11 +334,11 @@ const App: React.FC = () => {
             
             // Extract addresses for the selector
             const parsedAddresses: string[] = [];
-            if (extractedDetails.deliveryAddress) {
-                parsedAddresses.push(extractedDetails.deliveryAddress);
+            if ((extractedDetails as any).deliveryAddress) {
+                parsedAddresses.push((extractedDetails as any).deliveryAddress);
             }
-            if (extractedDetails.collectionAddress) {
-                parsedAddresses.push(extractedDetails.collectionAddress);
+            if ((extractedDetails as any).collectionAddress) {
+                parsedAddresses.push((extractedDetails as any).collectionAddress);
             }
             // Add any additional addresses from allAddresses if available
             if ((extractedDetails as any).allAddresses) {
