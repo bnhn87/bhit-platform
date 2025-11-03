@@ -400,7 +400,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ products, result
                             fontSize: 14,
                             fontWeight: 500,
                             padding: '6px 12px',
-                            borderRadius: theme.radii.full
+                            borderRadius: '9999px'
                         }}>
                             <ExclamationTriangleIcon style={{ height: 20, width: 20, marginRight: 8 }}/> Auto: 2-Man Van Required
                         </div>
@@ -414,7 +414,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ products, result
                             fontSize: 14,
                             fontWeight: 500,
                             padding: '6px 12px',
-                            borderRadius: theme.radii.full
+                            borderRadius: '9999px'
                         }}>
                             <ExclamationTriangleIcon style={{ height: 20, width: 20, marginRight: 8 }}/> High Waste Volume Flagged
                         </div>
@@ -428,7 +428,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ products, result
                             fontSize: 14,
                             fontWeight: 500,
                             padding: '6px 12px',
-                            borderRadius: theme.radii.full
+                            borderRadius: '9999px'
                         }}>
                             <UsersIcon style={{ height: 20, width: 20, marginRight: 8 }}/> Auto: Supervisor Included
                         </div>
