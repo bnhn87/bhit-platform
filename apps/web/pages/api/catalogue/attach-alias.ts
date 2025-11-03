@@ -68,8 +68,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         // Create new alias
-        const { data: newAlias, error: insertError } = await supabase
-            .from('product_aliases')
+        const { data: newAlias, error: insertError } = await (supabase
+            .from('product_aliases') as any)
             .insert({
                 product_id: targetProductId,
                 alias_code: productCode,
