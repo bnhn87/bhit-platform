@@ -1,8 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { createServerClient } from '../../../lib/supabaseAdmin';
+import { supabaseAdmin } from '../../../lib/supabaseAdmin';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const supabase = createServerClient();
+    const supabase = supabaseAdmin;
 
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser(
