@@ -11,11 +11,17 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { EnhancedParseResult } from '../types';
 
-if (!process.env.GEMINI_API_KEY) {
-    throw new Error("GEMINI_API_KEY environment variable not set");
-}
+let ai: GoogleGenAI | null = null;
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+function getAI(): GoogleGenAI {
+    if (!ai) {
+        if (!process.env.GEMINI_API_KEY) {
+            throw new Error("GEMINI_API_KEY environment variable not set");
+        }
+        ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    }
+    return ai;
+}
 
 // Enhanced response schema with confidence
 const responseSchema = {
@@ -196,7 +202,7 @@ const attemptParse = async (
     const topP = 0.9 + (attempt * 0.02);
     const topK = Math.min(40 + (attempt * 10), 60);
     
-    const response = await ai.models.generateContent({
+    const response = await getAI().models.generateContent({
         model: "gemini-2.0-flash-exp",
         contents: { parts: requestParts },
         config: {
