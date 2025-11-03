@@ -90,6 +90,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             .single();
 
         if (productError) throw productError;
+        if (!product) throw new Error('Product not found');
 
         return res.status(201).json({
             message: 'Alias attached successfully',
