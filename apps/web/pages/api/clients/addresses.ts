@@ -176,10 +176,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             default:
                 res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
-                return res.status(405).end(`Method ${method} Not Allowed`);
+                res.status(405).end(`Method ${method} Not Allowed`);
+                return;
         }
     } catch (error) {
         console.error('API Error:', error);
-        return res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: 'Internal server error' });
+        return;
     }
 }
