@@ -385,7 +385,7 @@ export const ProductAliasAttacher: React.FC<ProductAliasAttacherProps> = ({
                 ) : catalogueProducts.length === 0 ? (
                     <div style={{ textAlign: 'center', padding: '20px' }}>
                         <div style={{ color: theme.colors.textSubtle }}>No products in catalogue</div>
-                        <div style={{ fontSize: '12px', color: theme.colors.textMuted, marginTop: '4px' }}>
+                        <div style={{ fontSize: '12px', color: theme.colors.muted, marginTop: '4px' }}>
                             Save this product to start building your catalogue
                         </div>
                     </div>

@@ -107,9 +107,9 @@ SE1 3ER`;
             case 'site':
                 return <MapPinIcon style={{ width: 20, height: 20, color: theme.colors.accent }} />;
             case 'collection':
-                return <TruckIcon style={{ width: 20, height: 20, color: theme.colors.warning }} />;
+                return <TruckIcon style={{ width: 20, height: 20, color: theme.colors.warn }} />;
             case 'client':
-                return <BuildingOfficeIcon style={{ width: 20, height: 20, color: theme.colors.info }} />;
+                return <BuildingOfficeIcon style={{ width: 20, height: 20, color: theme.colors.accentAlt }} />;
             default:
                 return <MapPinIcon style={{ width: 20, height: 20, color: theme.colors.textSubtle }} />;
         }
@@ -138,15 +138,15 @@ SE1 3ER`;
 
             {detectedAddresses.length > 0 && (
                 <div style={{
-                    background: theme.colors.info + '10',
-                    border: `1px solid ${theme.colors.info}40`,
+                    background: theme.colors.accentAlt + '10',
+                    border: `1px solid ${theme.colors.accentAlt}40`,
                     borderRadius: theme.radii.md,
                     padding: 12,
                     marginBottom: 16
                 }}>
                     <p style={{
                         fontSize: 14,
-                        color: theme.colors.info,
+                        color: theme.colors.accentAlt,
                         margin: 0
                     }}>
                         Multiple addresses detected in the quote. Please select the correct ones:
@@ -258,10 +258,10 @@ SE1 3ER`;
                                     gap: 12,
                                     padding: 12,
                                     background: selectedCollectionAddress === address.fullAddress
-                                        ? theme.colors.warning + '20'
+                                        ? theme.colors.warn + '20'
                                         : theme.colors.panelAlt,
                                     border: `1px solid ${selectedCollectionAddress === address.fullAddress
-                                        ? theme.colors.warning
+                                        ? theme.colors.warn
                                         : theme.colors.border}`,
                                     borderRadius: theme.radii.md,
                                     cursor: 'pointer',
@@ -298,7 +298,7 @@ SE1 3ER`;
                                     </div>
                                     <div style={{
                                         fontSize: 11,
-                                        color: theme.colors.warning,
+                                        color: theme.colors.warn,
                                         marginTop: 4
                                     }}>
                                         Postcode: {address.postcode}
@@ -430,15 +430,15 @@ SE1 3ER`;
                     </div>
 
                     <div style={{
-                        background: theme.colors.info + '10',
-                        border: `1px solid ${theme.colors.info}40`,
+                        background: theme.colors.accentAlt + '10',
+                        border: `1px solid ${theme.colors.accentAlt}40`,
                         borderRadius: theme.radii.sm,
                         padding: 8,
                         marginBottom: 12
                     }}>
                         <p style={{
                             fontSize: 12,
-                            color: theme.colors.info,
+                            color: theme.colors.accentAlt,
                             margin: 0
                         }}>
                             💡 Address must include a valid UK postcode on the last line

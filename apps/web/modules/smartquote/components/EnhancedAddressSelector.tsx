@@ -188,9 +188,9 @@ export const EnhancedAddressSelector: React.FC<AddressSelectorProps> = ({
             case 'site':
                 return <MapPinIcon style={{ width: 20, height: 20, color: theme.colors.accent }} />;
             case 'collection':
-                return <TruckIcon style={{ width: 20, height: 20, color: theme.colors.warning }} />;
+                return <TruckIcon style={{ width: 20, height: 20, color: theme.colors.warn }} />;
             case 'client':
-                return <BuildingOfficeIcon style={{ width: 20, height: 20, color: theme.colors.info }} />;
+                return <BuildingOfficeIcon style={{ width: 20, height: 20, color: theme.colors.accentAlt }} />;
             default:
                 return <MapPinIcon style={{ width: 20, height: 20, color: theme.colors.textSubtle }} />;
         }
@@ -200,9 +200,9 @@ export const EnhancedAddressSelector: React.FC<AddressSelectorProps> = ({
         address: Address,
         isSelected: boolean,
         onClick: () => void,
-        colorTheme: 'accent' | 'warning' = 'accent'
+        colorTheme: 'accent' | 'warn' = 'accent'
     ) => {
-        const themeColor = colorTheme === 'warning' ? theme.colors.warning : theme.colors.accent;
+        const themeColor = colorTheme === 'warn' ? theme.colors.warn : theme.colors.accent;
 
         return (
             <button
@@ -264,7 +264,7 @@ export const EnhancedAddressSelector: React.FC<AddressSelectorProps> = ({
                     {address.accessRestrictions && (
                         <div style={{
                             fontSize: 11,
-                            color: theme.colors.warning,
+                            color: theme.colors.warn,
                             marginTop: 2,
                             fontStyle: 'italic'
                         }}>
@@ -362,9 +362,9 @@ SE1 3ER`;
                             style={{
                                 marginLeft: 'auto',
                                 padding: '6px 12px',
-                                background: theme.colors.info + '20',
-                                color: theme.colors.info,
-                                border: `1px solid ${theme.colors.info}40`,
+                                background: theme.colors.accentAlt + '20',
+                                color: theme.colors.accentAlt,
+                                border: `1px solid ${theme.colors.accentAlt}40`,
                                 borderRadius: theme.radii.sm,
                                 cursor: 'pointer',
                                 fontSize: 12,
@@ -394,15 +394,15 @@ SE1 3ER`;
 
             {!loadingAddresses && !showSavedTab && detectedAddresses.length > 0 && (
                 <div style={{
-                    background: theme.colors.info + '10',
-                    border: `1px solid ${theme.colors.info}40`,
+                    background: theme.colors.accentAlt + '10',
+                    border: `1px solid ${theme.colors.accentAlt}40`,
                     borderRadius: theme.radii.md,
                     padding: 12,
                     marginBottom: 16
                 }}>
                     <p style={{
                         fontSize: 14,
-                        color: theme.colors.info,
+                        color: theme.colors.accentAlt,
                         margin: 0
                     }}>
                         Multiple addresses detected in the quote. Please select the correct ones:
@@ -461,7 +461,7 @@ SE1 3ER`;
                                                 address,
                                                 selectedCollectionAddress === address.fullAddress,
                                                 () => onCollectionAddressSelect(address.fullAddress),
-                                                'warning'
+                                                'warn'
                                             )}
                                         </React.Fragment>
                                     ))}
@@ -583,15 +583,15 @@ SE1 3ER`;
                     </div>
 
                     <div style={{
-                        background: theme.colors.info + '10',
-                        border: `1px solid ${theme.colors.info}40`,
+                        background: theme.colors.accentAlt + '10',
+                        border: `1px solid ${theme.colors.accentAlt}40`,
                         borderRadius: theme.radii.sm,
                         padding: 8,
                         marginBottom: 12
                     }}>
                         <p style={{
                             fontSize: 12,
-                            color: theme.colors.info,
+                            color: theme.colors.accentAlt,
                             margin: 0
                         }}>
                             💡 Address must include a valid UK postcode on the last line
