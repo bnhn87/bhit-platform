@@ -1,6 +1,6 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { ParseResult, ParseContent, ParsedProduct } from '../types';
-import { configService } from './configService';
+import { loadConfig } from './configService';
 
 let ai: GoogleGenAI | null = null;
 
@@ -17,13 +17,13 @@ function getAI(): GoogleGenAI {
 
 // Get all product codes from the catalogue for fuzzy matching
 const getCatalogueProductCodes = (): string[] => {
-    const config = configService.getConfig();
+    const config = loadConfig();
     return Object.keys(config.productCatalogue);
 };
 
 // Find best matching product from catalogue using fuzzy logic
 const findBestCatalogueMatch = (productCode: string, description: string): string | null => {
-    const catalogue = configService.getConfig().productCatalogue;
+    const catalogue = loadConfig().productCatalogue;
     const catalogueKeys = Object.keys(catalogue);
 
     // Clean the product code for matching
@@ -380,7 +380,7 @@ const promptText = "Extract products and quote details. Be flexible with product
 
 // Enhanced post-processing to use catalogue for unknown products
 const enhanceProductsWithCatalogue = (products: ParsedProduct[]): ParsedProduct[] => {
-    const config = configService.getConfig();
+    const config = loadConfig();
 
     return products.map(product => {
         // Try to find a catalogue match

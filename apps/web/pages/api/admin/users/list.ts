@@ -98,8 +98,8 @@ export default async function handler(
     const { data: authUsers, error: authError } = await adminClient.auth.admin.listUsers();
 
     // Merge profiles with auth data and extract permissions from user_metadata
-    const users = profiles?.map(profile => {
-      const authUser = authUsers?.users?.find(u => u.id === profile.id);
+    const users = profiles?.map((profile: any) => {
+      const authUser = authUsers?.users?.find((u: any) => u.id === profile.id);
       // Check if user is banned (inactive)
       const isBanned = authUser?.banned_until && new Date(authUser.banned_until) > new Date();
 
