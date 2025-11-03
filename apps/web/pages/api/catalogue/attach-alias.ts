@@ -83,8 +83,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (insertError) throw insertError;
 
         // Get the product details to return
-        const { data: product, error: productError } = await supabase
-            .from('product_catalogue_items')
+        const { data: product, error: productError } = await (supabase
+            .from('product_catalogue_items') as any)
             .select('canonical_name, canonical_code, install_time_hours')
             .eq('id', targetProductId)
             .single();
