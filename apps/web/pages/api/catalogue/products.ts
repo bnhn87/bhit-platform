@@ -103,8 +103,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 // Update existing product
                 const { id, ...updateData } = req.body;
 
-                const { data: updated, error: updateError } = await supabase
-                    .from('product_catalogue_items')
+                const { data: updated, error: updateError } = await (supabase
+                    .from('product_catalogue_items') as any)
                     .update({
                         ...updateData,
                         updated_by: user.id,
