@@ -31,14 +31,14 @@ export const QuoteSummaryCard: React.FC<QuoteSummaryCardProps> = ({ results, det
         {
             icon: CalendarIcon,
             label: 'Project Duration',
-            value: `${crew.totalProjectDays.toFixed(1)} days`,
-            sublabel: `${labour.bufferedHours.toFixed(2)} total hours`
+            value: `${(labour.bufferedHours / 8).toFixed(1)} days`,
+            sublabel: `${labour.bufferedHours.toFixed(1)} total hours`
         },
         {
             icon: UsersIcon,
             label: 'Installation Team',
             value: `${crew.crewSize} person${crew.crewSize > 1 ? 's' : ''}`,
-            sublabel: crew.vanType === 'twoMan' ? 'Two-man van' : 'One-man van'
+            sublabel: crew.isTwoManVanRequired ? 'Two-man van' : 'One-man van'
         },
         {
             icon: ClockIcon,

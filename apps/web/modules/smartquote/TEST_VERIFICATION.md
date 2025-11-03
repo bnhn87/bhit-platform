@@ -51,7 +51,7 @@
 - ✅ `ExportControls.tsx` - Export buttons
 
 ## 🔧 Property Name Fixes Applied
-1. `crew.projectDuration` → `crew.totalProjectDays`
+1. Duration calculation: Now derived from `labour.bufferedHours / 8` (single source of truth)
 2. `crew.vanType` → `crew.isTwoManVanRequired`
 3. `waste.totalWasteM3` → `waste.totalVolumeM3`
 

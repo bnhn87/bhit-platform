@@ -63,8 +63,8 @@ const sampleQuoteData = {
         },
         crew: {
             crewSize: 3,
-            vanType: "twoMan",
-            projectDuration: 1.5
+            isTwoManVanRequired: true
+            // Duration is calculated from labour.bufferedHours / 8
         },
         waste: {
             loadsRequired: 1.2,

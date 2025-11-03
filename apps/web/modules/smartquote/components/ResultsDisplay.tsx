@@ -140,7 +140,7 @@ const CrewCard: React.FC<{ results: CalculationResults; details: QuoteDetails; o
                     border: `1px solid ${theme.colors.border}`
                 }}>
                     <span style={{ fontWeight: 500, color: theme.colors.textSubtle }}>Job Duration (On-site):</span>
-                    <span style={{ fontWeight: 700, color: theme.colors.text }}>{(crew.totalProjectDays || 0).toFixed(2)} calendar days</span>
+                    <span style={{ fontWeight: 700, color: theme.colors.text }}>{(labour.bufferedHours / 8).toFixed(1)} calendar days</span>
                 </div>
                 <div style={{
                     background: theme.colors.panelAlt,
@@ -738,7 +738,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ products, result
                             <div style={{ fontSize: 14, color: theme.colors.textSubtle }}>Total Team Size</div>
                         </div>
                         <div style={{ textAlign: 'center' }}>
-                            <div style={{ fontSize: 28, fontWeight: 700, color: theme.colors.warn }}>{(results.crew.totalProjectDays || 0).toFixed(1)}</div>
+                            <div style={{ fontSize: 28, fontWeight: 700, color: theme.colors.warn }}>{(results.labour.bufferedHours / 8).toFixed(1)}</div>
                             <div style={{ fontSize: 14, color: theme.colors.textSubtle }}>Total Project Days</div>
                         </div>
                     </div>
