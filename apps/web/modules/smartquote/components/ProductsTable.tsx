@@ -18,7 +18,7 @@ export const ProductsTable: React.FC<ProductsTableProps> = ({
     const [copied, setCopied] = useState(false);
 
     // Format products according to BHIT spec
-    const formatProductLine = (product: CalculatedProduct): string => {
+    const formatProductLine = (product: CalculatedProduct) => {
         const line = product.lineNumber === 999 ? 'END' : product.lineNumber.toString();
         const description = product.cleanDescription || product.description || product.rawDescription;
         const formattedDesc = `Line ${line} – ${description}`;
