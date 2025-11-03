@@ -39,8 +39,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 } = req.body;
 
                 // Insert the main product
-                const { data: newProduct, error: insertError } = await supabase
-                    .from('product_catalogue_items')
+                const { data: newProduct, error: insertError } = await (supabase
+                    .from('product_catalogue_items') as any)
                     .insert({
                         canonical_code: productCode,
                         canonical_name: productName,
@@ -61,8 +61,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 if (insertError) {
                     // If product exists, update it instead
                     if (insertError.code === '23505') {
-                        const { data: updatedProduct, error: updateError } = await supabase
-                            .from('product_catalogue_items')
+                        const { data: updatedProduct, error: updateError } = await (supabase
+                            .from('product_catalogue_items') as any)
                             .update({
                                 install_time_hours: installTimeHours,
                                 waste_volume_m3: wasteVolumeM3 || 0.035,
@@ -103,8 +103,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 // Update existing product
                 const { id, ...updateData } = req.body;
 
-                const { data: updated, error: updateError } = await supabase
-                    .from('product_catalogue_items')
+                const { data: updated, error: updateError } = await (supabase
+                    .from('product_catalogue_items') as any)
                     .update({
                         ...updateData,
                         updated_by: user.id,
@@ -143,8 +143,8 @@ async function addAliases(
         created_by: userId
     }));
 
-    const { error } = await supabase
-        .from('product_aliases')
+    const { error } = await (supabase
+        .from('product_aliases') as any)
         .insert(aliasInserts)
         .select();
 

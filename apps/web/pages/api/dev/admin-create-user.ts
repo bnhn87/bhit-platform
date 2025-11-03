@@ -20,7 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { data: allUsers, error: listError } = await admin.auth.admin.listUsers();
   if (listError) return res.status(400).json({ error: listError.message });
   
-  const existingUser = allUsers?.users?.find(user => user.email === email);
+  const existingUser = allUsers?.users?.find((user: any) => user.email === email);
   let userId = existingUser?.id as string | undefined;
 
   if (!userId) {

@@ -64,7 +64,7 @@ const StatCard: React.FC<{ title: string; value: string | number; description: s
 };
 
 const CrewCard: React.FC<{ results: CalculationResults; details: QuoteDetails; onDetailsChange: (details: QuoteDetails) => void }> = ({ results, details, onDetailsChange }) => {
-    const { crew } = results;
+    const { crew, labour } = results;
     
     const isOverridden = details.overrideFitterCount != null || details.overrideSupervisorCount != null || details.overrideVanType != null;
     
@@ -291,7 +291,7 @@ const CrewCard: React.FC<{ results: CalculationResults; details: QuoteDetails; o
 };
 
 export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ products, results, quoteDetails, config, onDetailsChange, onProductsChange, onSaveLearnedProduct }) => {
-    const { labour, waste, pricing } = results;
+    const { labour, crew, waste, pricing } = results;
     const [editingTimes, setEditingTimes] = useState<Record<number, string>>({});
 
     // Feature flags

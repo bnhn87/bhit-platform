@@ -9,6 +9,13 @@ import { createClient } from '@supabase/supabase-js';
  * Requires admin or director role
  */
 
+interface ProfileData {
+  id: string;
+  email: string;
+  role: string;
+  created_at: string;
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -79,7 +86,7 @@ export default async function handler(
     }
 
     // Get all users with their permissions using admin client
-    const { data: profiles, error: profilesError } = await adminClient
+    const profilesResponse = await adminClient
       .from('profiles')
       .select(`
         id,
@@ -88,6 +95,9 @@ export default async function handler(
         created_at
       `)
       .order('created_at', { ascending: false });
+
+    const profiles = profilesResponse.data as ProfileData[] | null;
+    const profilesError = profilesResponse.error;
 
     if (profilesError) {
       console.error('Failed to fetch profiles:', profilesError);
@@ -98,8 +108,8 @@ export default async function handler(
     const { data: authUsers, error: authError } = await adminClient.auth.admin.listUsers();
 
     // Merge profiles with auth data and extract permissions from user_metadata
-    const users = profiles?.map(profile => {
-      const authUser = authUsers?.users?.find(u => u.id === profile.id);
+    const users = profiles?.map((profile: ProfileData) => {
+      const authUser: any = authUsers?.users?.find((u: any) => u.id === profile.id);
       // Check if user is banned (inactive)
       const isBanned = authUser?.banned_until && new Date(authUser.banned_until) > new Date();
 
