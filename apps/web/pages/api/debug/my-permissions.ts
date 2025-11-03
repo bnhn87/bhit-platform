@@ -74,7 +74,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       user_metadata: user.user_metadata,
       permissions_from_token: user.user_metadata?.permissions,
       permissions_from_admin_api: authUser?.user?.user_metadata?.permissions,
-      raw_user_meta_data: authUser?.user?.raw_user_meta_data
+      raw_user_meta_data: authUser?.user?.user_metadata
     });
 
   } catch (error: any) {
