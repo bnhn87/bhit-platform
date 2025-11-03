@@ -40,7 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         if (existingAlias) {
             // If it exists but points to a different product, we need to update it
-            if (existingAlias.product_id !== targetProductId) {
+            if ((existingAlias as any).product_id !== targetProductId) {
                 const { error: updateError } = await supabase
                     .from('product_aliases')
                     .update({
@@ -49,7 +49,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         created_by: user.id,
                         created_at: new Date().toISOString()
                     })
-                    .eq('id', existingAlias.id);
+                    .eq('id', (existingAlias as any).id);
 
                 if (updateError) throw updateError;
 
