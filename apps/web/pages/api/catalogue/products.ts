@@ -39,8 +39,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 } = req.body;
 
                 // Insert the main product
-                const { data: newProduct, error: insertError } = await supabase
-                    .from('product_catalogue_items')
+                const { data: newProduct, error: insertError } = await (supabase
+                    .from('product_catalogue_items') as any)
                     .insert({
                         canonical_code: productCode,
                         canonical_name: productName,
