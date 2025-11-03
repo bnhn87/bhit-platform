@@ -54,11 +54,12 @@ export const QuoteSummaryCard: React.FC<QuoteSummaryCardProps> = ({ results, det
         }
     ];
 
+    const labourCost = pricing.fitterCost + pricing.supervisorCost;
     const costBreakdown = [
-        { label: 'Labour', value: pricing.labourCost, percentage: (pricing.labourCost / pricing.totalCost) * 100 },
-        { label: 'Waste', value: pricing.wasteCost, percentage: (pricing.wasteCost / pricing.totalCost) * 100 },
+        { label: 'Labour', value: labourCost, percentage: (labourCost / pricing.totalCost) * 100 },
+        { label: 'Vans', value: pricing.vanCost, percentage: (pricing.vanCost / pricing.totalCost) * 100 },
         { label: 'Parking', value: pricing.parkingCost, percentage: (pricing.parkingCost / pricing.totalCost) * 100 },
-        { label: 'Rework', value: pricing.specialistReworkingCost || 0, percentage: ((pricing.specialistReworkingCost || 0) / pricing.totalCost) * 100 }
+        { label: 'Rework', value: pricing.reworkingCost || 0, percentage: ((pricing.reworkingCost || 0) / pricing.totalCost) * 100 }
     ].filter(item => item.value > 0);
 
     return (
@@ -100,7 +101,7 @@ export const QuoteSummaryCard: React.FC<QuoteSummaryCardProps> = ({ results, det
                     <div style={{
                         padding: '8px 16px',
                         background: theme.colors.success,
-                        borderRadius: theme.radii.full,
+                        borderRadius: '9999px',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '6px'
@@ -221,7 +222,7 @@ export const QuoteSummaryCard: React.FC<QuoteSummaryCardProps> = ({ results, det
                             <div style={{
                                 height: '8px',
                                 background: theme.colors.bg,
-                                borderRadius: theme.radii.full,
+                                borderRadius: '9999px',
                                 overflow: 'hidden'
                             }}>
                                 <div style={{
@@ -256,7 +257,7 @@ export const QuoteSummaryCard: React.FC<QuoteSummaryCardProps> = ({ results, det
                             <div style={{
                                 padding: '6px 12px',
                                 background: theme.colors.accent,
-                                borderRadius: theme.radii.full,
+                                borderRadius: '9999px',
                                 color: 'white',
                                 fontSize: '13px',
                                 fontWeight: 500
@@ -268,7 +269,7 @@ export const QuoteSummaryCard: React.FC<QuoteSummaryCardProps> = ({ results, det
                             <div style={{
                                 padding: '6px 12px',
                                 background: theme.colors.accent,
-                                borderRadius: theme.radii.full,
+                                borderRadius: '9999px',
                                 color: 'white',
                                 fontSize: '13px',
                                 fontWeight: 500
@@ -280,7 +281,7 @@ export const QuoteSummaryCard: React.FC<QuoteSummaryCardProps> = ({ results, det
                             <div style={{
                                 padding: '6px 12px',
                                 background: theme.colors.accentAlt,
-                                borderRadius: theme.radii.full,
+                                borderRadius: '9999px',
                                 color: 'white',
                                 fontSize: '13px',
                                 fontWeight: 500
