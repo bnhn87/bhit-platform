@@ -61,8 +61,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 if (insertError) {
                     // If product exists, update it instead
                     if (insertError.code === '23505') {
-                        const { data: updatedProduct, error: updateError } = await supabase
-                            .from('product_catalogue_items')
+                        const { data: updatedProduct, error: updateError } = await (supabase
+                            .from('product_catalogue_items') as any)
                             .update({
                                 install_time_hours: installTimeHours,
                                 waste_volume_m3: wasteVolumeM3 || 0.035,
