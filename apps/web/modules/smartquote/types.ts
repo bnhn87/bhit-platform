@@ -52,7 +52,7 @@ export interface ParsedProduct {
 export interface ProductReference {
     installTimeHours: number;
     wasteVolumeM3: number;
-    isHeavy: boolean;
+    isHeavy?: boolean;
 }
 
 export type ParseContent = (string | { mimeType: string; data: string; })[];
