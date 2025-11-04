@@ -21,6 +21,7 @@ import * as XLSX from 'xlsx';
 
 import Layout from '../components/Layout';
 import { processInvoiceWithAI } from '../lib/invoiceAiService';
+import { processInvoiceWithLearning, createActiveLearningRequestsForInvoice } from '../lib/smartInvoiceProcessor';
 import {
   fetchInvoices,
   createInvoiceFromExtraction,
@@ -241,13 +242,27 @@ export default function SmartInvoice() {
       setUploadProgress(prev => ({ ...prev, [invoiceId]: 10 }));
 
       try {
-        // Process with AI
+        // Process with AI + Learning Systems (patterns, validation, anomalies)
         setUploadProgress(prev => ({ ...prev, [invoiceId]: 30 }));
-        const result = await processInvoiceWithAI(file);
+        const result = await processInvoiceWithLearning(file);
 
         if (!result.success || !result.data) {
           console.error('AI processing failed:', result.error);
           return { success: false, error: result.error, fileName: file.name };
+        }
+
+        // Log AI learning insights
+        if (result.appliedPatterns && result.appliedPatterns.length > 0) {
+          console.log('🧠 Applied learned patterns:', result.appliedPatterns);
+        }
+        if (result.validationResult && !result.validationResult.is_valid) {
+          console.warn('⚠️ Validation issues:', result.validationResult.critical_issues);
+        }
+        if (result.anomalyDetection && result.anomalyDetection.requires_review) {
+          console.warn('🚨 Anomaly detected:', result.anomalyDetection.description);
+        }
+        if (result.predictedCorrections && result.predictedCorrections.length > 0) {
+          console.log('💡 Predicted corrections available:', result.predictedCorrections.length);
         }
 
         setUploadProgress(prev => ({ ...prev, [invoiceId]: 60 }));
@@ -264,8 +279,10 @@ export default function SmartInvoice() {
         setUploadProgress(prev => ({ ...prev, [invoiceId]: 80 }));
 
         // Save to database (with duplicate detection)
+        let savedInvoiceId: string | undefined;
         try {
-          await createInvoiceFromExtraction(result.data, filePath);
+          const savedInvoice = await createInvoiceFromExtraction(result.data, filePath);
+          savedInvoiceId = savedInvoice.id;
         } catch (dbError: any) {
           // Check if it's a duplicate error
           if (dbError?.message?.includes('DUPLICATE')) {
@@ -278,7 +295,8 @@ export default function SmartInvoice() {
 
             if (shouldSkip) {
               // User confirmed - create anyway by skipping duplicate check
-              await createInvoiceFromExtraction(result.data, filePath, true);
+              const savedInvoice = await createInvoiceFromExtraction(result.data, filePath, true);
+              savedInvoiceId = savedInvoice.id;
             } else {
               // User cancelled - skip this invoice
               setUploadProgress(prev => ({ ...prev, [invoiceId]: 100 }));
@@ -286,6 +304,17 @@ export default function SmartInvoice() {
             }
           } else {
             throw dbError;
+          }
+        }
+
+        // Create active learning requests for low-confidence fields
+        if (savedInvoiceId && result.activeLearningRequests && result.activeLearningRequests.length > 0) {
+          try {
+            await createActiveLearningRequestsForInvoice(savedInvoiceId, result.data);
+            console.log(`📝 Created ${result.activeLearningRequests.length} active learning requests`);
+          } catch (learningError) {
+            console.error('Failed to create active learning requests:', learningError);
+            // Non-critical, continue
           }
         }
 
