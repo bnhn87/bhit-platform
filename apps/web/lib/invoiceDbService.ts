@@ -472,7 +472,7 @@ export async function uploadInvoiceFile(
     const fileName = `${invoiceNumber}_${timestamp}_${file.name}`;
     const filePath = `invoices/${fileName}`;
 
-    const { data, error } = await supabase.storage
+    const { data, error } = await supabaseAdmin.storage
       .from('documents')
       .upload(filePath, file);
 
@@ -493,7 +493,7 @@ export async function uploadInvoiceFile(
  */
 export async function getInvoiceFileUrl(filePath: string): Promise<string> {
   try {
-    const { data, error } = await supabase.storage
+    const { data, error } = await supabaseAdmin.storage
       .from('documents')
       .createSignedUrl(filePath, 3600); // 1 hour expiry
 
