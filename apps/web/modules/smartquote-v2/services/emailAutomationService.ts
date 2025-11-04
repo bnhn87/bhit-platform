@@ -8,13 +8,14 @@
 // - Approve/reject draft quotes
 
 import { supabase } from '../../../lib/supabaseClient';
-import { parseQuoteContentEnhanced } from './enhancedGeminiService';
 import {
     QuoteEmail,
     QuoteDraft,
     EmailAutomationService as IEmailAutomationService,
     EnhancedParseResult
 } from '../types';
+
+import { parseQuoteContentEnhanced } from './enhancedGeminiService';
 
 class EmailAutomationService implements IEmailAutomationService {
     

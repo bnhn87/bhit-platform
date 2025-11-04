@@ -5,9 +5,10 @@ import { theme } from '../../../lib/theme';
 import { ParsedProduct, ProductReference, AppConfig } from '../types';
 import { getDashboardCardStyle, getDashboardButtonStyle, getDashboardTypographyStyle, getDashboardInputStyle, spacing as _spacing } from '../utils/dashboardStyles';
 import { getIconProps } from '../utils/iconSizing';
-import ProductAliasAttacher from './ProductAliasAttacher';
 
 import { HelpCircleIcon } from './icons';
+import ProductAliasAttacher from './ProductAliasAttacher';
+
 
 interface UnknownProductInputProps {
     products: ParsedProduct[];

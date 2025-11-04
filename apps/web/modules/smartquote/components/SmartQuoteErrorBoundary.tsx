@@ -102,7 +102,7 @@ export class SmartQuoteErrorBoundary extends Component<Props, State> {
                             margin: 0,
                             marginBottom: 24
                         }}>
-                            The SmartQuote tool encountered an unexpected error. Don't worry, your data should be safe.
+                            The SmartQuote tool encountered an unexpected error. Don&apos;t worry, your data should be safe.
                         </p>
 
                         {this.state.error && (

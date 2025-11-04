@@ -2,8 +2,8 @@ import React, { useEffect, useRef } from 'react';
 
 import { theme } from '../../../lib/theme';
 import { useFocusTrap } from '../hooks/useAccessibility';
-import { getDialogA11yProps, getFocusStyles } from '../utils/accessibilityHelpers';
 import { KeyboardShortcut, getShortcutLabel } from '../hooks/useKeyboardShortcuts';
+import { getDialogA11yProps, getFocusStyles } from '../utils/accessibilityHelpers';
 
 interface KeyboardShortcutsHelpProps {
     shortcuts: KeyboardShortcut[];

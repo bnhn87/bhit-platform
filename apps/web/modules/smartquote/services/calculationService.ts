@@ -1,6 +1,7 @@
 
 
 import { ParsedProduct, CalculationResults, CalculatedProduct, LabourResults, CrewResults, WasteResults, ProductReference, QuoteDetails, PricingResults, AppConfig } from '../types';
+
 import { catalogueService } from './catalogueService';
 
 const _roundToNearest = (value: number, nearest: number): number => {

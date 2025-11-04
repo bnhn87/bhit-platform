@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+
 import { theme } from '../../../lib/theme';
 import { CalculatedProduct } from '../types';
 import { getDashboardCardStyle, getDashboardTypographyStyle } from '../utils/dashboardStyles';
+
 import { TableIcon, DownloadIcon, ClipboardIcon, CheckCircleIcon } from './icons';
 
 interface ProductsTableProps {

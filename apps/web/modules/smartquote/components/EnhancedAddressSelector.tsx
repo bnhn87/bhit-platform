@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+
 import { theme } from '../../../lib/theme';
-import { MapPinIcon, BuildingOfficeIcon, TruckIcon, PlusCircleIcon, CheckCircleIcon, ClockIcon } from './icons';
 import { clientService, type ClientAddress, type Client } from '../services/clientService';
+
+import { MapPinIcon, BuildingOfficeIcon, TruckIcon, PlusCircleIcon, CheckCircleIcon, ClockIcon } from './icons';
 
 export interface Address {
     type: 'site' | 'collection' | 'client' | 'custom';

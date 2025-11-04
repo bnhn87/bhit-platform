@@ -1,7 +1,7 @@
 import { AppConfig, ProductReference } from '../types';
 
-import { hybridProductService } from './databaseProductService';
 import { getDefaultConfig as getFullConfig } from './configService';
+import { hybridProductService } from './databaseProductService';
 
 const CONFIG_STORAGE_KEY = 'bhit_smartquote_config';
 

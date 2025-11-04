@@ -3,6 +3,7 @@
 // ========================================
 
 import React, { useState, useEffect } from 'react';
+
 import revisionTrackingService from '../services/revisionTrackingService';
 import { QuoteRevision } from '../types';
 

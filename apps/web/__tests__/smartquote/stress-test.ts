@@ -11,13 +11,13 @@ import {
     groupPowerItems,
     validateRawProduct
 } from '../../modules/smartquote/services/calculationService';
+import { hybridStorageService } from '../../modules/smartquote/services/databaseStorageService';
+import { getDefaultConfig } from '../../modules/smartquote/services/enhancedConfigService';
+import { ErrorHandler, ErrorCategory, withRetry } from '../../modules/smartquote/services/errorService';
 import {
     validateQuoteDetails,
     validateProducts
 } from '../../modules/smartquote/services/validationService';
-import { hybridStorageService } from '../../modules/smartquote/services/databaseStorageService';
-import { ErrorHandler, ErrorCategory, withRetry } from '../../modules/smartquote/services/errorService';
-import { getDefaultConfig } from '../../modules/smartquote/services/enhancedConfigService';
 import { QuoteDetails, ParsedProduct, CalculatedProduct, SavedQuote } from '../../modules/smartquote/types';
 
 // Test data generators

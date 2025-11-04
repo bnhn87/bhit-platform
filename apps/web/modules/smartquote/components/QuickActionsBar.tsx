@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import { theme } from '../../../lib/theme';
 import { SaveStatus } from '../services/storageService';
+
 import { SaveStatusIndicator } from './SaveStatusIndicator';
 
 interface QuickActionsBarProps {

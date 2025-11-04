@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextApiRequest, NextApiResponse } from 'next';
+
 import { logJobHardDeleted } from '../../../../lib/activityLogger';
 
 /**

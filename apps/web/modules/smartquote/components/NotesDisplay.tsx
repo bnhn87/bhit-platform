@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+
 import { theme } from '../../../lib/theme';
 import { getDashboardCardStyle, getDashboardTypographyStyle, getDashboardInputStyle } from '../utils/dashboardStyles';
-import { FileTextIcon, PencilIcon, CheckCircleIcon, XCircleIcon } from './icons';
 import { getIconProps } from '../utils/iconSizing';
+
+import { FileTextIcon, PencilIcon, CheckCircleIcon, XCircleIcon } from './icons';
 
 interface NotesDisplayProps {
     notes: {

@@ -9,8 +9,8 @@ import { getDashboardCardStyle, getDashboardTypographyStyle, spacing } from '../
 import { getIconProps } from '../utils/iconSizing';
 
 import { ClockIcon, UsersIcon, TrashIcon, ExclamationTriangleIcon, StairsIcon, TruckIcon, CurrencyPoundIcon, WrenchScrewdriverIcon, ArrowUturnLeftIcon, BookOpenIcon, BrainIcon, PencilIcon, HelpCircleIcon, SaveIcon } from './icons';
-import { ProductCrossCheck } from './ProductCrossCheck';
 import { NotesDisplay } from './NotesDisplay';
+import { ProductCrossCheck } from './ProductCrossCheck';
 import { ProductsTable } from './ProductsTable';
 import { QuoteSummaryCard } from './QuoteSummaryCard';
 

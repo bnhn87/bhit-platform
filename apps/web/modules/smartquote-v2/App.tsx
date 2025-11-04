@@ -9,23 +9,24 @@
 // - Image extraction from PDFs
 
 import React, { useState, useEffect } from 'react';
+
+import AnalyticsDashboard from './components/AnalyticsDashboard';
+import EmailDraftsPanel from './components/EmailDraftsPanel';
+import InitialInput from './components/InitialInput';
+import ParseReviewPanel from './components/ParseReviewPanel';
+import ProductSuggestionsPanel from './components/ProductSuggestionsPanel';
+import QuoteDetailsForm from './components/QuoteDetailsForm';
+import ResultsDisplay from './components/ResultsDisplay';
+import RevisionHistory from './components/RevisionHistory';
+import analyticsService from './services/analyticsService';
+import emailAutomationService from './services/emailAutomationService';
 import { parseQuoteContentEnhanced } from './services/enhancedGeminiService';
 import { productLearningService } from './services/productLearningService';
 import revisionTrackingService from './services/revisionTrackingService';
-import emailAutomationService from './services/emailAutomationService';
 import imageExtractionService from './services/imageExtractionService';
-import analyticsService from './services/analyticsService';
 import { EnhancedParseResult, ProductSuggestion } from './types';
 
 // Import components
-import InitialInput from './components/InitialInput';
-import ParseReviewPanel from './components/ParseReviewPanel';
-import QuoteDetailsForm from './components/QuoteDetailsForm';
-import ResultsDisplay from './components/ResultsDisplay';
-import ProductSuggestionsPanel from './components/ProductSuggestionsPanel';
-import RevisionHistory from './components/RevisionHistory';
-import EmailDraftsPanel from './components/EmailDraftsPanel';
-import AnalyticsDashboard from './components/AnalyticsDashboard';
 
 interface AppState {
     stage: 'initial' | 'parsing' | 'review' | 'results' | 'email_drafts' | 'analytics';

@@ -4,6 +4,7 @@
 // Review parsed products with confidence indicators
 
 import React, { useState } from 'react';
+
 import { EnhancedParseResult } from '../types';
 
 interface ParseReviewPanelProps {

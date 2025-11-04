@@ -1,5 +1,6 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
+import type { NextApiRequest, NextApiResponse } from 'next';
+
 import { logPermissionsUpdated } from '../../../../lib/activityLogger';
 
 /**
@@ -93,8 +94,6 @@ export default async function handler(
       can_export_data: permissions.can_export_data ?? false
     };
 
-    console.log('Updating permissions for user:', user_id, permissionsData);
-
     // Get current user to preserve existing metadata
     const { data: currentUserData, error: getUserError } = await adminClient.auth.admin.getUserById(user_id);
 
@@ -117,8 +116,6 @@ export default async function handler(
         error: updateError.message
       });
     }
-
-    console.log('Successfully updated permissions for user:', user_id);
 
     // Log activity
     await logPermissionsUpdated(user_id, currentUserData.user.email, user.id);

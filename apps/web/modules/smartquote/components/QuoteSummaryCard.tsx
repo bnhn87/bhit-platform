@@ -1,7 +1,9 @@
 import React from 'react';
+
 import { theme } from '../../../lib/theme';
-import { getDashboardCardStyle, getDashboardTypographyStyle } from '../utils/dashboardStyles';
 import { CalculationResults, QuoteDetails } from '../types';
+import { getDashboardCardStyle, getDashboardTypographyStyle } from '../utils/dashboardStyles';
+
 import {
     CurrencyPoundIcon,
     ClockIcon,

@@ -5,9 +5,10 @@ import { getGlassmorphicStyle } from '../../../components/ui/GlassmorphicStyles'
 import { theme } from '../../../lib/theme';
 import { useFormValidation, required } from '../hooks/useFormValidation';
 import { QuoteDetails, AppConfig } from '../types';
-import { SimpleAddressSelector } from './SimpleAddressSelector';
 
 import { TruckIcon, TrashIcon, BuildingIcon, ArrowTrendingUpIcon, WrenchIcon, UserGroupIcon } from './icons';
+import { SimpleAddressSelector } from './SimpleAddressSelector';
+
 
 interface QuoteDetailsFormProps {
     details: QuoteDetails;

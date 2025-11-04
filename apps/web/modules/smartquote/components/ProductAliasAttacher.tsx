@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
+
+import { theme } from '../../../lib/theme';
 import { catalogueService } from '../services/catalogueService';
 import { getDefaultConfig } from '../services/configService';
-import { theme } from '../../../lib/theme';
 
 interface ProductAliasAttacherProps {
     productCode: string;
@@ -309,7 +310,7 @@ export const ProductAliasAttacher: React.FC<ProductAliasAttacherProps> = ({
                         borderRadius: theme.radii.sm,
                         border: `1px solid ${theme.colors.success}30`
                     }}>
-                        💡 Future quotes with "{productCode}" will now use {installTime} hours automatically
+                        💡 Future quotes with &quot;{productCode}&quot; will now use {installTime} hours automatically
                     </div>
                 )}
 
@@ -343,7 +344,7 @@ export const ProductAliasAttacher: React.FC<ProductAliasAttacherProps> = ({
             }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: theme.colors.text }}>
-                        Attach "{productCode}" to Existing Product
+                        Attach &quot;{productCode}&quot; to Existing Product
                     </h3>
                     <button
                         onClick={() => setMode('initial')}
@@ -393,7 +394,7 @@ export const ProductAliasAttacher: React.FC<ProductAliasAttacherProps> = ({
                 <div style={{ maxHeight: '240px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                     {filteredProducts.length === 0 ? (
                         <div style={{ textAlign: 'center', padding: '20px', color: theme.colors.textSubtle }}>
-                            No products matching "{searchTerm}"
+                            No products matching &quot;{searchTerm}&quot;
                         </div>
                     ) : filteredProducts.map(product => (
                         <label

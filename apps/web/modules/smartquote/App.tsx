@@ -2,25 +2,25 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
 
-import { theme } from '../../lib/theme';
 import { supabase } from '../../lib/supabaseClient';
+import { theme } from '../../lib/theme';
 
 
 import { AdminPanel } from './components/AdminPanel';
 import { ClientPDFLayout } from './components/ClientPDFLayout';
 import { ExportControls } from './components/ExportControls';
 import { BHILogo, LoadingSpinnerIcon, CheckCircleIcon, HomeIcon } from './components/icons';
-import { KeyboardShortcutsHelp } from './components/KeyboardShortcutsHelp';
 import { InitialInput } from './components/InitialInput';
-import { QuoteDetailsForm } from './components/QuoteDetailsForm';
+import { KeyboardShortcutsHelp } from './components/KeyboardShortcutsHelp';
 import { QuoteComparisonView } from './components/QuoteComparisonView';
+import { QuoteDetailsForm } from './components/QuoteDetailsForm';
 import { ResultsDisplay } from './components/ResultsDisplay';
 import { SkipLinks } from './components/SkipLinks';
 import { SmartQuoteErrorBoundary } from './components/SmartQuoteErrorBoundary';
 import { UnknownProductInput } from './components/UnknownProductInput';
 import { HomePage } from './HomePage';
-import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { useScreenReaderAnnounce } from './hooks/useAccessibility';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { useBreakpoint, useIsMobile, useIsTouchDevice } from './hooks/useResponsive';
 import { useUndoRedo } from './hooks/useUndoRedo';
 import { ManualProductSelector } from './ManualProductSelector';

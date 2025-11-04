@@ -3,6 +3,7 @@
 // ========================================
 
 import React from 'react';
+
 import { ProductSuggestion } from '../types';
 
 interface ProductSuggestionsPanelProps {

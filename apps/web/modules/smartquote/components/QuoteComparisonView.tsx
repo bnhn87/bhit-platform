@@ -3,11 +3,13 @@ import React, { useState, useMemo } from 'react';
 import { theme } from '../../../lib/theme';
 import { useBreakpoint, useIsMobile } from '../hooks/useResponsive';
 import { SavedQuote } from '../types';
-import { getDashboardCardStyle, getDashboardButtonStyle, getDashboardTypographyStyle } from '../utils/dashboardStyles';
-import { getResponsiveContainerStyles, responsiveSpacing } from '../utils/responsive';
 import { getButtonA11yProps } from '../utils/accessibilityHelpers';
-import { CheckCircleIcon, XCircleIcon } from './icons';
+import { getDashboardCardStyle, getDashboardButtonStyle, getDashboardTypographyStyle } from '../utils/dashboardStyles';
 import { getIconProps } from '../utils/iconSizing';
+import { getResponsiveContainerStyles, responsiveSpacing } from '../utils/responsive';
+
+import { CheckCircleIcon, XCircleIcon } from './icons';
+
 
 interface QuoteComparisonViewProps {
     quotes: SavedQuote[];

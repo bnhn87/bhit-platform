@@ -1,5 +1,5 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 /**
  * API Route: List Users
@@ -64,17 +64,8 @@ export default async function handler(
       .eq('id', user.id)
       .single();
 
-    console.log('Auth check:', {
-      userId: user.id,
-      profile,
-      profileError,
-      role: profile?.role,
-      roleLower: profile?.role?.toLowerCase()
-    });
-
     const userRole = profile?.role?.toLowerCase();
     if (profileError || (userRole !== 'admin' && userRole !== 'director')) {
-      console.log('Access denied:', { profileError, userRole });
       return res.status(403).json({ error: 'Forbidden: Admin or Director access required' });
     }
 

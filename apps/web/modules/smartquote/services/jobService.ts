@@ -1,7 +1,7 @@
-import { SavedQuote } from '../types';
 import { createJob, JobResult } from '../../../lib/jobs';
-import { JobPayload, Job } from '../../../lib/types';
 import { supabase } from '../../../lib/supabaseClient';
+import { JobPayload, Job } from '../../../lib/types';
+import { SavedQuote } from '../types';
 
 export interface CreateJobOptions {
     userId: string;
