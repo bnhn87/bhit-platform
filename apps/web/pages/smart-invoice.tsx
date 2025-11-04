@@ -81,6 +81,7 @@ export default function SmartInvoice() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [previewInvoice, setPreviewInvoice] = useState<InvoiceData | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Load invoices from database on mount
@@ -323,6 +324,56 @@ export default function SmartInvoice() {
       console.error('Error deleting invoice:', error);
       setError('Failed to delete invoice');
     }
+  };
+
+  // Bulk operations
+  const handleBulkDelete = async () => {
+    if (!confirm(`Are you sure you want to delete ${selectedInvoices.size} invoices?`)) {
+      return;
+    }
+
+    const deletePromises = Array.from(selectedInvoices).map(id => deleteInvoice(id));
+    await Promise.allSettled(deletePromises);
+
+    setInvoices(prev => prev.filter(inv => !selectedInvoices.has(inv.id)));
+    setSelectedInvoices(new Set());
+  };
+
+  const handleBulkExport = () => {
+    const selectedData = invoices.filter(inv => selectedInvoices.has(inv.id));
+    const ws = XLSX.utils.json_to_sheet(
+      selectedData.map(inv => ({
+        Date: inv.date,
+        'Invoice #': inv.invoiceNumber,
+        Supplier: inv.supplier,
+        Description: inv.description,
+        Category: inv.category,
+        Vehicle: inv.vehicleReg,
+        'Job Ref': inv.jobReference,
+        'Net (£)': inv.netAmount,
+        'VAT (£)': inv.vatAmount,
+        'Gross (£)': inv.grossAmount,
+        Status: inv.paymentStatus,
+        Notes: inv.notes,
+      }))
+    );
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Selected Invoices');
+    XLSX.writeFile(wb, `BHIT_Selected_Invoices_${format(new Date(), 'yyyy-MM-dd')}.xlsx`);
+  };
+
+  const handleBulkStatusChange = async (status: 'Pending' | 'Paid') => {
+    const updatePromises = Array.from(selectedInvoices).map(id =>
+      updateInvoice(id, { status: status === 'Paid' ? 'paid' : 'pending' })
+    );
+
+    await Promise.allSettled(updatePromises);
+
+    setInvoices(prev => prev.map(inv =>
+      selectedInvoices.has(inv.id) ? { ...inv, paymentStatus: status } : inv
+    ));
+    setSelectedInvoices(new Set());
   };
 
   // Drag & Drop handlers
@@ -641,9 +692,60 @@ export default function SmartInvoice() {
 
           <div>
             {selectedInvoices.size > 0 && (
-              <span style={{ color: theme.colors.accent, fontWeight: 500 }}>
-                {selectedInvoices.size} selected
-              </span>
+              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                <span style={{ color: theme.colors.accent, fontWeight: 500, marginRight: '0.5rem' }}>
+                  {selectedInvoices.size} selected
+                </span>
+                <button
+                  onClick={() => handleBulkStatusChange('Paid')}
+                  style={{
+                    ...getDashboardButtonStyle('secondary'),
+                    padding: '0.5rem 1rem',
+                    fontSize: '0.875rem'
+                  }}
+                >
+                  Mark as Paid
+                </button>
+                <button
+                  onClick={() => handleBulkStatusChange('Pending')}
+                  style={{
+                    ...getDashboardButtonStyle('secondary'),
+                    padding: '0.5rem 1rem',
+                    fontSize: '0.875rem'
+                  }}
+                >
+                  Mark as Pending
+                </button>
+                <button
+                  onClick={handleBulkExport}
+                  style={{
+                    ...getDashboardButtonStyle('secondary'),
+                    padding: '0.5rem 1rem',
+                    fontSize: '0.875rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.25rem'
+                  }}
+                >
+                  <Download size={14} />
+                  Export
+                </button>
+                <button
+                  onClick={handleBulkDelete}
+                  style={{
+                    ...getDashboardButtonStyle('secondary'),
+                    padding: '0.5rem 1rem',
+                    fontSize: '0.875rem',
+                    background: theme.colors.danger,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.25rem'
+                  }}
+                >
+                  <Trash2 size={14} />
+                  Delete
+                </button>
+              </div>
             )}
           </div>
         </div>
@@ -873,6 +975,7 @@ export default function SmartInvoice() {
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                       <button
                         title="View Original"
+                        onClick={() => setPreviewInvoice(invoice)}
                         style={{
                           background: 'transparent',
                           border: 'none',
@@ -987,6 +1090,277 @@ export default function SmartInvoice() {
                     }} />
                   </div>
                 ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Invoice Preview Modal */}
+        {previewInvoice && (
+          <div
+            style={{
+              position: 'fixed',
+              inset: 0,
+              background: 'rgba(0, 0, 0, 0.9)',
+              backdropFilter: 'blur(8px)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 2000,
+              padding: '2rem'
+            }}
+            onClick={() => setPreviewInvoice(null)}
+          >
+            <div
+              style={{
+                background: theme.colors.panel,
+                borderRadius: theme.radii.lg,
+                boxShadow: '0 25px 100px rgba(0,0,0,0.8)',
+                maxWidth: '1400px',
+                width: '100%',
+                maxHeight: '90vh',
+                display: 'flex',
+                flexDirection: 'column',
+                overflow: 'hidden'
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div style={{
+                padding: '1.5rem',
+                borderBottom: `1px solid ${theme.colors.border}`,
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}>
+                <h2 style={{ margin: 0, color: theme.colors.text }}>
+                  Invoice Preview - {previewInvoice.invoiceNumber || 'N/A'}
+                </h2>
+                <button
+                  onClick={() => setPreviewInvoice(null)}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: theme.colors.textSubtle,
+                    cursor: 'pointer',
+                    fontSize: '1.5rem',
+                    padding: '0.25rem 0.5rem',
+                    lineHeight: 1,
+                    borderRadius: theme.radii.sm
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+
+              {/* Content */}
+              <div style={{
+                display: 'flex',
+                flex: 1,
+                overflow: 'hidden'
+              }}>
+                {/* Left: Invoice file */}
+                <div style={{
+                  flex: 2,
+                  background: theme.colors.background,
+                  padding: '1.5rem',
+                  overflow: 'auto',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  {previewInvoice.fileUrl ? (
+                    previewInvoice.fileUrl.endsWith('.pdf') ? (
+                      <iframe
+                        src={previewInvoice.fileUrl}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          border: 'none',
+                          borderRadius: theme.radii.md
+                        }}
+                      />
+                    ) : (
+                      <img
+                        src={previewInvoice.fileUrl}
+                        alt="Invoice"
+                        style={{
+                          maxWidth: '100%',
+                          maxHeight: '100%',
+                          objectFit: 'contain',
+                          borderRadius: theme.radii.md
+                        }}
+                      />
+                    )
+                  ) : (
+                    <div style={{ textAlign: 'center', color: theme.colors.textSubtle }}>
+                      <FileText size={64} style={{ marginBottom: '1rem', opacity: 0.5 }} />
+                      <p>No file attached</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Right: Invoice details */}
+                <div style={{
+                  flex: 1,
+                  padding: '1.5rem',
+                  overflow: 'auto',
+                  borderLeft: `1px solid ${theme.colors.border}`
+                }}>
+                  <h3 style={{ marginTop: 0, marginBottom: '1rem', color: theme.colors.text }}>
+                    Invoice Details
+                  </h3>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <div>
+                      <div style={{ fontSize: '0.75rem', color: theme.colors.textSubtle, marginBottom: '0.25rem' }}>
+                        Supplier
+                      </div>
+                      <div style={{ color: theme.colors.text, fontWeight: 500 }}>
+                        {previewInvoice.supplier || 'N/A'}
+                      </div>
+                    </div>
+
+                    <div>
+                      <div style={{ fontSize: '0.75rem', color: theme.colors.textSubtle, marginBottom: '0.25rem' }}>
+                        Invoice Number
+                      </div>
+                      <div style={{ color: theme.colors.text, fontWeight: 500 }}>
+                        {previewInvoice.invoiceNumber || 'N/A'}
+                      </div>
+                    </div>
+
+                    <div>
+                      <div style={{ fontSize: '0.75rem', color: theme.colors.textSubtle, marginBottom: '0.25rem' }}>
+                        Date
+                      </div>
+                      <div style={{ color: theme.colors.text }}>
+                        {previewInvoice.date || 'N/A'}
+                      </div>
+                    </div>
+
+                    <div>
+                      <div style={{ fontSize: '0.75rem', color: theme.colors.textSubtle, marginBottom: '0.25rem' }}>
+                        Description
+                      </div>
+                      <div style={{ color: theme.colors.text }}>
+                        {previewInvoice.description || 'N/A'}
+                      </div>
+                    </div>
+
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 1fr',
+                      gap: '1rem',
+                      padding: '1rem',
+                      background: theme.colors.background,
+                      borderRadius: theme.radii.md
+                    }}>
+                      <div>
+                        <div style={{ fontSize: '0.75rem', color: theme.colors.textSubtle, marginBottom: '0.25rem' }}>
+                          Net
+                        </div>
+                        <div style={{ color: theme.colors.text, fontWeight: 600 }}>
+                          £{previewInvoice.netAmount?.toFixed(2) || '0.00'}
+                        </div>
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '0.75rem', color: theme.colors.textSubtle, marginBottom: '0.25rem' }}>
+                          VAT
+                        </div>
+                        <div style={{ color: theme.colors.text, fontWeight: 600 }}>
+                          £{previewInvoice.vatAmount?.toFixed(2) || '0.00'}
+                        </div>
+                      </div>
+                      <div style={{ gridColumn: 'span 2', borderTop: `1px solid ${theme.colors.border}`, paddingTop: '1rem' }}>
+                        <div style={{ fontSize: '0.75rem', color: theme.colors.textSubtle, marginBottom: '0.25rem' }}>
+                          Gross Total
+                        </div>
+                        <div style={{ color: theme.colors.accent, fontWeight: 700, fontSize: '1.5rem' }}>
+                          £{previewInvoice.grossAmount?.toFixed(2) || '0.00'}
+                        </div>
+                      </div>
+                    </div>
+
+                    {previewInvoice.category && (
+                      <div>
+                        <div style={{ fontSize: '0.75rem', color: theme.colors.textSubtle, marginBottom: '0.25rem' }}>
+                          Category
+                        </div>
+                        <div style={{
+                          display: 'inline-block',
+                          padding: '0.25rem 0.75rem',
+                          background: `${theme.colors.accent}20`,
+                          color: theme.colors.accent,
+                          borderRadius: theme.radii.md,
+                          fontSize: '0.875rem',
+                          fontWeight: 500
+                        }}>
+                          {previewInvoice.category}
+                        </div>
+                      </div>
+                    )}
+
+                    {previewInvoice.vehicleReg && (
+                      <div>
+                        <div style={{ fontSize: '0.75rem', color: theme.colors.textSubtle, marginBottom: '0.25rem' }}>
+                          Vehicle Reg
+                        </div>
+                        <div style={{ color: theme.colors.text, fontWeight: 500 }}>
+                          {previewInvoice.vehicleReg}
+                        </div>
+                      </div>
+                    )}
+
+                    {previewInvoice.jobReference && (
+                      <div>
+                        <div style={{ fontSize: '0.75rem', color: theme.colors.textSubtle, marginBottom: '0.25rem' }}>
+                          Job Reference
+                        </div>
+                        <div style={{ color: theme.colors.text, fontWeight: 500 }}>
+                          {previewInvoice.jobReference}
+                        </div>
+                      </div>
+                    )}
+
+                    <div>
+                      <div style={{ fontSize: '0.75rem', color: theme.colors.textSubtle, marginBottom: '0.25rem' }}>
+                        Status
+                      </div>
+                      <div style={{
+                        display: 'inline-block',
+                        padding: '0.25rem 0.75rem',
+                        background: previewInvoice.paymentStatus === 'Paid'
+                          ? `${theme.colors.success}20`
+                          : `${theme.colors.warning}20`,
+                        color: previewInvoice.paymentStatus === 'Paid'
+                          ? theme.colors.success
+                          : theme.colors.warning,
+                        borderRadius: theme.radii.md,
+                        fontSize: '0.875rem',
+                        fontWeight: 500
+                      }}>
+                        {previewInvoice.paymentStatus || 'Pending'}
+                      </div>
+                    </div>
+
+                    {previewInvoice.aiExtracted && (
+                      <div style={{
+                        padding: '0.75rem',
+                        background: `${theme.colors.accent}10`,
+                        borderRadius: theme.radii.md,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem'
+                      }}>
+                        <Sparkles size={16} style={{ color: theme.colors.accent }} />
+                        <span style={{ fontSize: '0.875rem', color: theme.colors.textSubtle }}>
+                          AI Extracted
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
