@@ -52,10 +52,10 @@ const EXTRAS_BY_ROLE: Record<UserRole, { label: string; href: string }[]> = {
 // Note: top position is dynamic and set via inline style based on banner presence
 const bar: React.CSSProperties = {
   position: "fixed",
-  top: 0,
+  // top is set dynamically via inline style
   left: 0,
   right: 0,
-  zIndex: 1000,
+  zIndex: 999, // Lower than TaskBanner (9999) so banner is always on top
   display: "flex",
   alignItems: "center",
   gap: 10,
@@ -204,24 +204,32 @@ export default function AppNav() {
       }
     };
 
-    // Try multiple times to catch banner after it renders
-    updateBannerHeight();
-
-    // Retry after a short delay in case banner hasn't rendered yet
-    const timeoutId = setTimeout(updateBannerHeight, 100);
+    // Aggressive multi-attempt detection
+    updateBannerHeight(); // Immediate
+    const timeout1 = setTimeout(updateBannerHeight, 50);   // 50ms
+    const timeout2 = setTimeout(updateBannerHeight, 100);  // 100ms
+    const timeout3 = setTimeout(updateBannerHeight, 250);  // 250ms
+    const timeout4 = setTimeout(updateBannerHeight, 500);  // 500ms
 
     // Update on window resize
     window.addEventListener('resize', updateBannerHeight);
 
     // Use MutationObserver to detect banner changes
     const observer = new MutationObserver(updateBannerHeight);
-    const banner = document.querySelector('.task-banner');
-    if (banner) {
-      observer.observe(banner, { attributes: true, childList: true, subtree: true });
-    }
+    // Observer will be set up after a delay to ensure banner exists
+    const observerTimeout = setTimeout(() => {
+      const banner = document.querySelector('.task-banner');
+      if (banner) {
+        observer.observe(banner, { attributes: true, childList: true, subtree: true });
+      }
+    }, 100);
 
     return () => {
-      clearTimeout(timeoutId);
+      clearTimeout(timeout1);
+      clearTimeout(timeout2);
+      clearTimeout(timeout3);
+      clearTimeout(timeout4);
+      clearTimeout(observerTimeout);
       window.removeEventListener('resize', updateBannerHeight);
       observer.disconnect();
     };
