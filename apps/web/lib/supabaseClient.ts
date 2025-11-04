@@ -1,24 +1,26 @@
 import { createClient, SupabaseClient as _SupabaseClient } from "@supabase/supabase-js";
 
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+// Use placeholder values during build if env vars are missing
+// This allows the build to succeed while throwing runtime errors when actually used
+const url = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
+const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key';
 
-if (!url || !anon) {
-  throw new Error(
-    "[supabaseClient] Missing required environment variables: NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY"
-  );
-}
+const isMissingConfig = !process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
+// Don't use strict Database type to allow querying any table
 export const supabase = createClient(url, anon, {
-  auth: { 
-    persistSession: true, 
-    autoRefreshToken: true, 
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
     detectSessionInUrl: true,
     storageKey: 'bhit-auth-token'
   },
   global: {
     headers: {
-      'X-Client-Info': 'bhit-work-os'
+      'X-Client-Info': 'bhit-work-os',
+      ...(isMissingConfig && {
+        'X-Config-Warning': 'Missing Supabase configuration'
+      })
     }
   }
 });

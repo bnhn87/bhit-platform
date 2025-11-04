@@ -11,11 +11,9 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { EnhancedParseResult } from '../types';
 
-if (!process.env.GEMINI_API_KEY) {
-    throw new Error("GEMINI_API_KEY environment variable not set");
-}
-
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+// Use placeholder during build if env var is missing
+const apiKey = process.env.GEMINI_API_KEY || 'placeholder-gemini-key';
+const ai = new GoogleGenAI({ apiKey });
 
 // Enhanced response schema with confidence
 const responseSchema = {

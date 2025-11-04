@@ -15,9 +15,13 @@ export interface Database {
           title: string
           client_name: string | null
           reference: string | null
-          status: 'planned' | 'in_progress' | 'snagging' | 'completed'
+          status: 'planned' | 'in_progress' | 'snagging' | 'completed' | 'active' | 'started' | 'on_hold' | 'cancelled'
+          location: string | null
           location_x: number | null
           location_y: number | null
+          start_date: string | null
+          end_date: string | null
+          quoted_amount: number | null
           created_at: string
           updated_at: string
           created_by: string
@@ -28,9 +32,13 @@ export interface Database {
           title: string
           client_name?: string | null
           reference?: string | null
-          status?: 'planned' | 'in_progress' | 'snagging' | 'completed'
+          status?: 'planned' | 'in_progress' | 'snagging' | 'completed' | 'active' | 'started' | 'on_hold' | 'cancelled'
+          location?: string | null
           location_x?: number | null
           location_y?: number | null
+          start_date?: string | null
+          end_date?: string | null
+          quoted_amount?: number | null
           created_at?: string
           updated_at?: string
           created_by: string
@@ -41,9 +49,13 @@ export interface Database {
           title?: string
           client_name?: string | null
           reference?: string | null
-          status?: 'planned' | 'in_progress' | 'snagging' | 'completed'
+          status?: 'planned' | 'in_progress' | 'snagging' | 'completed' | 'active' | 'started' | 'on_hold' | 'cancelled'
+          location?: string | null
           location_x?: number | null
           location_y?: number | null
+          start_date?: string | null
+          end_date?: string | null
+          quoted_amount?: number | null
           created_at?: string
           updated_at?: string
           created_by?: string
