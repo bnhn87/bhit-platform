@@ -4,11 +4,16 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:turbo": "next dev --turbo",
     "build": "next build",
+    "build:analyze": "ANALYZE=true next build",
     "start": "next start",
     "lint": "eslint . --ext .ts,.tsx --max-warnings=0",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "dev:check": "npm run lint && npm run typecheck"
+    "dev:check": "npm run lint && npm run typecheck",
+    "clean": "rm -rf .next node_modules/.cache",
+    "postinstall": "echo 'Dependencies installed successfully'"
   },
   "dependencies": {
     "@google/genai": "^1.16.0",
@@ -35,7 +40,6 @@
     "pdf-parse": "^1.1.1",
     "pdfjs-dist": "^5.4.54",
     "pg": "^8.16.3",
-    "puppeteer": "^24.20.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-konva": "^19.0.7",
