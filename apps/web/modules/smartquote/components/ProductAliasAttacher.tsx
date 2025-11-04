@@ -53,7 +53,9 @@ export const ProductAliasAttacher: React.FC<ProductAliasAttacherProps> = ({
 
             // If no products from DB, use config as fallback
             if (!products || products.length === 0) {
-                console.log('No products from DB, using config catalogue');
+                if (process.env.NODE_ENV === 'development') {
+                    console.log('[SmartQuote] No products from DB, using config catalogue');
+                }
                 const config = await getDefaultConfig();
 
                 // Convert config products to the expected format
