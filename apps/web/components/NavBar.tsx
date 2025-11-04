@@ -28,12 +28,14 @@ const EXTRAS_BY_ROLE: Record<UserRole, { label: string; href: string }[]> = {
   installer: [],
   supervisor: [],
   ops: [
+    { label: "POD Manager", href: "/pods" },
     { label: "Smart Quote", href: "/smart-quote" },
     { label: "SmartInvoice", href: "/smart-invoice" },
     { label: "Floor Planner", href: "/floor-planner" },
     { label: "Settings", href: "/settings" }
   ],
   director: [
+    { label: "POD Manager", href: "/pods" },
     { label: "Smart Quote", href: "/smart-quote" },
     { label: "SmartInvoice", href: "/smart-invoice" },
     { label: "Floor Planner", href: "/floor-planner" },
