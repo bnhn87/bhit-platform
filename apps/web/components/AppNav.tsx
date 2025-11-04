@@ -1,80 +1,35 @@
 // apps/web/components/AppNav.tsx
-import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { useHasInvoiceAccess } from "@/hooks/useHasInvoiceAccess";
 import { useUserRole } from "@/hooks/useUserRole";
-import { UserRole } from "@/lib/roles";
 import { supabase } from "@/lib/supabaseClient";
+import { getCoreNavItems, getNavItemsForRole } from "@/config/navigation";
 
 /**
- * LEFT CLUSTER = core links (always visible, no flicker, never duplicated)
- * RIGHT CLUSTER = role EXTRAS only (no Dashboard/Today/Jobs/Clients here)
+ * Dynamic Navigation Bar
+ * All links are configured in config/navigation.ts
+ * Numbers in labels make it easy to disable/remove specific links
  */
-const EXTRAS_BY_ROLE: Record<UserRole, { label: string; href: string }[]> = {
-  guest: [],
-  installer: [],
-  supervisor: [
-    { label: "Progress", href: "/construction-progress" }
-  ],
-  ops: [
-    { label: "POD Manager", href: "/pods" },
-    { label: "Progress", href: "/construction-progress" },
-    { label: "Smart Quote", href: "/smart-quote" },
-    { label: "SmartInvoice", href: "/smart-invoice" },
-    { label: "Settings", href: "/settings" }
-  ],
-  director: [
-    { label: "POD Manager", href: "/pods" },
-    { label: "Progress", href: "/construction-progress" },
-    { label: "Smart Quote", href: "/smart-quote" },
-    { label: "SmartInvoice", href: "/smart-invoice" },
-    { label: "Invoice Schedule", href: "/invoicing/schedule" },
-    { label: "Admin Panel", href: "/admin-panel" },
-    { label: "Costing", href: "/admin/costing" },
-    { label: "Users", href: "/admin/user-management" },
-    { label: "Settings", href: "/settings" }
-  ],
-  admin: [
-    { label: "POD Manager", href: "/pods" },
-    { label: "Progress", href: "/construction-progress" },
-    { label: "Smart Quote", href: "/smart-quote" },
-    { label: "SmartInvoice", href: "/smart-invoice" },
-    { label: "Admin Panel", href: "/admin-panel" },
-    { label: "Costing", href: "/admin/costing" },
-    { label: "Users", href: "/admin/user-management" },
-    { label: "Settings", href: "/settings" }
-  ]
-};
 
-// iOS 29 - Clean & Modern with Shimmer
 const bar: React.CSSProperties = {
   position: "sticky",
   top: 0,
-  zIndex: 1000,
+  zIndex: 50,
   display: "flex",
   alignItems: "center",
-  gap: 10,
-  padding: "10px 20px",
-
-  // Clean background
-  background: "rgba(11, 17, 24, 0.85)",
-  backdropFilter: "blur(16px) saturate(180%)",
-  WebkitBackdropFilter: "blur(16px) saturate(180%)",
-
-  borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
-  boxShadow: "0 1px 3px rgba(0, 0, 0, 0.3)"
+  gap: 14,
+  padding: "10px 16px",
+  background: "#0b1118",
+  borderBottom: "1px solid #1d2733"
 };
 
 const brand: React.CSSProperties = {
-  fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif",
   fontWeight: 900,
-  fontSize: 16,
-  letterSpacing: -0.3,
-  color: "#ffffff",
-  textDecoration: "none",
-  transition: "all 0.2s ease"
+  letterSpacing: 0.4,
+  color: "#e8eef6",
+  textDecoration: "none"
 };
 
 const group: React.CSSProperties = {
@@ -85,51 +40,31 @@ const group: React.CSSProperties = {
 };
 
 const pill: React.CSSProperties = {
-  padding: "8px 14px",
-  borderRadius: 12,
-  background: "linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%)",
-  border: "none",
-  color: "#ffffff",
+  padding: "8px 12px",
+  borderRadius: 10,
+  background: "#0f151c",
+  border: "1px solid #1d2733",
+  color: "#e8eef6",
   textDecoration: "none",
-  fontSize: 14,
-  fontWeight: 600,
-  letterSpacing: -0.2,
-  fontFamily: "-apple-system, BlinkMacSystemFont, system-ui, sans-serif",
-  transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-  position: "relative",
-  overflow: "hidden",
-  boxShadow: "inset 0 0.5px 1px rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.15)"
+  fontSize: 13,
+  fontWeight: 700
 };
 
 const pillActive: React.CSSProperties = {
-  padding: "8px 14px",
-  borderRadius: 12,
-  background: "linear-gradient(135deg, #3da3ff 0%, #1d91ff 100%)",
-  border: "none",
-  color: "#ffffff",
-  textDecoration: "none",
-  fontSize: 14,
-  fontWeight: 700,
-  letterSpacing: -0.2,
-  fontFamily: "-apple-system, BlinkMacSystemFont, system-ui, sans-serif",
-  transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-  position: "relative",
-  overflow: "hidden",
-  boxShadow: "inset 0 0.5px 1px rgba(255, 255, 255, 0.25), 0 2px 8px rgba(29, 145, 255, 0.3)"
+  ...pill,
+  background: "#1d91ff",
+  color: "#fff",
+  boxShadow: "0 6px 16px rgba(29,145,255,0.25)"
 };
 
 const roleBadge: React.CSSProperties = {
-  padding: "8px 14px",
+  padding: "6px 10px",
   borderRadius: 999,
-  background: "rgba(125, 211, 252, 0.12)",
-  border: "1px solid rgba(125, 211, 252, 0.25)",
-  color: "#7dd3fc",
+  background: "#14202b",
+  border: "1px solid #284054",
+  color: "#cfe3ff",
   fontSize: 12,
-  fontWeight: 800,
-  letterSpacing: 0.5,
-  fontFamily: "-apple-system, BlinkMacSystemFont, system-ui, sans-serif",
-  textTransform: "uppercase",
-  transition: "all 0.2s ease"
+  fontWeight: 800
 };
 
 function Skeleton({ w = 64 }: { w?: number }) {
@@ -149,34 +84,9 @@ function Skeleton({ w = 64 }: { w?: number }) {
 }
 
 function NavLink({ href, label, active }: { href: string; label: string; active: boolean }) {
-  const [isHovered, setIsHovered] = React.useState(false);
-
-  const baseStyle = active ? pillActive : pill;
-
-  const hoverStyle: React.CSSProperties = !active && isHovered ? {
-    ...pill,
-    background: `
-      linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 100%),
-      rgba(255, 255, 255, 0.05)
-    `,
-    border: "1px solid rgba(255, 255, 255, 0.2)",
-    boxShadow: `
-      inset 0 1px 1px rgba(255, 255, 255, 0.1),
-      0 4px 8px rgba(0, 0, 0, 0.15),
-      0 0 20px rgba(125, 211, 252, 0.08)
-    `,
-    transform: "translateY(-1px)"
-  } : {};
-
   return (
-    <Link
-      href={href}
-      className={`nav-pill ${active ? 'active' : ''}`}
-      style={{ ...baseStyle, ...hoverStyle }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <span className="nav-pill-text">{label}</span>
+    <Link href={href} style={active ? pillActive : pill}>
+      {label}
     </Link>
   );
 }
@@ -185,6 +95,10 @@ export default function AppNav() {
   const { role, loading } = useUserRole();
   const { hasAccess: hasInvoiceAccess, loading: invoiceLoading } = useHasInvoiceAccess();
   const r = useRouter();
+
+  // Get navigation items from centralized config
+  const coreItems = getCoreNavItems();
+  const roleItems = getNavItemsForRole(role);
 
   async function signOut() {
     await supabase.auth.signOut();
@@ -195,78 +109,28 @@ export default function AppNav() {
     <>
       <style>{`
         @keyframes pulse { 0% {background-position: 0% 0%} 100% {background-position: -200% 0%} }
-
-        @keyframes navShimmer {
-          0% { left: -100%; }
-          100% { left: 100%; }
-        }
-
-        /* Shimmer effect on hover - hidden by default */
-        .nav-pill::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(255, 255, 255, 0.3),
-            transparent
-          );
-          pointer-events: none;
-          z-index: 1;
-          transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* Trigger shimmer on hover */
-        .nav-pill:hover::before {
-          left: 100%;
-        }
-
-        /* Active pills get slower shimmer */
-        .nav-pill.active::before {
-          background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(255, 255, 255, 0.4),
-            transparent
-          );
-          transition: left 0.9s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* Text lights up on hover and active state */
-        .nav-pill .nav-pill-text {
-          position: relative;
-          z-index: 2;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .nav-pill:hover .nav-pill-text,
-        .nav-pill:active .nav-pill-text,
-        .nav-pill.active .nav-pill-text {
-          filter: brightness(1.3) drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
-        }
-
         @media (max-width: 900px) { main { padding-top: 8px } }
       `}</style>
       <nav style={bar}>
         <Link href="/dashboard" style={brand}>BHIT&nbsp;OS</Link>
 
-        {/* LEFT: core links (never duplicated) */}
+        {/* LEFT: core links (configured in navigation.ts) */}
         <div style={{ ...group, marginLeft: 8 }}>
-          <NavLink href="/dashboard" label="Dashboard" active={r.pathname === "/dashboard"} />
-          <NavLink href="/today" label="Today" active={r.pathname.startsWith("/today")} />
-          <NavLink
-            href="/jobs"
-            label="Jobs"
-            active={r.pathname.startsWith("/jobs") || r.pathname.startsWith("/job")}
-          />
-          <NavLink href="/clients" label="Clients" active={r.pathname.startsWith("/clients")} />
+          {coreItems.map((item) => (
+            <NavLink
+              key={item.id}
+              href={item.href}
+              label={item.label}
+              active={
+                r.pathname === item.href ||
+                r.pathname.startsWith(item.href + "/") ||
+                (item.href === "/jobs" && r.pathname.startsWith("/job"))
+              }
+            />
+          ))}
         </div>
 
-        {/* RIGHT: extras + auth */}
+        {/* RIGHT: role-based items + auth */}
         <div style={{ marginLeft: "auto", ...group }}>
           {loading || invoiceLoading ? (
             <>
@@ -276,18 +140,23 @@ export default function AppNav() {
             </>
           ) : (
             <>
-              {/* Role-based extras */}
-              {(EXTRAS_BY_ROLE[role] || []).map((it) => (
+              {/* Role-based items from config */}
+              {roleItems.map((item) => (
                 <NavLink
-                  key={it.href}
-                  href={it.href}
-                  label={it.label}
-                  active={r.pathname === it.href || r.asPath === it.href || r.pathname.startsWith(it.href)}
+                  key={item.id}
+                  href={item.href}
+                  label={item.label}
+                  active={
+                    r.pathname === item.href ||
+                    r.asPath === item.href ||
+                    r.pathname.startsWith(item.href + "/") ||
+                    (item.href.includes("/invoicing") && r.pathname.startsWith("/invoicing"))
+                  }
                 />
               ))}
 
               {/* Dynamic invoice access for non-directors */}
-              {role !== 'director' && hasInvoiceAccess && (
+              {role !== 'director' && role !== 'admin' && hasInvoiceAccess && (
                 <NavLink
                   href="/invoicing/schedule"
                   label="Invoice Schedule"
@@ -300,12 +169,10 @@ export default function AppNav() {
 
               {/* Auth control */}
               {role === "guest" ? (
-                <Link href="/login" className="nav-pill" style={pill}>
-                  <span className="nav-pill-text">Sign in</span>
-                </Link>
+                <Link href="/login" style={pill}>Sign in</Link>
               ) : (
-                <button onClick={signOut} className="nav-pill" style={{ ...pill, cursor: "pointer", border: "1px solid #2b3542" }}>
-                  <span className="nav-pill-text">Sign out</span>
+                <button onClick={signOut} style={{ ...pill, cursor: "pointer", border: "1px solid #2b3542" }}>
+                  Sign out
                 </button>
               )}
             </>
