@@ -604,7 +604,7 @@ export async function detectAnomalies(
         type: 'weekend_invoice',
         description: 'Invoice dated on weekend',
         severity: 'low',
-        evidence: 'Most businesses don't issue invoices on weekends',
+        evidence: 'Most businesses do not issue invoices on weekends',
       });
       anomalyScore += 10;
     }
