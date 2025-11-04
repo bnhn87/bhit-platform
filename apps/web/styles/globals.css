@@ -89,11 +89,40 @@ body{
   width: 100%;
 }
 
-/* Glassmorphic Panels */
+/* Glassmorphic Panels - iOS 27 Premium */
 .glassmorphic-panel {
   border-radius: 16px;
   padding: 20px;
-  box-shadow: 0 0 20px 2px rgba(0, 170, 255, 0.15), inset 0 1px 2px rgba(255, 255, 255, 0.1);
+
+  /* Advanced layered background */
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 100%),
+    rgba(255, 255, 255, 0.04);
+
+  /* Premium backdrop */
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+
+  /* Sophisticated border */
+  border: 1px solid rgba(255, 255, 255, 0.16);
+
+  /* Multi-layer depth shadows */
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.1),
+    0 2px 4px rgba(0, 0, 0, 0.08),
+    0 8px 16px rgba(0, 0, 0, 0.12),
+    0 0 32px rgba(0, 170, 255, 0.08);
+
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glassmorphic-panel:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.15),
+    0 4px 8px rgba(0, 0, 0, 0.1),
+    0 12px 24px rgba(0, 0, 0, 0.15),
+    0 0 40px rgba(0, 170, 255, 0.12);
 }
 
 /* Glassmorphic Buttons */
@@ -320,10 +349,247 @@ html, body {
   }
 }
 
-/* Form elements responsive */
-input, textarea, select, button {
-  max-width: 100%;
+/* ===== GLOBAL FORM ELEMENTS - iOS 27 FUTURISTIC DESIGN ===== */
+/* Ultra-modern, premium, bleeding-edge */
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+input[type="time"],
+input[type="search"],
+input[type="tel"],
+input[type="url"],
+textarea,
+select {
+  width: 100%;
+  padding: 14px 18px;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--text);
+
+  /* Advanced layered background with depth */
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 100%),
+    rgba(255, 255, 255, 0.04);
+
+  /* Premium backdrop effects */
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+
+  /* Sophisticated border with inner glow */
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+
+  /* Multi-layer shadow for depth */
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.1),
+    0 1px 2px rgba(0, 0, 0, 0.1),
+    0 4px 8px rgba(0, 0, 0, 0.08);
+
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-sizing: border-box;
+  max-width: 100%;
+}
+
+/* Premium placeholder styling */
+input[type="text"]::placeholder,
+input[type="email"]::placeholder,
+input[type="password"]::placeholder,
+input[type="number"]::placeholder,
+input[type="search"]::placeholder,
+input[type="tel"]::placeholder,
+input[type="url"]::placeholder,
+textarea::placeholder {
+  color: rgba(168, 176, 194, 0.7);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+/* Advanced focus state with glow and elevation */
+input:focus,
+textarea:focus,
+select:focus {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%),
+    rgba(255, 255, 255, 0.06);
+
+  border-color: rgba(125, 211, 252, 0.5);
+
+  /* Premium glow effect */
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.15),
+    0 0 0 4px rgba(125, 211, 252, 0.08),
+    0 0 20px rgba(125, 211, 252, 0.15),
+    0 8px 16px rgba(0, 0, 0, 0.12);
+
+  transform: translateY(-1px);
+}
+
+/* Disabled state with subtle fade */
+input:disabled,
+textarea:disabled,
+select:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+}
+
+/* Select dropdowns - ultra-modern */
+select {
+  cursor: pointer;
+  appearance: none;
+
+  /* Custom gradient arrow */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath fill='%237dd3fc' opacity='0.8' d='M7 10L2 5h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 42px;
+}
+
+select option {
+  background: #0f172a;
+  color: var(--text);
+  padding: 12px;
+  font-weight: 500;
+}
+
+/* Textarea with refined spacing */
+textarea {
+  resize: vertical;
+  min-height: 96px;
+  line-height: 1.6;
+  padding: 16px 18px;
+}
+
+/* Button - iOS 27 premium design */
+button {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  padding: 12px 24px;
+  border-radius: 12px;
+
+  /* Layered background with depth */
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.08) 100%),
+    rgba(255, 255, 255, 0.06);
+
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+
+  border: 1px solid rgba(255, 255, 255, 0.18);
+
+  /* Premium shadow system */
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.1),
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    0 8px 16px rgba(0, 0, 0, 0.08);
+
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+  box-sizing: border-box;
+  max-width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Shimmer effect on hover - proportionate to button size */
+button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(255, 255, 255, 0.15),
+    transparent);
+  transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  z-index: 1;
+}
+
+button:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+/* Primary/submit buttons - luxurious slow shimmer */
+button.primary::before,
+button[type="submit"]::before {
+  transition: left 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(255, 255, 255, 0.25),
+    transparent);
+}
+
+button:hover:not(:disabled) {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.12) 100%),
+    rgba(255, 255, 255, 0.08);
+
+  border-color: rgba(255, 255, 255, 0.24);
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.15),
+    0 4px 8px rgba(0, 0, 0, 0.12),
+    0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(0);
+  transition: all 0.1s;
+}
+
+button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Primary button - premium accent variant */
+button.primary,
+button[type="submit"] {
+  background:
+    linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%),
+    var(--accent);
+
+  border: 1px solid rgba(125, 211, 252, 0.3);
+  color: #001a2e;
+  font-weight: 700;
+
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.3),
+    0 4px 8px rgba(0, 0, 0, 0.15),
+    0 12px 24px rgba(125, 211, 252, 0.2);
+}
+
+button.primary:hover:not(:disabled),
+button[type="submit"]:hover:not(:disabled) {
+  background:
+    linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%),
+    #38bdf8;
+
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.4),
+    0 0 0 4px rgba(125, 211, 252, 0.1),
+    0 8px 16px rgba(0, 0, 0, 0.2),
+    0 16px 32px rgba(125, 211, 252, 0.3);
+
+  transform: translateY(-3px);
 }
 
 /* Buttons responsive */

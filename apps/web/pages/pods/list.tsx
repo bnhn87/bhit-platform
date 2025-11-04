@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useRequireAuth } from '../../hooks/useRequireAuth';
 import Layout from '../../components/Layout';
+import { theme } from '../../lib/theme';
 import type { DeliveryPOD } from '../../lib/pod/types';
 
 export default function PODList() {
@@ -39,32 +40,60 @@ export default function PODList() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-[#0a0a0a] p-6">
-        <div className="max-w-7xl mx-auto">
+      <div style={{ padding: 24 }}>
+        <div style={{ maxWidth: 1600, margin: '0 auto' }}>
           {/* Header */}
-          <div className="mb-8 flex items-center justify-between">
-            <h1 className="text-3xl font-semibold text-white">All PODs</h1>
+          <div style={{ marginBottom: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <h1 style={{ margin: 0, color: theme.colors.text, fontSize: 28, fontWeight: 700 }}>All PODs</h1>
+              <p style={{ margin: '8px 0 0 0', color: theme.colors.textSubtle }}>Browse and search all delivery documents</p>
+            </div>
             <button
               onClick={() => router.push('/pods')}
-              className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition"
+              style={{
+                padding: '10px 20px',
+                background: theme.colors.panel,
+                border: `1px solid ${theme.colors.border}`,
+                borderRadius: 6,
+                color: theme.colors.text,
+                cursor: 'pointer',
+                fontSize: 14,
+                fontWeight: 600
+              }}
             >
-              ← Back
+              ← Back to Dashboard
             </button>
           </div>
 
           {/* Filters */}
-          <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div style={{ marginBottom: 24, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
             <input
               type="text"
               placeholder="Search by reference, name, address..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none"
+              style={{
+                padding: '12px 16px',
+                background: theme.colors.panelAlt,
+                border: `1px solid ${theme.colors.border}`,
+                borderRadius: 6,
+                color: theme.colors.text,
+                fontSize: 14,
+                outline: 'none'
+              }}
             />
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+              style={{
+                padding: '12px 16px',
+                background: theme.colors.panelAlt,
+                border: `1px solid ${theme.colors.border}`,
+                borderRadius: 6,
+                color: theme.colors.text,
+                fontSize: 14,
+                outline: 'none'
+              }}
             >
               <option value="">All Statuses</option>
               <option value="pending">Pending</option>
@@ -76,27 +105,39 @@ export default function PODList() {
 
           {/* Table */}
           {loading ? (
-            <div className="flex justify-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '48px 0' }}>
+              <div style={{
+                width: 48,
+                height: 48,
+                border: `3px solid ${theme.colors.border}`,
+                borderTop: `3px solid ${theme.colors.accent}`,
+                borderRadius: '50%',
+                animation: 'spin 1s linear infinite'
+              }}></div>
+              <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+            </div>
+          ) : pods.length === 0 ? (
+            <div className="glassmorphic-panel" style={{ padding: 48, textAlign: 'center' }}>
+              <p style={{ color: theme.colors.textSubtle, fontSize: 16 }}>No PODs found</p>
             </div>
           ) : (
-            <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-lg overflow-hidden">
-              <table className="w-full">
-                <thead className="bg-white/5 border-b border-white/10">
+            <div className="glassmorphic-panel" style={{ overflow: 'hidden' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead style={{ background: theme.colors.panelAlt, borderBottom: `1px solid ${theme.colors.border}` }}>
                   <tr>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">
+                    <th style={{ padding: '14px 20px', textAlign: 'left', fontSize: 13, fontWeight: 700, color: theme.colors.textSubtle, textTransform: 'uppercase', letterSpacing: 0.5 }}>
                       Reference
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">
+                    <th style={{ padding: '14px 20px', textAlign: 'left', fontSize: 13, fontWeight: 700, color: theme.colors.textSubtle, textTransform: 'uppercase', letterSpacing: 0.5 }}>
                       Date
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">
+                    <th style={{ padding: '14px 20px', textAlign: 'left', fontSize: 13, fontWeight: 700, color: theme.colors.textSubtle, textTransform: 'uppercase', letterSpacing: 0.5 }}>
                       Supplier
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">
+                    <th style={{ padding: '14px 20px', textAlign: 'left', fontSize: 13, fontWeight: 700, color: theme.colors.textSubtle, textTransform: 'uppercase', letterSpacing: 0.5 }}>
                       Status
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">
+                    <th style={{ padding: '14px 20px', textAlign: 'left', fontSize: 13, fontWeight: 700, color: theme.colors.textSubtle, textTransform: 'uppercase', letterSpacing: 0.5 }}>
                       Actions
                     </th>
                   </tr>
@@ -105,30 +146,43 @@ export default function PODList() {
                   {pods.map((pod) => (
                     <tr
                       key={pod.id}
-                      className="border-b border-white/5 hover:bg-white/5 transition cursor-pointer"
+                      style={{
+                        borderBottom: `1px solid ${theme.colors.border}`,
+                        cursor: 'pointer',
+                        transition: 'background 0.15s'
+                      }}
                       onClick={() => router.push(`/pods/${pod.id}`)}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = theme.colors.panelAlt)}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                     >
-                      <td className="px-6 py-4 text-white font-mono">
+                      <td style={{ padding: '16px 20px', color: theme.colors.text, fontFamily: 'monospace', fontSize: 14, fontWeight: 600 }}>
                         {pod.sales_order_ref || 'N/A'}
                       </td>
-                      <td className="px-6 py-4 text-gray-300">
+                      <td style={{ padding: '16px 20px', color: theme.colors.text, fontSize: 14 }}>
                         {pod.delivery_date
                           ? new Date(pod.delivery_date).toLocaleDateString()
                           : 'N/A'}
                       </td>
-                      <td className="px-6 py-4 text-gray-300">
+                      <td style={{ padding: '16px 20px', color: theme.colors.text, fontSize: 14 }}>
                         {(pod as any).supplier?.name || 'Unknown'}
                       </td>
-                      <td className="px-6 py-4">
+                      <td style={{ padding: '16px 20px' }}>
                         <StatusBadge status={pod.status} />
                       </td>
-                      <td className="px-6 py-4">
+                      <td style={{ padding: '16px 20px' }}>
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             router.push(`/pods/${pod.id}`);
                           }}
-                          className="text-blue-400 hover:text-blue-300 text-sm"
+                          style={{
+                            color: theme.colors.accent,
+                            fontSize: 13,
+                            fontWeight: 600,
+                            background: 'none',
+                            border: 'none',
+                            cursor: 'pointer'
+                          }}
                         >
                           View →
                         </button>
@@ -146,19 +200,28 @@ export default function PODList() {
 }
 
 function StatusBadge({ status }: { status: string }) {
-  const colors: Record<string, string> = {
-    pending: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-    needs_review: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
-    approved: 'bg-green-500/20 text-green-400 border-green-500/30',
-    rejected: 'bg-red-500/20 text-red-400 border-red-500/30'
+  const colors: Record<string, { bg: string; text: string; border: string }> = {
+    pending: { bg: 'rgba(59, 130, 246, 0.15)', text: '#60a5fa', border: 'rgba(59, 130, 246, 0.3)' },
+    parsing: { bg: 'rgba(168, 85, 247, 0.15)', text: '#c084fc', border: 'rgba(168, 85, 247, 0.3)' },
+    needs_review: { bg: 'rgba(251, 191, 36, 0.15)', text: '#fbbf24', border: 'rgba(251, 191, 36, 0.3)' },
+    approved: { bg: 'rgba(34, 197, 94, 0.15)', text: '#22c55e', border: 'rgba(34, 197, 94, 0.3)' },
+    rejected: { bg: 'rgba(239, 68, 68, 0.15)', text: '#ef4444', border: 'rgba(239, 68, 68, 0.3)' }
   };
 
+  const style = colors[status] || { bg: 'rgba(156, 163, 175, 0.15)', text: '#9ca3af', border: 'rgba(156, 163, 175, 0.3)' };
+
   return (
-    <span
-      className={`px-3 py-1 text-xs font-semibold rounded-full border ${
-        colors[status] || 'bg-gray-500/20 text-gray-400 border-gray-500/30'
-      }`}
-    >
+    <span style={{
+      padding: '4px 10px',
+      fontSize: 12,
+      fontWeight: 700,
+      borderRadius: 999,
+      background: style.bg,
+      color: style.text,
+      border: `1px solid ${style.border}`,
+      textTransform: 'uppercase',
+      letterSpacing: 0.3
+    }}>
       {status.replace(/_/g, ' ')}
     </span>
   );
