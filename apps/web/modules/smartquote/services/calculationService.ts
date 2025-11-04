@@ -179,6 +179,13 @@ export const clearProductLookupCache = () => {
     productLookupCacheKeys = null;
 };
 
+/**
+ * Validates a raw product from the AI parser before processing
+ * Applies business rules for excluding certain product types
+ *
+ * @param product - The raw parsed product to validate
+ * @returns true if the product should be included, false if it should be excluded
+ */
 export const validateRawProduct = (product: ParsedProduct): boolean => {
     // The AI is now responsible for identifying products. We just perform a simple sanity check and apply exclusion rules.
     if (!product.productCode || !product.rawDescription) {
@@ -214,12 +221,15 @@ export const validateRawProduct = (product: ParsedProduct): boolean => {
 };
 
 
+/**
+ * Standardizes the product name for display using the AI-generated clean description
+ * This creates a consistent, clear name based on the AI's improved understanding of the document
+ * Format: "Line [Line Number] – [Clean Description]"
+ *
+ * @param product - The parsed product to standardize
+ * @returns Standardized product name string
+ */
 export const standardizeProductName = (product: ParsedProduct): string => {
-    /**
-     * Standardizes the product name for display using the AI-generated clean description.
-     * This creates a consistent, clear name based on the AI's improved understanding of the document.
-     * The format is: "Line [Line Number] – [Clean Description]"
-     */
     if (!product.cleanDescription) {
         // Fallback for safety, though the AI should always provide this field.
         // Fallback for safety, though the AI should always provide this field
@@ -228,6 +238,13 @@ export const standardizeProductName = (product: ParsedProduct): string => {
     return `Line ${product.lineNumber} – ${product.cleanDescription}`;
 };
 
+/**
+ * Groups all power-related items (power modules, data modules, etc.) into a single consolidated line item
+ * This simplifies quotes by combining similar low-value power accessories
+ *
+ * @param products - Array of parsed products
+ * @returns Object containing regular products and optionally a consolidated power item
+ */
 export const groupPowerItems = (products: ParsedProduct[]): { groupedItems: ParsedProduct[], powerItemsConsolidated: ParsedProduct | null } => {
     // Updated regex pattern from configuration
     const powerRegex = /(?:power(?:\s*bar|\s*module)?|POW-TRAY|R-POW|P60|SPM|starter\s*lead|connector\s*lead|SPM-B)/i;
@@ -644,6 +661,22 @@ const generateNotes = (pricing: PricingResults, details: QuoteDetails): Calculat
 }
 
 
+/**
+ * Main calculation engine - computes all quote metrics including labour, crew, waste, and pricing
+ * This is the core business logic that transforms product data into actionable quote information
+ *
+ * @param products - Array of calculated products with time and waste data
+ * @param details - Quote-specific details (client, address, special requirements)
+ * @param config - Application configuration including pricing rates and business rules
+ * @returns Complete calculation results with all metrics
+ *
+ * @example
+ * ```typescript
+ * const results = calculateAll(products, quoteDetails, appConfig);
+ * console.log(results.pricing.totalCost); // Final quote price
+ * console.log(results.crew.crewSize); // Required crew size
+ * ```
+ */
 export const calculateAll = (
     products: CalculatedProduct[],
     details: QuoteDetails,
