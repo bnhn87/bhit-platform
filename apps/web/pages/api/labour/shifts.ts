@@ -41,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         data: data || []
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error fetching shifts:', error);
       return res.status(500).json({
         error: 'Failed to fetch shifts',
@@ -112,7 +112,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         data
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error creating shift:', error);
       return res.status(500).json({
         error: 'Failed to create shift',
@@ -173,7 +173,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         data
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error updating shift:', error);
       return res.status(500).json({
         error: 'Failed to update shift',

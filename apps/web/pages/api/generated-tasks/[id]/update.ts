@@ -2,43 +2,12 @@ import { createClient } from '@supabase/supabase-js';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 import { logTaskCompleted } from '../../../../lib/activityLogger';
+import { getUserIdFromRequest } from '../../../../lib/authTokenParser';
 
 const supabaseServiceRole = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
-
-// Helper to extract user ID from auth token
-async function getUserIdFromRequest(req: NextApiRequest): Promise<string | null> {
-  try {
-    const cookies = req.headers.cookie || '';
-    const tokenMatch = cookies.match(/sb-[^-]+-auth-token=([^;]+)/);
-
-    if (!tokenMatch) return null;
-
-    const tokenData = JSON.parse(decodeURIComponent(tokenMatch[1]));
-    const token = tokenData.access_token || tokenData[0];
-
-    if (!token) return null;
-
-    const userClient = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        global: {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      }
-    );
-
-    const { data: { user } } = await userClient.auth.getUser();
-    return user?.id || null;
-  } catch (error) {
-    return null;
-  }
-}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'PATCH') {
@@ -95,7 +64,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (error) {
       console.error('Error updating task:', error);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: error instanceof Error ? error.message : 'Unknown error' });
     }
 
     // Log task completion if status changed to 'Completed' or if completed_qty matches total_qty
@@ -112,7 +81,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     return res.status(200).json({ data });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Task update API error:', error);
     return res.status(500).json({ error: 'Failed to update task' });
   }

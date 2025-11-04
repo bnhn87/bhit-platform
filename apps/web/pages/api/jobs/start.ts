@@ -3,41 +3,9 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import { logJobStatusChanged } from "../../../lib/activityLogger";
 import { supabaseAdmin } from "../../../lib/supabaseAdmin";
-import { createClient } from '@supabase/supabase-js';
+import { getUserIdFromRequest } from "../../../lib/authTokenParser";
 
 type Body = { jobId?: string; pin?: string };
-
-// Helper to extract user ID from auth token
-async function getUserIdFromRequest(req: NextApiRequest): Promise<string | null> {
-  try {
-    const cookies = req.headers.cookie || '';
-    const tokenMatch = cookies.match(/sb-[^-]+-auth-token=([^;]+)/);
-
-    if (!tokenMatch) return null;
-
-    const tokenData = JSON.parse(decodeURIComponent(tokenMatch[1]));
-    const token = tokenData.access_token || tokenData[0];
-
-    if (!token) return null;
-
-    const userClient = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        global: {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      }
-    );
-
-    const { data: { user } } = await userClient.auth.getUser();
-    return user?.id || null;
-  } catch (error) {
-    return null;
-  }
-}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });

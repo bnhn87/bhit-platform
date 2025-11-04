@@ -92,7 +92,7 @@ export default function SmartQuoteV2App() {
                 loading: false
             }));
             
-        } catch (error) {
+        } catch (error: unknown) {
             setState(prev => ({
                 ...prev,
                 error: error instanceof Error ? error.message : 'Failed to parse document',
@@ -122,7 +122,7 @@ export default function SmartQuoteV2App() {
                 loading: false
             }));
             
-        } catch (error) {
+        } catch (error: unknown) {
             setState(prev => ({
                 ...prev,
                 error: error instanceof Error ? error.message : 'Failed to finalize quote',
@@ -149,7 +149,7 @@ export default function SmartQuoteV2App() {
                 currentRevision: prev.currentRevision + 1
             }));
             
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Failed to create revision:', error);
         }
     };

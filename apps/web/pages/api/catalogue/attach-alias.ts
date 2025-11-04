@@ -99,7 +99,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             recommendation: `Future quotes with "${productCode}" will now automatically use ${product.install_time_hours} hours`
         });
 
-    } catch (error) {
+    } catch (error: unknown) {
         console.error('Attach alias error:', error);
         return res.status(500).json({
             error: 'Failed to attach alias',

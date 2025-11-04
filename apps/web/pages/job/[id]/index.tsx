@@ -350,7 +350,7 @@ export default function JobDetailPage() {
 
     if (error) {
       // console.error('Failed to update job status:', error);
-      setErr(`Failed to update status: ${error.message}`);
+      setErr(`Failed to update status: ${error instanceof Error ? error.message : "Unknown error"}`);
       return;
     }
 
@@ -370,7 +370,7 @@ export default function JobDetailPage() {
 
     if (error) {
       console.error('Failed to update lead installer:', error);
-      setErr(`Failed to update lead installer: ${error.message}`);
+      setErr(`Failed to update lead installer: ${error instanceof Error ? error.message : "Unknown error"}`);
       return;
     }
 
@@ -415,7 +415,7 @@ export default function JobDetailPage() {
         .eq("id", id);
         
       if (error) {
-        setErr(`Failed to update job: ${error.message}`);
+        setErr(`Failed to update job: ${error instanceof Error ? error.message : "Unknown error"}`);
         return;
       }
       
@@ -650,7 +650,7 @@ export default function JobDetailPage() {
                           
                           // Force navigation to jobs page
                           window.location.href = '/jobs';
-                        } catch (error) {
+                        } catch (error: unknown) {
                           // console.error('❌ Delete error:', error);
                           alert('Failed to delete job: ' + (error instanceof Error ? error.message : 'Unknown error'));
                         }

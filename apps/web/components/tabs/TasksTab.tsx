@@ -716,7 +716,7 @@ const TasksTab: React.FC<{ jobId: string }> = ({ jobId }) => {
 
       await Promise.all(updates);
       alert(`Successfully uplifted ${updates.length} tasks.`);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error uplifting all tasks:', error);
       alert('Failed to uplift all tasks. Please try again.');
     }
@@ -744,7 +744,7 @@ const TasksTab: React.FC<{ jobId: string }> = ({ jobId }) => {
 
       await Promise.all(updates);
       alert(`Successfully completed ${updates.length} tasks.`);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error completing all tasks:', error);
       alert('Failed to complete all tasks. Please try again.');
     }

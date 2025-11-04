@@ -13,7 +13,7 @@ try {
   } else {
     console.warn('No Gemini API key found - PDF parsing will not work');
   }
-} catch (error) {
+} catch (error: unknown) {
   console.warn('Gemini AI initialization failed:', error);
 }
 
@@ -147,7 +147,7 @@ const extractTextFromPdf = async (file: File): Promise<string> => {
     }
     
     return fullText.trim();
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('PDF extraction failed:', error);
     throw new Error(`Failed to extract text from PDF: ${error instanceof Error ? error.message : String(error)}`);
   }
@@ -210,7 +210,7 @@ export const parseFurnitureFromPdf = async (file: File) => {
     // console.log('Successfully parsed', processedData.length, 'furniture items');
     return processedData;
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("PDF parsing failed:", error);
     if (error instanceof Error ? error.message : String(error).includes('PDF library')) {
       throw new Error("PDF processing is not available. Please refresh the page and try again.");
@@ -316,7 +316,7 @@ export const checkLayoutWithAi = async (
     }
 
     return parsedData as LayoutIssue[];
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Gemini API request for layout analysis:", error);
     throw new Error("The AI failed to analyze the layout. Please try again.");
   }
@@ -396,7 +396,7 @@ export const getPlacementDimensions = async (
     }
 
     return parsedData as Array<{ x1: number; y1: number; x2: number; y2: number; referenceType: string }>;
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Gemini API request for placement dimensions:", error);
     throw new Error("The AI failed to measure placement dimensions. Please try again.");
   }
@@ -444,7 +444,7 @@ export const getRotationFromImage = async (
     }
     const parsedData = JSON.parse(jsonText);
     return parsedData.rotation || 0;
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Gemini API request for rotation detection failed:", error);
     // Fail gracefully, returning 0 rotation.
     return 0;

@@ -121,7 +121,7 @@ export default async function handler(
     console.log('Successfully updated permissions for user:', user_id);
 
     // Log activity
-    await logPermissionsUpdated(user_id, currentUserData.user.email, user.id);
+    await logPermissionsUpdated(user_id, currentUserData.user.email ?? 'unknown', user.id);
 
     return res.status(200).json({
       success: true,
@@ -129,10 +129,10 @@ export default async function handler(
       message: 'Permissions updated successfully'
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Update permissions error:', error);
     return res.status(500).json({
-      error: error?.message || 'Internal server error'
+      error: error instanceof Error ? error.message : 'Internal server error'
     });
   }
 }

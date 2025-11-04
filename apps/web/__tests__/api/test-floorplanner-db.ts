@@ -35,7 +35,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
       }
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Database test error:', error);
     res.status(500).json({ 
       success: false, 

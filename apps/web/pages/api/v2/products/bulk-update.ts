@@ -180,7 +180,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       labourImpact
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Bulk update API error:', error);
     return res.status(500).json({ 
       error: 'Failed to perform bulk update',

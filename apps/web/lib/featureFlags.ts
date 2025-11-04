@@ -105,7 +105,7 @@ export async function isFeatureEnabled(flagKey: string): Promise<boolean> {
     flagCache.set(flagKey, fallbackValue);
     return fallbackValue;
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Failed to check feature flag:', error);
     const fallbackValue = getFallbackFlagValue(flagKey);
     flagCache.set(flagKey, fallbackValue);
@@ -224,7 +224,7 @@ export async function checkFeatureFlags(flagKeys: string[]): Promise<Record<stri
         }
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Failed to fetch feature flags:', error);
       uncachedKeys.forEach(key => {
         results[key] = false;
@@ -250,7 +250,7 @@ export async function trackFeatureUsage(
       p_event_type: eventType,
       p_metadata: metadata
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Failed to track feature usage:', error);
   }
 }
@@ -272,7 +272,7 @@ export async function getAllFeatureFlags(): Promise<FeatureFlag[]> {
     }
 
     return data || [];
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Failed to fetch all feature flags:', error);
     return [];
   }
@@ -305,7 +305,7 @@ export async function updateFeatureFlag(
     // Clear cache for this flag
     flagCache.clearFlag(flagKey);
     return true;
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Failed to update feature flag:', error);
     return false;
   }
@@ -338,7 +338,7 @@ export async function createUserOverride(
     }
 
     return true;
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Failed to create user override:', error);
     return false;
   }
@@ -378,7 +378,7 @@ export async function getFeatureFlagAnalytics(
     }
 
     return data || [];
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Failed to fetch analytics:', error);
     return [];
   }
@@ -420,7 +420,7 @@ export function useFeatureFlag(flagKey: string): [boolean, boolean] {
           setIsEnabled(enabled);
           setIsLoading(false);
         }
-      } catch (error) {
+      } catch (error: unknown) {
         console.error('Error in useFeatureFlag:', error);
         if (isMounted) {
           setIsEnabled(false);

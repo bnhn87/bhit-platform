@@ -92,7 +92,7 @@ export default async function handler(
     if (error) {
       console.error('Password reset failed:', error);
       return res.status(500).json({
-        error: error.message || 'Failed to reset password'
+        error: error instanceof Error ? error.message : 'Failed to reset password'
       });
     }
 
@@ -102,10 +102,10 @@ export default async function handler(
       user_id: data.user.id
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Password reset error:', error);
     return res.status(500).json({
-      error: error?.message || 'Internal server error'
+      error: error instanceof Error ? error.message : 'Internal server error'
     });
   }
 }

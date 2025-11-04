@@ -240,7 +240,7 @@ const App: React.FC = () => {
                         setAppConfig(updatedConfig);
                     }
                 }
-            } catch (error) {
+            } catch (error: unknown) {
                 console.error('[App] Failed to load org_settings for vehicle costs:', error);
             }
         })();
@@ -303,7 +303,7 @@ const App: React.FC = () => {
                 try {
                     const quotes = await hybridStorageService.loadQuotes();
                     setSavedQuotes(quotes);
-                } catch (error) {
+                } catch (error: unknown) {
                     console.error('Failed to load saved quotes:', error);
                     setSavedQuotes([]);
                 }
@@ -536,7 +536,7 @@ const App: React.FC = () => {
             });
 
             displaySuccessMessage(`Time for "${productCode}" saved to database and catalogue!`);
-        } catch (error) {
+        } catch (error: unknown) {
             // Still update local config as fallback
             const smartError = ErrorHandler.handle(error, ErrorCategory.DATABASE, 'save learned product');
             const newCatalogue = {
@@ -615,7 +615,7 @@ const App: React.FC = () => {
             } else {
                 displaySuccessMessage("Quote saved successfully!");
             }
-        } catch (error) {
+        } catch (error: unknown) {
             const smartError = ErrorHandler.handle(error, ErrorCategory.DATABASE, 'quote save');
             setError(smartError.userMessage);
         }
@@ -661,7 +661,7 @@ const App: React.FC = () => {
             // Optionally redirect to the job page
             window.open(`/job/${result.jobId}`, '_blank');
             
-        } catch (error) {
+        } catch (error: unknown) {
             const errorMessage = error instanceof Error ? error.message : 'Failed to create job';
             setError(`Job creation failed: ${errorMessage}`);
         }

@@ -50,7 +50,7 @@ export async function fetchInvoices(filters?: {
     }
 
     return data || [];
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('fetchInvoices error:', error);
     throw error;
   }
@@ -95,7 +95,7 @@ export async function testConnection(): Promise<{
       success: true,
       details: `Connected as user ${userData?.id} with role ${userData?.role}`
     };
-  } catch (error) {
+  } catch (error: unknown) {
     return {
       success: false,
       details: error instanceof Error ? error.message : 'Unknown error'

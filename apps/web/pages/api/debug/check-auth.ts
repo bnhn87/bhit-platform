@@ -62,10 +62,10 @@ export default async function handler(
       hasAccess: ['admin', 'director'].includes(profile?.role?.toLowerCase())
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     return res.status(500).json({
-      error: error?.message || 'Internal server error',
-      stack: error?.stack
+      error: error instanceof Error ? error.message : 'Internal server error',
+      stack: error instanceof Error ? error.stack : undefined
     });
   }
 }

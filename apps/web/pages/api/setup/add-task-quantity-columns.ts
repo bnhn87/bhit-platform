@@ -130,7 +130,7 @@ ADD COLUMN IF NOT EXISTS damage_notes TEXT;`,
       result: execResult
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Migration error:', error);
     return res.status(500).json({
       error: 'Failed to add columns',

@@ -217,7 +217,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       ]
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Daily closeout API error:', error);
     return res.status(500).json({ 
       error: 'Failed to create daily closeout',

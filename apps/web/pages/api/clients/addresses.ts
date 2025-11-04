@@ -27,7 +27,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         .limit(parseInt(recent as string) || 10);
 
                     if (error) {
-                        return res.status(500).json({ error: error.message });
+                        return res.status(500).json({ error: error instanceof Error ? error.message : 'Unknown error' });
                     }
 
                     return res.status(200).json(addresses || []);
@@ -48,7 +48,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     const { data: addresses, error } = await query.order('is_default', { ascending: false });
 
                     if (error) {
-                        return res.status(500).json({ error: error.message });
+                        return res.status(500).json({ error: error instanceof Error ? error.message : 'Unknown error' });
                     }
 
                     return res.status(200).json(addresses || []);
@@ -108,7 +108,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     .single();
 
                 if (error) {
-                    return res.status(500).json({ error: error.message });
+                    return res.status(500).json({ error: error instanceof Error ? error.message : 'Unknown error' });
                 }
 
                 return res.status(201).json(newAddress);
@@ -148,7 +148,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     .single();
 
                 if (error) {
-                    return res.status(500).json({ error: error.message });
+                    return res.status(500).json({ error: error instanceof Error ? error.message : 'Unknown error' });
                 }
 
                 return res.status(200).json(updatedAddress);
@@ -168,7 +168,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     .eq('id', id);
 
                 if (error) {
-                    return res.status(500).json({ error: error.message });
+                    return res.status(500).json({ error: error instanceof Error ? error.message : 'Unknown error' });
                 }
 
                 return res.status(200).json({ success: true });
@@ -179,7 +179,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 res.status(405).end(`Method ${method} Not Allowed`);
                 return;
         }
-    } catch (error) {
+    } catch (error: unknown) {
         console.error('API Error:', error);
         res.status(500).json({ error: 'Internal server error' });
         return;

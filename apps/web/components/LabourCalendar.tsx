@@ -130,7 +130,7 @@ export default function LabourCalendar() {
       if (eventsError) throw eventsError;
       setEvents(eventsData || []);
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error loading calendar data:', error);
     } finally {
       setLoading(false);

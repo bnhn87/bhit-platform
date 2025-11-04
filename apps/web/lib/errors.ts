@@ -150,7 +150,7 @@ export function asyncHandler<T extends unknown[], R>(
   return async (...args: T): Promise<R> => {
     try {
       return await fn(...args);
-    } catch (error) {
+    } catch (error: unknown) {
       // Log the error
       console.error('Async handler error:', error);
       throw error;
@@ -166,7 +166,7 @@ export function withErrorBoundary<T extends Record<string, unknown>>(
   return function WrappedComponent(props: T) {
     try {
       return React.createElement(Component, props);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Component error:', error);
       
       if (fallback) {

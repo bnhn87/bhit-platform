@@ -32,7 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       instructions: 'Upload a PDF in the floor planner to test full functionality.'
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     return res.status(500).json({
       error: 'Failed to check PDF parsing service',
       details: error instanceof Error ? error.message : String(error)

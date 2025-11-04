@@ -132,7 +132,7 @@ CREATE TRIGGER update_generated_tasks_updated_at
       message: 'Floor planner schema ready to apply',
       schema: schema
     });
-  } catch (error) {
+  } catch (error: unknown) {
     res.status(500).json({
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error'

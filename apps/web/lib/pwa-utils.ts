@@ -86,7 +86,7 @@ export class PWAManager {
         });
 
         return registration;
-      } catch (error) {
+      } catch (error: unknown) {
         console.error('[PWA] Service Worker registration failed:', error);
       }
     }
@@ -134,7 +134,7 @@ export class PWAManager {
       const choiceResult = await this.installPrompt.userChoice;
       this.installPrompt = null;
       return choiceResult.outcome === 'accepted';
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('[PWA] Install prompt failed:', error);
       return false;
     }
@@ -189,7 +189,7 @@ export class PWAManager {
       } else {
         this.emit('syncError', result);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('[PWA] Sync failed:', error);
       this.emit('syncError', error);
     }
@@ -269,7 +269,7 @@ export class PWAManager {
         const registration = await navigator.serviceWorker.ready;
         await (registration as ServiceWorkerRegistration & { sync: { register: (tag: string) => Promise<void> } }).sync.register(tag);
         return true;
-      } catch (error) {
+      } catch (error: unknown) {
         console.error('[PWA] Background sync registration failed:', error);
         return false;
       }
@@ -283,7 +283,7 @@ export class PWAManager {
       try {
         await (navigator as Navigator & { share: (data: unknown) => Promise<void> }).share(data);
         return true;
-      } catch (error) {
+      } catch (error: unknown) {
         console.error('[PWA] Share failed:', error);
         return false;
       }
@@ -297,7 +297,7 @@ export class PWAManager {
       try {
         await navigator.clipboard.writeText(text);
         return true;
-      } catch (error) {
+      } catch (error: unknown) {
         console.error('[PWA] Clipboard write failed:', error);
         return false;
       }
@@ -324,7 +324,7 @@ export class PWAManager {
           ...options
         });
         return true;
-      } catch (error) {
+      } catch (error: unknown) {
         console.error('[PWA] Notification failed:', error);
         return false;
       }
@@ -362,7 +362,7 @@ export class PWAManager {
           quota: estimate.quota || 0,
           usage: estimate.usage || 0
         };
-      } catch (error) {
+      } catch (error: unknown) {
         console.error('[PWA] Storage estimate failed:', error);
         return null;
       }

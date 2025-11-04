@@ -161,14 +161,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         site_address_id: null, // Could be enhanced to link actual addresses
                         collection_address_id: null
                     });
-            } catch (error) {
+            } catch (error: unknown) {
                 console.error('Error saving logistics record:', error);
             }
         }
 
         return res.status(200).json(result);
 
-    } catch (error) {
+    } catch (error: unknown) {
         console.error('Logistics calculation error:', error);
         return res.status(500).json({ error: 'Failed to calculate logistics' });
     }

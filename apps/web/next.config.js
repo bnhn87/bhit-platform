@@ -3,9 +3,9 @@ const path = require("path");
 const webpack = require("webpack");
 
 module.exports = {
-  reactStrictMode: false,
+  reactStrictMode: true,
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
   outputFileTracingRoot: path.join(__dirname),
   webpack: (config) => {

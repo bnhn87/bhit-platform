@@ -55,7 +55,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.setHeader('Content-Disposition', `inline; filename="labour-schedule-${jobData.reference}.html"`);
     return res.send(htmlContent);
     
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error generating schedule export:', error);
     return res.status(500).json({
       error: 'Internal server error',

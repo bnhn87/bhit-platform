@@ -126,7 +126,7 @@ export const EnhancedAddressSelector: React.FC<AddressSelectorProps> = ({
                 const convertedRecent = recent.map(addr => dbAddressToAddress(addr));
                 setRecentAddresses(convertedRecent);
 
-            } catch (error) {
+            } catch (error: unknown) {
                 console.error('Error loading client data:', error);
             } finally {
                 setLoadingAddresses(false);
@@ -165,7 +165,7 @@ export const EnhancedAddressSelector: React.FC<AddressSelectorProps> = ({
                     const converted = dbAddressToAddress(newAddress, currentClient);
                     setSavedAddresses([...savedAddresses, converted]);
                 }
-            } catch (error) {
+            } catch (error: unknown) {
                 console.error('Error saving address:', error);
             }
         }

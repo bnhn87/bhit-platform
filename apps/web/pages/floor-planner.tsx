@@ -135,7 +135,7 @@ export default function StandaloneFloorPlannerPage() {
         const dataToSave = JSON.stringify(projectsToSave);
         localStorage.setItem(STORAGE_KEY, dataToSave);
         return true;
-      } catch (error) {
+      } catch (error: unknown) {
         if (error instanceof Error && error.name === 'QuotaExceededError') {
           return false;
         }

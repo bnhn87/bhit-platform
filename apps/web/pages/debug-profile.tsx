@@ -24,8 +24,8 @@ export default function DebugProfile() {
 
         const data = await response.json();
         setResult(data);
-      } catch (error: any) {
-        setResult({ error: error.message });
+      } catch (error: unknown) {
+        setResult({ error: error instanceof Error ? error.message : 'Unknown error' });
       } finally {
         setLoading(false);
       }

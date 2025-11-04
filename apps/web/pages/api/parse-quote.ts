@@ -178,10 +178,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       throw new Error('No content returned from AI');
     }
 
-    // Parse and validate
-    const parsed = JSON.parse(content);
-    if (!Array.isArray(parsed.products)) {
-      throw new Error('Invalid format');
+    // Parse and validate with error handling
+    let parsed: { products?: unknown[] };
+    try {
+      parsed = JSON.parse(content);
+    } catch (parseError) {
+      throw new Error(`Failed to parse AI response: ${parseError instanceof Error ? parseError.message : 'Invalid JSON'}`);
+    }
+
+    if (!parsed || !Array.isArray(parsed.products)) {
+      throw new Error('Invalid format: response must contain products array');
     }
 
     res.status(200).json(parsed);

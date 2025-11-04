@@ -577,7 +577,7 @@ export const useAiPlanner = (initialProject: Project, onUpdateProject: (project:
                 if (rotation !== 0) {
                     commitFurnitureUpdate(itemToUpdate.id, { rotation });
                 }
-            } catch (error) {
+            } catch (error: unknown) {
                 console.error("AI rotation detection failed.", error);
             }
         }

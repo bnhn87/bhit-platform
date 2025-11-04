@@ -5,43 +5,12 @@ import { v4 as uuidv4 } from 'uuid';
 import { logJobCreated, logQuoteApproved } from '../../../lib/activityLogger';
 import { convertQuoteToLabourEstimate, sanitizeProductsForJob } from '../../../lib/labour-logic';
 import type { CalculationResults, CalculatedProduct, QuoteDetails } from '../../../modules/smartquote/types';
+import { getUserIdFromRequest } from '../../../lib/authTokenParser';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
-
-// Helper to extract user ID from auth token
-async function getUserIdFromRequest(req: NextApiRequest): Promise<string | null> {
-  try {
-    const cookies = req.headers.cookie || '';
-    const tokenMatch = cookies.match(/sb-[^-]+-auth-token=([^;]+)/);
-
-    if (!tokenMatch) return null;
-
-    const tokenData = JSON.parse(decodeURIComponent(tokenMatch[1]));
-    const token = tokenData.access_token || tokenData[0];
-
-    if (!token) return null;
-
-    const userClient = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        global: {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      }
-    );
-
-    const { data: { user } } = await userClient.auth.getUser();
-    return user?.id || null;
-  } catch (error) {
-    return null;
-  }
-}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -275,7 +244,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       message: 'Job created successfully from quote'
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     // console.error('Error converting quote to job:', error);
     return res.status(500).json({
       error: 'Internal server error',

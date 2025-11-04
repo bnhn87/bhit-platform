@@ -167,7 +167,7 @@ export default function DashboardLabourScheduler() {
         setAllocations(allocationsMap);
       }
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error loading jobs data:', error);
     } finally {
       setLoading(false);

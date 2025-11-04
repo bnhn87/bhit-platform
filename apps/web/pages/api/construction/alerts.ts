@@ -27,7 +27,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         data: data || []
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error fetching alerts:', error);
       return res.status(500).json({
         error: 'Failed to fetch alerts',
@@ -87,7 +87,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         data
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error creating alert:', error);
       return res.status(500).json({
         error: 'Failed to create alert',
@@ -137,7 +137,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         data
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error updating alert:', error);
       return res.status(500).json({
         error: 'Failed to update alert',

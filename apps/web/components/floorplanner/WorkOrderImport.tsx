@@ -279,7 +279,7 @@ SHF001`;
           } else {
             reject(new Error("No text content could be extracted from the PDF."));
           }
-        } catch (error) {
+        } catch (error: unknown) {
           const errorMessage = error instanceof Error ? error.message : String(error);
           reject(new Error(`Failed to parse PDF "${file.name}". Error: ${errorMessage}`));
         } finally {

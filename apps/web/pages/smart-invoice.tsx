@@ -204,7 +204,7 @@ export default function SmartInvoice() {
         await createInvoiceFromExtraction(result.data, filePath);
 
         setUploadProgress(prev => ({ ...prev, [invoiceId]: 100 }));
-      } catch (error) {
+      } catch (error: unknown) {
         console.error('Error processing invoice:', error);
         setError(`Failed to process ${file.name}`);
       }
@@ -289,7 +289,7 @@ export default function SmartInvoice() {
     // Save to database
     try {
       await updateInvoice(rowId, updates as any);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error updating invoice:', error);
       setError('Failed to save changes');
       // Reload from database to revert
@@ -306,7 +306,7 @@ export default function SmartInvoice() {
     try {
       await deleteInvoice(invoiceId);
       setInvoices(prev => prev.filter(inv => inv.id !== invoiceId));
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error deleting invoice:', error);
       setError('Failed to delete invoice');
     }

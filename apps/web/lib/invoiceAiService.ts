@@ -171,7 +171,7 @@ export async function processInvoiceWithAI(
       data: validateAndEnrichData(extractedData),
       processingTime: Date.now() - startTime,
     };
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Invoice processing error:', error);
     return {
       success: false,
@@ -209,7 +209,7 @@ async function extractWithGemini(
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       lastError = error instanceof Error ? error : new Error(String(error));
 
       if (attempt < MAX_RETRIES) {

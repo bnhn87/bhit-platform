@@ -238,7 +238,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     return res.status(400).json({ error: 'Invalid format. Supported formats: csv, excel, json' });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error exporting invoice schedule:', error);
     return res.status(500).json({
       error: 'Failed to export schedule',

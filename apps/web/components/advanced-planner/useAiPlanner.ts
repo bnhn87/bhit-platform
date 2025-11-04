@@ -305,7 +305,7 @@ export const useAiPlanner = (
       // console.log('Created blob URL:', blobUrl); // Debug log
       changeProject({ floorPlanUrl: blobUrl });
       showNotification('Floor plan uploaded successfully!', 'success');
-    } catch (error) {
+    } catch (error: unknown) {
       // eslint-disable-next-line no-console
       console.error('Floor plan upload error:', error); // Debug log
       showNotification('Failed to upload floor plan', 'error');

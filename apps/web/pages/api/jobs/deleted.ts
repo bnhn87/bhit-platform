@@ -20,11 +20,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (error) {
       console.error('Error fetching deleted jobs:', error);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: error instanceof Error ? error.message : 'Unknown error' });
     }
 
     return res.status(200).json({ data });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Deleted jobs API error:', error);
     return res.status(500).json({ error: 'Failed to fetch deleted jobs' });
   }

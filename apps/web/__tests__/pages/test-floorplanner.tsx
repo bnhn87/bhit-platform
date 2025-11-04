@@ -47,7 +47,7 @@ export default function TestFloorPlanner() {
       const plan = await getFloorPlanForJob(jobId);
       setFloorPlan(plan);
       setMessage(`Loaded floor plan: ${plan ? plan.name : 'None found'}`);
-    } catch (error) {
+    } catch (error: unknown) {
       setMessage(`Error loading floor plan: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setLoading(false);
@@ -71,7 +71,7 @@ export default function TestFloorPlanner() {
       await saveFloorPlan(newFloorPlan);
       setFloorPlan(newFloorPlan);
       setMessage('Floor plan saved successfully!');
-    } catch (error) {
+    } catch (error: unknown) {
       setMessage(`Error saving floor plan: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setLoading(false);
@@ -86,7 +86,7 @@ export default function TestFloorPlanner() {
       const loadedTasks = await getGeneratedTasksForJob(jobId);
       setTasks(loadedTasks);
       setMessage(`Loaded ${loadedTasks.length} tasks`);
-    } catch (error) {
+    } catch (error: unknown) {
       setMessage(`Error loading tasks: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setLoading(false);
@@ -122,7 +122,7 @@ export default function TestFloorPlanner() {
       await saveGeneratedTasks(newTasks);
       setTasks(newTasks);
       setMessage('Tasks saved successfully!');
-    } catch (error) {
+    } catch (error: unknown) {
       setMessage(`Error saving tasks: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setLoading(false);
