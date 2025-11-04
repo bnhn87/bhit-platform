@@ -4,45 +4,14 @@ import { useRouter } from "next/router";
 
 import { useHasInvoiceAccess } from "@/hooks/useHasInvoiceAccess";
 import { useUserRole } from "@/hooks/useUserRole";
-import { UserRole } from "@/lib/roles";
 import { supabase } from "@/lib/supabaseClient";
+import { getCoreNavItems, getNavItemsForRole } from "@/config/navigation";
 
 /**
- * LEFT CLUSTER = core links (always visible, no flicker, never duplicated)
- * RIGHT CLUSTER = role EXTRAS only (no Dashboard/Today/Jobs/Clients here)
+ * Dynamic Navigation Bar
+ * All links are configured in config/navigation.ts
+ * Numbers in labels make it easy to disable/remove specific links
  */
-const EXTRAS_BY_ROLE: Record<UserRole, { label: string; href: string }[]> = {
-  guest: [],
-  installer: [],
-  supervisor: [
-    { label: "Progress", href: "/construction-progress" }
-  ],
-  ops: [
-    { label: "Progress", href: "/construction-progress" },
-    { label: "Smart Quote", href: "/smart-quote" },
-    { label: "SmartInvoice", href: "/smart-invoice" },
-    { label: "Settings", href: "/settings" }
-  ],
-  director: [
-    { label: "Progress", href: "/construction-progress" },
-    { label: "Smart Quote", href: "/smart-quote" },
-    { label: "SmartInvoice", href: "/smart-invoice" },
-    { label: "Invoice Schedule", href: "/invoicing/schedule" },
-    { label: "Admin Panel", href: "/admin-panel" },
-    { label: "Costing", href: "/admin/costing" },
-    { label: "Users", href: "/admin/user-management" },
-    { label: "Settings", href: "/settings" }
-  ],
-  admin: [
-    { label: "Progress", href: "/construction-progress" },
-    { label: "Smart Quote", href: "/smart-quote" },
-    { label: "SmartInvoice", href: "/smart-invoice" },
-    { label: "Admin Panel", href: "/admin-panel" },
-    { label: "Costing", href: "/admin/costing" },
-    { label: "Users", href: "/admin/user-management" },
-    { label: "Settings", href: "/settings" }
-  ]
-};
 
 const bar: React.CSSProperties = {
   position: "sticky",
@@ -127,6 +96,10 @@ export default function AppNav() {
   const { hasAccess: hasInvoiceAccess, loading: invoiceLoading } = useHasInvoiceAccess();
   const r = useRouter();
 
+  // Get navigation items from centralized config
+  const coreItems = getCoreNavItems();
+  const roleItems = getNavItemsForRole(role);
+
   async function signOut() {
     await supabase.auth.signOut();
     window.location.href = "/login";
@@ -141,19 +114,23 @@ export default function AppNav() {
       <nav style={bar}>
         <Link href="/dashboard" style={brand}>BHIT&nbsp;OS</Link>
 
-        {/* LEFT: core links (never duplicated) */}
+        {/* LEFT: core links (configured in navigation.ts) */}
         <div style={{ ...group, marginLeft: 8 }}>
-          <NavLink href="/dashboard" label="Dashboard" active={r.pathname === "/dashboard"} />
-          <NavLink href="/today" label="Today" active={r.pathname.startsWith("/today")} />
-          <NavLink
-            href="/jobs"
-            label="Jobs"
-            active={r.pathname.startsWith("/jobs") || r.pathname.startsWith("/job")}
-          />
-          <NavLink href="/clients" label="Clients" active={r.pathname.startsWith("/clients")} />
+          {coreItems.map((item) => (
+            <NavLink
+              key={item.id}
+              href={item.href}
+              label={item.label}
+              active={
+                r.pathname === item.href ||
+                r.pathname.startsWith(item.href + "/") ||
+                (item.href === "/jobs" && r.pathname.startsWith("/job"))
+              }
+            />
+          ))}
         </div>
 
-        {/* RIGHT: extras + auth */}
+        {/* RIGHT: role-based items + auth */}
         <div style={{ marginLeft: "auto", ...group }}>
           {loading || invoiceLoading ? (
             <>
@@ -163,18 +140,23 @@ export default function AppNav() {
             </>
           ) : (
             <>
-              {/* Role-based extras */}
-              {(EXTRAS_BY_ROLE[role] || []).map((it) => (
+              {/* Role-based items from config */}
+              {roleItems.map((item) => (
                 <NavLink
-                  key={it.href}
-                  href={it.href}
-                  label={it.label}
-                  active={r.pathname === it.href || r.asPath === it.href || r.pathname.startsWith(it.href)}
+                  key={item.id}
+                  href={item.href}
+                  label={item.label}
+                  active={
+                    r.pathname === item.href ||
+                    r.asPath === item.href ||
+                    r.pathname.startsWith(item.href + "/") ||
+                    (item.href.includes("/invoicing") && r.pathname.startsWith("/invoicing"))
+                  }
                 />
               ))}
 
               {/* Dynamic invoice access for non-directors */}
-              {role !== 'director' && hasInvoiceAccess && (
+              {role !== 'director' && role !== 'admin' && hasInvoiceAccess && (
                 <NavLink
                   href="/invoicing/schedule"
                   label="Invoice Schedule"
