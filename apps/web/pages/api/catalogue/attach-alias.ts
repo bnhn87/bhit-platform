@@ -32,7 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         // Check if the alias already exists
-        const { data: existingAlias, error: checkError } = await supabase
+        const { data: existingAlias } = await supabase
             .from('product_aliases')
             .select('id, product_id')
             .eq('alias_code', productCode)

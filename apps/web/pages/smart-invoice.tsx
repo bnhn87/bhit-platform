@@ -13,8 +13,7 @@ import {
   Trash2,
   FileSpreadsheet,
   Brain,
-  Sparkles,
-  CheckCircle
+  Sparkles
 } from 'lucide-react';
 import { format } from 'date-fns';
 import * as XLSX from 'xlsx';

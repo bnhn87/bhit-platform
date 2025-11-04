@@ -104,7 +104,7 @@ export default async function handler(
     }
 
     // Update user metadata with permissions (preserves existing metadata)
-    const { data: updatedUser, error: updateError } = await adminClient.auth.admin.updateUserById(user_id, {
+    const { error: updateError } = await adminClient.auth.admin.updateUserById(user_id, {
       user_metadata: {
         ...currentUserData.user.user_metadata,
         permissions: permissionsData

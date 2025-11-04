@@ -78,7 +78,7 @@ export default async function handler(
     };
 
     // Update user metadata
-    const { data: updatedUser, error: updateError } = await adminClient.auth.admin.updateUserById(
+    const { error: updateError } = await adminClient.auth.admin.updateUserById(
       user.id,
       {
         user_metadata: {

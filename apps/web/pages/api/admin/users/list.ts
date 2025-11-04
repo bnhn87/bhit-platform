@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
-import type { UserProfile, AuthUser } from '../../../../types/supabase-types';
+import type { UserProfile } from '../../../../types/supabase-types';
 
 /**
  * API Route: List Users
@@ -96,7 +96,7 @@ export default async function handler(
     }
 
     // Get auth users data for last_sign_in_at, full_name, and permissions
-    const { data: authUsers, error: authError } = await adminClient.auth.admin.listUsers();
+    const { data: authUsers } = await adminClient.auth.admin.listUsers();
 
     // Merge profiles with auth data and extract permissions from user_metadata
     const users = profiles?.map((profile: UserProfile) => {
