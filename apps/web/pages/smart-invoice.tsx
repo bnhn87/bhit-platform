@@ -28,7 +28,10 @@ import {
   deleteInvoice,
   uploadInvoiceFile,
   subscribeToInvoices,
-  type Invoice
+  recordCorrection,
+  getCorrectionHistory,
+  type Invoice,
+  type InvoiceCorrection
 } from '../lib/invoiceDbService';
 import { theme } from '../lib/theme';
 import { getDashboardCardStyle, getDashboardButtonStyle, getDashboardTypographyStyle } from '../modules/smartquote/utils/dashboardStyles';
@@ -60,12 +63,52 @@ interface InvoiceData {
   extractionStatus: 'pending' | 'processing' | 'complete' | 'failed';
   extractedFields: Record<string, any>;
   manuallyEdited: boolean;
+  fieldConfidence?: Record<string, number>; // Per-field confidence scores
 }
 
 interface EditingCell {
   rowId: string;
   field: keyof InvoiceData;
   value: any;
+}
+
+// ConfidenceBadge Component
+function ConfidenceBadge({ score, size = 'sm' }: { score: number; size?: 'sm' | 'md' }) {
+  const getConfidenceColor = (score: number) => {
+    if (score >= 90) return '#10b981'; // green
+    if (score >= 70) return '#f59e0b'; // yellow/orange
+    return '#ef4444'; // red
+  };
+
+  const getConfidenceLabel = (score: number) => {
+    if (score >= 90) return '🟢';
+    if (score >= 70) return '🟡';
+    return '🔴';
+  };
+
+  if (!score || score === 0) return null;
+
+  const dotSize = size === 'sm' ? '8px' : '10px';
+
+  return (
+    <div
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '0.25rem',
+        fontSize: size === 'sm' ? '0.75rem' : '0.875rem'
+      }}
+      title={`AI Confidence: ${score.toFixed(0)}%`}
+    >
+      <div style={{
+        width: dotSize,
+        height: dotSize,
+        borderRadius: '50%',
+        backgroundColor: getConfidenceColor(score),
+      }} />
+      {size === 'md' && <span style={{ color: theme.colors.textSecondary }}>{score.toFixed(0)}%</span>}
+    </div>
+  );
 }
 
 export default function SmartInvoice() {
@@ -82,6 +125,8 @@ export default function SmartInvoice() {
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [previewInvoice, setPreviewInvoice] = useState<InvoiceData | null>(null);
+  const [showLowConfidenceOnly, setShowLowConfidenceOnly] = useState(false);
+  const [correctionModalInvoice, setCorrectionModalInvoice] = useState<InvoiceData | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Load invoices from database on mount
@@ -282,6 +327,10 @@ export default function SmartInvoice() {
 
   // Handle cell edit
   const handleCellEdit = async (rowId: string, field: keyof InvoiceData, value: any) => {
+    // Capture original value before update for correction tracking
+    const originalInvoice = invoices.find(inv => inv.id === rowId);
+    const originalValue = originalInvoice?.[field];
+
     // Update local state immediately for responsive UI
     setInvoices(prev => prev.map(inv => {
       if (inv.id === rowId) {
@@ -297,6 +346,18 @@ export default function SmartInvoice() {
       return inv;
     }));
     setEditingCell(null);
+
+    // Record correction if value changed (for AI training)
+    if (originalValue !== value && originalValue !== null && originalValue !== undefined) {
+      try {
+        const supplierId = originalInvoice?.id; // Could map to actual supplier_id from database
+        await recordCorrection(rowId, field as string, originalValue, value, supplierId);
+        console.log(`Recorded correction for ${field}: ${originalValue} → ${value}`);
+      } catch (error) {
+        console.error('Error recording correction:', error);
+        // Don't block the update if correction recording fails
+      }
+    }
 
     // Map field names to database columns
     const fieldMapping: Record<string, string> = {
@@ -426,6 +487,7 @@ export default function SmartInvoice() {
   // Filter and search
   const filteredInvoices = invoices
     .filter(inv => filterCategory === 'all' || inv.category === filterCategory)
+    .filter(inv => !showLowConfidenceOnly || inv.aiConfidence < 80)
     .filter(inv => {
       if (!searchTerm) return true;
       const search = searchTerm.toLowerCase();
@@ -711,6 +773,27 @@ export default function SmartInvoice() {
               <option value="Materials">Materials</option>
               <option value="Other">Other</option>
             </select>
+
+            <button
+              onClick={() => setShowLowConfidenceOnly(!showLowConfidenceOnly)}
+              style={{
+                background: showLowConfidenceOnly ? theme.colors.accent : theme.colors.panel,
+                border: `1px solid ${showLowConfidenceOnly ? theme.colors.accent : theme.colors.border}`,
+                borderRadius: theme.radii.md,
+                padding: '0.5rem 1rem',
+                color: showLowConfidenceOnly ? '#fff' : theme.colors.text,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                fontSize: '0.875rem',
+                fontWeight: showLowConfidenceOnly ? 500 : 400
+              }}
+              title="Show only invoices with confidence below 80%"
+            >
+              <Brain size={16} />
+              {showLowConfidenceOnly ? 'Showing Low Confidence' : 'Show Low Confidence'}
+            </button>
           </div>
 
           <div>

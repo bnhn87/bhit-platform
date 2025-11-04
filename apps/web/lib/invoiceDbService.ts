@@ -407,6 +407,84 @@ export async function recordCorrection(
 }
 
 /**
+ * Get correction history for an invoice
+ */
+export async function getCorrectionHistory(
+  invoiceId: string
+): Promise<InvoiceCorrection[]> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('invoice_corrections')
+      .select('*')
+      .eq('invoice_id', invoiceId)
+      .order('corrected_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching correction history:', error);
+      throw error;
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('getCorrectionHistory error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get all corrections grouped by field (for analytics)
+ */
+export async function getCorrectionsByField(): Promise<Record<string, number>> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('invoice_corrections')
+      .select('field_name');
+
+    if (error) {
+      console.error('Error fetching corrections by field:', error);
+      throw error;
+    }
+
+    // Count corrections per field
+    const counts: Record<string, number> = {};
+    data?.forEach((correction) => {
+      const field = correction.field_name;
+      counts[field] = (counts[field] || 0) + 1;
+    });
+
+    return counts;
+  } catch (error) {
+    console.error('getCorrectionsByField error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get corrections for a specific supplier (for learning patterns)
+ */
+export async function getCorrectionsBySupplier(
+  supplierId: string
+): Promise<InvoiceCorrection[]> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('invoice_corrections')
+      .select('*')
+      .eq('supplier_id', supplierId)
+      .order('corrected_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching corrections by supplier:', error);
+      throw error;
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('getCorrectionsBySupplier error:', error);
+    throw error;
+  }
+}
+
+/**
  * Fetch suppliers
  */
 export async function fetchSuppliers(): Promise<Supplier[]> {
