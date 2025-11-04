@@ -3,6 +3,7 @@
 
 import type { ExtractedInvoiceData } from './invoiceAiService';
 import { supabase } from './supabaseClient';
+import { supabaseAdmin } from './supabaseAdmin';
 
 export interface Invoice {
   id: string;
@@ -133,7 +134,7 @@ export async function createInvoiceFromExtraction(
     // Check if supplier exists, create if not
     let supplierId: string | undefined;
     if (extractedData.supplier) {
-      const { data: existingSupplier } = await supabase
+      const { data: existingSupplier } = await supabaseAdmin
         .from('suppliers')
         .select('id')
         .eq('name', extractedData.supplier)
@@ -143,7 +144,7 @@ export async function createInvoiceFromExtraction(
         supplierId = existingSupplier.id;
       } else {
         // Create new supplier
-        const { data: newSupplier, error: supplierError } = await supabase
+        const { data: newSupplier, error: supplierError } = await supabaseAdmin
           .from('suppliers')
           .insert({
             name: extractedData.supplier,
@@ -182,7 +183,7 @@ export async function createInvoiceFromExtraction(
       created_by: user.user.id,
     };
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('invoices')
       .insert(invoiceData)
       .select()
@@ -208,7 +209,7 @@ export async function updateInvoice(
   updates: Partial<Invoice>
 ): Promise<Invoice> {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('invoices')
       .update({
         ...updates,
@@ -235,7 +236,7 @@ export async function updateInvoice(
  */
 export async function deleteInvoice(invoiceId: string): Promise<void> {
   try {
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('invoices')
       .delete()
       .eq('id', invoiceId);
@@ -260,7 +261,7 @@ export async function approveInvoice(invoiceId: string): Promise<Invoice> {
       throw new Error('User not authenticated');
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('invoices')
       .update({
         approval_status: 'approved',
@@ -291,7 +292,7 @@ export async function markInvoicePaid(
   paidDate?: string
 ): Promise<Invoice> {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('invoices')
       .update({
         status: 'paid',
@@ -329,7 +330,7 @@ export async function recordCorrection(
       throw new Error('User not authenticated');
     }
 
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('invoice_corrections')
       .insert({
         invoice_id: invoiceId,
@@ -355,7 +356,7 @@ export async function recordCorrection(
  */
 export async function fetchSuppliers(): Promise<Supplier[]> {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('suppliers')
       .select('*')
       .order('name');
@@ -377,7 +378,7 @@ export async function fetchSuppliers(): Promise<Supplier[]> {
  */
 export async function upsertSupplier(supplier: Partial<Supplier>): Promise<Supplier> {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('suppliers')
       .upsert({
         ...supplier,
@@ -410,7 +411,7 @@ export async function getInvoiceStats(): Promise<{
   paidAmount: number;
 }> {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('invoices')
       .select('status, gross_amount');
 
