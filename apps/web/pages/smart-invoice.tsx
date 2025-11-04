@@ -204,8 +204,31 @@ export default function SmartInvoice() {
 
         setUploadProgress(prev => ({ ...prev, [invoiceId]: 80 }));
 
-        // Save to database
-        await createInvoiceFromExtraction(result.data, filePath);
+        // Save to database (with duplicate detection)
+        try {
+          await createInvoiceFromExtraction(result.data, filePath);
+        } catch (dbError: any) {
+          // Check if it's a duplicate error
+          if (dbError?.message?.includes('DUPLICATE')) {
+            const shouldSkip = confirm(
+              `⚠️ Possible Duplicate Invoice Detected!\n\n` +
+              `${dbError.message.replace('DUPLICATE: ', '')}\n\n` +
+              `This might be a duplicate invoice. Do you want to create it anyway?\n\n` +
+              `Click OK to create anyway, or Cancel to skip this invoice.`
+            );
+
+            if (shouldSkip) {
+              // User confirmed - create anyway by skipping duplicate check
+              await createInvoiceFromExtraction(result.data, filePath, true);
+            } else {
+              // User cancelled - skip this invoice
+              setUploadProgress(prev => ({ ...prev, [invoiceId]: 100 }));
+              return { success: false, error: 'Skipped (duplicate)', fileName: file.name };
+            }
+          } else {
+            throw dbError;
+          }
+        }
 
         setUploadProgress(prev => ({ ...prev, [invoiceId]: 100 }));
         return { success: true, fileName: file.name };

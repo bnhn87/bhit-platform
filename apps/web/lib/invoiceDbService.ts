@@ -119,16 +119,71 @@ export async function fetchInvoices(filters?: {
 }
 
 /**
+ * Check for duplicate invoices
+ */
+export async function checkDuplicateInvoice(
+  invoiceNumber: string,
+  supplier: string,
+  grossAmount?: number
+): Promise<Invoice | null> {
+  try {
+    const invoices = await fetchInvoices();
+
+    // Look for exact invoice number + supplier match
+    const exactMatch = invoices.find(
+      inv => inv.invoice_number?.toLowerCase() === invoiceNumber?.toLowerCase() &&
+             inv.supplier_name?.toLowerCase() === supplier?.toLowerCase()
+    );
+
+    if (exactMatch) {
+      return exactMatch;
+    }
+
+    // Look for similar amount + supplier + date (fuzzy match)
+    if (grossAmount) {
+      const similarMatch = invoices.find(
+        inv => inv.supplier_name?.toLowerCase() === supplier?.toLowerCase() &&
+               inv.gross_amount &&
+               Math.abs(inv.gross_amount - grossAmount) < 0.01  // Within 1 penny
+      );
+
+      if (similarMatch) {
+        return similarMatch;
+      }
+    }
+
+    return null;
+  } catch (error) {
+    console.error('Error checking duplicate:', error);
+    return null;
+  }
+}
+
+/**
  * Create a new invoice from AI-extracted data
  */
 export async function createInvoiceFromExtraction(
   extractedData: ExtractedInvoiceData,
-  filePath?: string
+  filePath?: string,
+  skipDuplicateCheck: boolean = false
 ): Promise<Invoice> {
   try {
     const { data: user } = await supabase.auth.getUser();
     if (!user.user) {
       throw new Error('User not authenticated');
+    }
+
+    // Check for duplicates (unless explicitly skipped)
+    if (!skipDuplicateCheck && extractedData.invoiceNumber && extractedData.supplier) {
+      const duplicate = await checkDuplicateInvoice(
+        extractedData.invoiceNumber,
+        extractedData.supplier,
+        extractedData.grossAmount || undefined
+      );
+
+      if (duplicate) {
+        throw new Error(`DUPLICATE: Similar invoice found (${duplicate.invoice_number}) from ${duplicate.supplier_name}`);
+      }
     }
 
     // Check if supplier exists, create if not
