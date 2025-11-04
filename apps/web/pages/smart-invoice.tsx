@@ -155,29 +155,43 @@ export default function SmartInvoice() {
       const dbInvoices = await fetchInvoices();
 
       // Map database invoices to component format
-      const mappedInvoices: InvoiceData[] = dbInvoices.map((inv: Invoice) => ({
-        id: inv.id,
-        uploadedAt: new Date(inv.created_at),
-        fileName: inv.file_path ? inv.file_path.split('/').pop() || 'Unknown' : 'Unknown',
-        fileUrl: inv.file_path,
-        date: inv.invoice_date,
-        invoiceNumber: inv.invoice_number,
-        supplier: inv.supplier_name,
-        description: inv.description || null,
-        category: inv.category,
-        vehicleReg: inv.vehicle_reg || null,
-        jobReference: inv.job_reference || null,
-        netAmount: inv.net_amount ? parseFloat(inv.net_amount.toString()) : null,
-        vatAmount: inv.vat_amount ? parseFloat(inv.vat_amount.toString()) : null,
-        grossAmount: inv.gross_amount ? parseFloat(inv.gross_amount.toString()) : null,
-        paymentStatus: (inv.status === 'paid' ? 'Paid' : inv.status === 'pending' ? 'Pending' : 'Overdue') as 'Pending' | 'Paid' | 'Overdue',
-        paymentMethod: null,
-        notes: inv.notes || null,
-        aiConfidence: inv.confidence_score ? parseFloat(inv.confidence_score.toString()) : 0,
-        extractionStatus: 'complete' as const,
-        extractedFields: {},
-        manuallyEdited: false,
-      }));
+      const mappedInvoices: InvoiceData[] = dbInvoices.map((inv: Invoice) => {
+        // Try to parse field confidence from extracted_text JSON
+        let fieldConfidence: Record<string, number> = {};
+        try {
+          if (inv.extracted_text) {
+            const extracted = JSON.parse(inv.extracted_text);
+            fieldConfidence = extracted.fieldConfidence || {};
+          }
+        } catch (e) {
+          // No field confidence available for this invoice
+        }
+
+        return {
+          id: inv.id,
+          uploadedAt: new Date(inv.created_at),
+          fileName: inv.file_path ? inv.file_path.split('/').pop() || 'Unknown' : 'Unknown',
+          fileUrl: inv.file_path,
+          date: inv.invoice_date,
+          invoiceNumber: inv.invoice_number,
+          supplier: inv.supplier_name,
+          description: inv.description || null,
+          category: inv.category,
+          vehicleReg: inv.vehicle_reg || null,
+          jobReference: inv.job_reference || null,
+          netAmount: inv.net_amount ? parseFloat(inv.net_amount.toString()) : null,
+          vatAmount: inv.vat_amount ? parseFloat(inv.vat_amount.toString()) : null,
+          grossAmount: inv.gross_amount ? parseFloat(inv.gross_amount.toString()) : null,
+          paymentStatus: (inv.status === 'paid' ? 'Paid' : inv.status === 'pending' ? 'Pending' : 'Overdue') as 'Pending' | 'Paid' | 'Overdue',
+          paymentMethod: null,
+          notes: inv.notes || null,
+          aiConfidence: inv.confidence_score ? parseFloat(inv.confidence_score.toString()) : 0,
+          extractionStatus: 'complete' as const,
+          extractedFields: {},
+          manuallyEdited: false,
+          fieldConfidence,
+        };
+      });
 
       setInvoices(mappedInvoices);
     } catch (err) {
@@ -1054,13 +1068,18 @@ export default function SmartInvoice() {
                             )}
                           </div>
                         ) : (
-                          <div style={{ minHeight: '1.5rem' }}>
-                            {col.type === 'number' && value !== null ?
-                              `£${(value as number).toFixed(2)}` :
-                              col.type === 'date' && value ?
-                              format(new Date(value as string), 'dd/MM/yyyy') :
-                              (value as string) || '-'
-                            }
+                          <div style={{ minHeight: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <span>
+                              {col.type === 'number' && value !== null ?
+                                `£${(value as number).toFixed(2)}` :
+                                col.type === 'date' && value ?
+                                format(new Date(value as string), 'dd/MM/yyyy') :
+                                (value as string) || '-'
+                              }
+                            </span>
+                            {invoice.fieldConfidence && invoice.fieldConfidence[col.key] && (
+                              <ConfidenceBadge score={invoice.fieldConfidence[col.key] || 0} size="sm" />
+                            )}
                           </div>
                         )}
                         {invoice.manuallyEdited && col.key !== 'date' && (
