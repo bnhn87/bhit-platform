@@ -120,6 +120,15 @@ export default function Dashboard() {
     address: '',
     image: null as File | null
   });
+  const [showTaskModal, setShowTaskModal] = useState(false);
+  const [taskForm, setTaskForm] = useState({
+    title: '',
+    type: 'admin' as 'invoicing' | 'costs' | 'calls' | 'admin',
+    frequency: 'once' as 'daily' | 'weekly' | 'biweekly' | 'monthly' | 'once',
+    due_date: '',
+    navigation_route: '/dashboard',
+    assigned_to: 'all' as 'all' | 'directors' | 'managers'
+  });
 
   useEffect(() => {
     const updateTime = () => {
@@ -250,6 +259,45 @@ export default function Dashboard() {
     } catch (err) {
       console.error("Error creating job:", err);
       alert("Error creating job");
+    }
+  };
+
+  const handleCreateTask = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        alert('Please log in to create tasks');
+        return;
+      }
+
+      const res = await fetch('/api/task-banner/tasks', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(taskForm)
+      });
+
+      if (res.ok) {
+        // Reset form and close modal
+        setTaskForm({
+          title: '',
+          type: 'admin',
+          frequency: 'once',
+          due_date: '',
+          navigation_route: '/dashboard',
+          assigned_to: 'all'
+        });
+        setShowTaskModal(false);
+        alert('Highway task created successfully!');
+      } else {
+        const errorData = await res.json();
+        alert('Error creating task: ' + (errorData.error || 'Unknown error'));
+      }
+    } catch (err) {
+      console.error('Error creating task:', err);
+      alert('Error creating task');
     }
   };
 
@@ -465,6 +513,43 @@ export default function Dashboard() {
             color: theme.colors.textSubtle
           }}>
             AI Layout Planning
+          </div>
+        </button>
+
+        <button
+          onClick={() => setShowTaskModal(true)}
+          className="glassmorphic-panel glassmorphic-base glassmorphic-glow-purple"
+          style={{
+            padding: 20,
+            textAlign: 'center',
+            cursor: 'pointer',
+            border: 'none',
+            background: 'transparent',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = `0 8px 24px ${theme.colors.accent}60`;
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = 'none';
+          }}
+        >
+          <div style={{ fontSize: 32, marginBottom: 8 }}>🚦</div>
+          <div style={{
+            fontSize: 16,
+            fontWeight: 600,
+            color: theme.colors.text,
+            marginBottom: 4
+          }}>
+            Highway Task
+          </div>
+          <div style={{
+            fontSize: 12,
+            color: theme.colors.textSubtle
+          }}>
+            Add Task to Banner
           </div>
         </button>
 
@@ -895,6 +980,228 @@ export default function Dashboard() {
                   disabled={!quickAddForm.reference || !quickAddForm.projectManager || !quickAddForm.jobDetail || !quickAddForm.address}
                 >
                   💾 Save Job
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Highway Task Modal */}
+      {showTaskModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.7)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          padding: 20
+        }}>
+          <div className="glassmorphic-panel glassmorphic-base" style={{
+            maxWidth: 500,
+            width: '100%',
+            maxHeight: '90vh',
+            overflowY: 'auto',
+            borderRadius: theme.radii.lg
+          }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: 24
+            }}>
+              <h3 style={{
+                margin: 0,
+                color: theme.colors.text,
+                fontSize: 'clamp(18px, 4vw, 24px)'
+              }}>
+                🚦 Add Highway Task
+              </h3>
+              <button
+                onClick={() => setShowTaskModal(false)}
+                className="glassmorphic-button glassmorphic-base"
+                style={{
+                  padding: 8,
+                  borderRadius: '50%',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: theme.colors.text
+                }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div style={{ display: 'grid', gap: 16 }}>
+              <div>
+                <label style={{
+                  display: 'block',
+                  marginBottom: 8,
+                  color: theme.colors.text,
+                  fontWeight: 600,
+                  fontSize: 'clamp(12px, 2.5vw, 14px)'
+                }}>
+                  Task Title *
+                </label>
+                <input
+                  type="text"
+                  value={taskForm.title}
+                  onChange={(e) => setTaskForm({...taskForm, title: e.target.value})}
+                  className="glassmorphic-dropdown glassmorphic-base"
+                  placeholder="e.g., REVIEW PENDING INVOICES"
+                  required
+                  style={{ border: 'none', color: theme.colors.text, fontSize: '14px', textTransform: 'uppercase' }}
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: 8,
+                    color: theme.colors.text,
+                    fontWeight: 600,
+                    fontSize: 'clamp(12px, 2.5vw, 14px)'
+                  }}>
+                    Type
+                  </label>
+                  <select
+                    value={taskForm.type}
+                    onChange={(e) => setTaskForm({...taskForm, type: e.target.value as any})}
+                    className="glassmorphic-dropdown glassmorphic-base"
+                    style={{ border: 'none', color: theme.colors.text, fontSize: '14px' }}
+                  >
+                    <option value="invoicing">Invoicing</option>
+                    <option value="costs">Costs</option>
+                    <option value="calls">Calls</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: 8,
+                    color: theme.colors.text,
+                    fontWeight: 600,
+                    fontSize: 'clamp(12px, 2.5vw, 14px)'
+                  }}>
+                    Frequency
+                  </label>
+                  <select
+                    value={taskForm.frequency}
+                    onChange={(e) => setTaskForm({...taskForm, frequency: e.target.value as any})}
+                    className="glassmorphic-dropdown glassmorphic-base"
+                    style={{ border: 'none', color: theme.colors.text, fontSize: '14px' }}
+                  >
+                    <option value="once">Once</option>
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="biweekly">Biweekly</option>
+                    <option value="monthly">Monthly</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label style={{
+                  display: 'block',
+                  marginBottom: 8,
+                  color: theme.colors.text,
+                  fontWeight: 600,
+                  fontSize: 'clamp(12px, 2.5vw, 14px)'
+                }}>
+                  Due Date & Time *
+                </label>
+                <input
+                  type="datetime-local"
+                  value={taskForm.due_date}
+                  onChange={(e) => setTaskForm({...taskForm, due_date: e.target.value})}
+                  className="glassmorphic-dropdown glassmorphic-base"
+                  required
+                  style={{ border: 'none', color: theme.colors.text, fontSize: '14px' }}
+                />
+              </div>
+
+              <div>
+                <label style={{
+                  display: 'block',
+                  marginBottom: 8,
+                  color: theme.colors.text,
+                  fontWeight: 600,
+                  fontSize: 'clamp(12px, 2.5vw, 14px)'
+                }}>
+                  Navigation Route
+                </label>
+                <input
+                  type="text"
+                  value={taskForm.navigation_route}
+                  onChange={(e) => setTaskForm({...taskForm, navigation_route: e.target.value})}
+                  className="glassmorphic-dropdown glassmorphic-base"
+                  placeholder="/invoicing/schedule"
+                  style={{ border: 'none', color: theme.colors.text, fontSize: '14px' }}
+                />
+              </div>
+
+              <div>
+                <label style={{
+                  display: 'block',
+                  marginBottom: 8,
+                  color: theme.colors.text,
+                  fontWeight: 600,
+                  fontSize: 'clamp(12px, 2.5vw, 14px)'
+                }}>
+                  Assigned To
+                </label>
+                <select
+                  value={taskForm.assigned_to}
+                  onChange={(e) => setTaskForm({...taskForm, assigned_to: e.target.value as any})}
+                  className="glassmorphic-dropdown glassmorphic-base"
+                  style={{ border: 'none', color: theme.colors.text, fontSize: '14px' }}
+                >
+                  <option value="all">All Users</option>
+                  <option value="directors">Directors Only</option>
+                  <option value="managers">Managers Only</option>
+                </select>
+              </div>
+
+              <div style={{
+                display: 'flex',
+                gap: 12,
+                justifyContent: 'flex-end',
+                marginTop: 8
+              }}>
+                <button
+                  onClick={() => setShowTaskModal(false)}
+                  className="glassmorphic-button glassmorphic-base"
+                  style={{
+                    padding: "12px 20px",
+                    fontSize: "14px",
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: theme.colors.textSubtle
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleCreateTask}
+                  className="glassmorphic-button glassmorphic-base glassmorphic-glow-purple"
+                  style={{
+                    padding: "12px 24px",
+                    fontSize: "14px",
+                    fontWeight: 600,
+                    border: 'none',
+                    cursor: 'pointer'
+                  }}
+                  disabled={!taskForm.title || !taskForm.due_date}
+                >
+                  🚦 Add to Highway
                 </button>
               </div>
             </div>

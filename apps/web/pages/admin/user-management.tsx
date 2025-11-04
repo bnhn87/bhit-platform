@@ -25,6 +25,7 @@ interface User {
   can_edit_org_settings?: boolean;
   can_view_reports?: boolean;
   can_export_data?: boolean;
+  banner_enabled?: boolean;
 }
 
 export default function UserManagement() {
@@ -222,6 +223,45 @@ export default function UserManagement() {
     }
   };
 
+  const handleToggleBanner = async (user: User) => {
+    try {
+      setError('');
+      setSuccess('');
+
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (!session?.access_token) {
+        setError('Not authenticated');
+        return;
+      }
+
+      const newStatus = !user.banner_enabled;
+
+      const response = await fetch('/api/task-banner/user-permissions', {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          user_id: user.id,
+          banner_enabled: newStatus
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSuccess(`Task Banner ${newStatus ? 'enabled' : 'disabled'} for user!`);
+        fetchUsers();
+      } else {
+        setError(data.error || 'Failed to toggle banner access');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Failed to toggle banner access');
+    }
+  };
+
   const handleSavePermissions = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -391,6 +431,7 @@ export default function UserManagement() {
                   <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, color: '#8b949e', textTransform: 'uppercase' }}>Email</th>
                   <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, color: '#8b949e', textTransform: 'uppercase' }}>Role</th>
                   <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, color: '#8b949e', textTransform: 'uppercase' }}>Status</th>
+                  <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, color: '#8b949e', textTransform: 'uppercase' }}>Banner</th>
                   <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, color: '#8b949e', textTransform: 'uppercase' }}>Last Login</th>
                   <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, color: '#8b949e', textTransform: 'uppercase' }}>Actions</th>
                 </tr>
@@ -431,6 +472,32 @@ export default function UserManagement() {
                       }}>
                         {user.is_active ? 'Active' : 'Inactive'}
                       </span>
+                    </td>
+                    <td style={{ padding: '1rem' }}>
+                      <button
+                        onClick={() => handleToggleBanner(user)}
+                        style={{
+                          width: 54,
+                          height: 28,
+                          borderRadius: 999,
+                          border: `1px solid ${user.banner_enabled ? '#4ade80' : '#1d2733'}`,
+                          background: user.banner_enabled ? '#1a3d2e' : '#111823',
+                          position: "relative",
+                          cursor: "pointer"
+                        }}
+                      >
+                        <span
+                          style={{
+                            position: "absolute",
+                            top: 2,
+                            left: user.banner_enabled ? 28 : 2,
+                            width: 24,
+                            height: 24,
+                            borderRadius: 999,
+                            background: user.banner_enabled ? '#4ade80' : '#8b949e'
+                          }}
+                        />
+                      </button>
                     </td>
                     <td style={{ padding: '1rem', color: '#8b949e', fontSize: '0.875rem' }}>
                       {user.last_sign_in_at

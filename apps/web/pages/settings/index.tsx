@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useState } from "react";
 
 import { InvoicePermissions } from "../../components/InvoicePermissions";
+import { BannerPreferencesComponent } from "../../components/settings/BannerPreferences";
 import { VehicleManagement } from "../../components/VehicleManagement";
 import { useRequireAuth } from "../../hooks/useRequireAuth";
 import { useUserRole } from "../../hooks/useUserRole";
@@ -191,6 +192,11 @@ export default function SettingsPage() {
         </div>
       </Card>
 
+      {/* Task Banner Preferences */}
+      <Card title="Task Banner Preferences" note="Personalize your highway">
+        <BannerPreferencesComponent />
+      </Card>
+
       {/* Vehicle Management */}
       <Card title="Vehicle Fleet Management" note="SmartQuote Module">
         <VehicleManagement
@@ -199,13 +205,13 @@ export default function SettingsPage() {
           readonly={!isDirector}
         />
         {vehicleMsg && (
-          <div style={{ 
-            marginTop: 12, 
-            padding: 8, 
-            background: theme.colors.accent, 
-            color: 'white', 
-            borderRadius: 6, 
-            fontSize: 12 
+          <div style={{
+            marginTop: 12,
+            padding: 8,
+            background: theme.colors.accent,
+            color: 'white',
+            borderRadius: 6,
+            fontSize: 12
           }}>
             {vehicleMsg}
           </div>

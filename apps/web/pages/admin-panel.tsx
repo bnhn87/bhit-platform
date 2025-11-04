@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
+import { TaskBannerSettingsComponent } from '../components/admin/TaskBannerSettings';
 import { useRequireAuth } from '../hooks/useRequireAuth';
 import { useUserRole } from '../hooks/useUserRole';
 import { theme } from '../lib/theme';
@@ -241,7 +242,8 @@ export default function AdminPanelPage() {
         setTimeout(() => setSaveMessage(null), 3000);
     };
 
-    if (role !== "director" && role !== "admin") {
+    const roleLower = role?.toLowerCase();
+    if (roleLower !== "director" && roleLower !== "admin") {
         return (
             <div style={{ padding: '24px', textAlign: 'center' }}>
                 <h1 style={{ color: theme.colors.text }}>Access Denied</h1>
@@ -392,6 +394,10 @@ export default function AdminPanelPage() {
                     </div>
                 </Section>
 
+                <Section title="Task Banner Settings" description="Control the scrolling LED highway at the top of your screen. Set global defaults for all users." accent={false}>
+                    <TaskBannerSettingsComponent isDirector={roleLower === "director" || roleLower === "admin"} />
+                </Section>
+
                 <div style={{
                     marginTop: 40,
                     padding: "20px",
@@ -400,9 +406,9 @@ export default function AdminPanelPage() {
                     border: `1px solid ${theme.colors.border}`,
                     textAlign: "center"
                 }}>
-                    <p style={{ 
-                        margin: 0, 
-                        color: theme.colors.textSubtle, 
+                    <p style={{
+                        margin: 0,
+                        color: theme.colors.textSubtle,
                         fontSize: 14,
                         fontStyle: 'italic'
                     }}>

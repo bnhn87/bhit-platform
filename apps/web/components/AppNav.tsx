@@ -49,9 +49,12 @@ const EXTRAS_BY_ROLE: Record<UserRole, { label: string; href: string }[]> = {
 };
 
 // iOS 29 - Clean & Modern with Shimmer
+// Note: top position is dynamic and set via inline style based on banner presence
 const bar: React.CSSProperties = {
-  position: "sticky",
+  position: "fixed",
   top: 0,
+  left: 0,
+  right: 0,
   zIndex: 1000,
   display: "flex",
   alignItems: "center",
@@ -185,6 +188,36 @@ export default function AppNav() {
   const { role, loading } = useUserRole();
   const { hasAccess: hasInvoiceAccess, loading: invoiceLoading } = useHasInvoiceAccess();
   const r = useRouter();
+  const [bannerHeight, setBannerHeight] = React.useState(0);
+
+  // Detect banner height on mount and resize
+  React.useEffect(() => {
+    const updateBannerHeight = () => {
+      const banner = document.querySelector('.task-banner') as HTMLElement;
+      if (banner) {
+        setBannerHeight(banner.offsetHeight);
+      } else {
+        setBannerHeight(0);
+      }
+    };
+
+    updateBannerHeight();
+
+    // Update on window resize
+    window.addEventListener('resize', updateBannerHeight);
+
+    // Use MutationObserver to detect banner changes
+    const observer = new MutationObserver(updateBannerHeight);
+    const banner = document.querySelector('.task-banner');
+    if (banner) {
+      observer.observe(banner, { attributes: true, childList: true, subtree: true });
+    }
+
+    return () => {
+      window.removeEventListener('resize', updateBannerHeight);
+      observer.disconnect();
+    };
+  }, []);
 
   async function signOut() {
     await supabase.auth.signOut();
@@ -251,7 +284,7 @@ export default function AppNav() {
 
         @media (max-width: 900px) { main { padding-top: 8px } }
       `}</style>
-      <nav style={bar}>
+      <nav style={{ ...bar, top: bannerHeight }}>
         <Link href="/dashboard" style={brand}>BHIT&nbsp;OS</Link>
 
         {/* LEFT: core links (never duplicated) */}
