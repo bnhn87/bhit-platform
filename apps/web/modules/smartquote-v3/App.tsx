@@ -8,11 +8,15 @@ import { supabase } from '../../lib/supabaseClient';
 import {
     Quote,
     QuoteStatus,
+    AppView,
+} from './types';
+
+// Import calculation types from v1 (since we're using v1's calculateAll service)
+import type {
     QuoteDetails,
     CalculatedProduct,
     CalculationResults,
-    AppView,
-} from './types';
+} from '../smartquote/types';
 
 // Import v1 components (reuse what works)
 import { InitialInput } from '../smartquote/components/InitialInput';
@@ -333,13 +337,84 @@ export default function SmartQuoteV3App() {
                 {view === ('home' as any) && <HomePage onSelectView={setView} />}
 
                 {view === ('parsing' as any) && (
-                    <div className="bg-white rounded-2xl shadow-2xl p-8">
-                        <InitialInput onParse={handleParse} />
+                    <div className="space-y-6">
+                        {/* Help Banner */}
+                        <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-xl p-6">
+                            <div className="flex items-start gap-4">
+                                <div className="flex-shrink-0">
+                                    <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                                        How to Parse a Quote
+                                    </h3>
+                                    <ul className="space-y-2 text-sm text-gray-700">
+                                        <li className="flex items-center gap-2">
+                                            <span className="text-blue-600">•</span>
+                                            <span><strong>Upload a file:</strong> PDF, Excel, or image of your quote</span>
+                                        </li>
+                                        <li className="flex items-center gap-2">
+                                            <span className="text-blue-600">•</span>
+                                            <span><strong>Or paste text:</strong> Copy and paste quote details directly</span>
+                                        </li>
+                                        <li className="flex items-center gap-2">
+                                            <span className="text-blue-600">•</span>
+                                            <span><strong>AI will extract:</strong> Products, quantities, client info, and project details</span>
+                                        </li>
+                                        <li className="flex items-center gap-2">
+                                            <span className="text-blue-600">•</span>
+                                            <span><strong>Review & edit:</strong> Check extracted data before calculating costs</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Parsing Form */}
+                        <div className="bg-white rounded-2xl shadow-2xl p-8">
+                            <InitialInput onParse={handleParse} />
+                        </div>
                     </div>
                 )}
 
                 {view === ('results' as any) && currentQuote && results && (
                     <div className="space-y-6">
+                        {/* Results Help Banner */}
+                        <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-6">
+                            <div className="flex items-start gap-4">
+                                <div className="flex-shrink-0">
+                                    <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                                        Quote Calculated Successfully!
+                                    </h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-gray-700">
+                                        <div>
+                                            <p className="font-medium mb-1">Next Steps:</p>
+                                            <ul className="space-y-1">
+                                                <li>• Review and adjust quote details if needed</li>
+                                                <li>• Request approval from manager</li>
+                                                <li>• Export PDF/Excel to send to client</li>
+                                            </ul>
+                                        </div>
+                                        <div>
+                                            <p className="font-medium mb-1">After Quote is Won:</p>
+                                            <ul className="space-y-1">
+                                                <li>• Mark quote as WON in status</li>
+                                                <li>• Click "Convert to Job" to create job</li>
+                                                <li>• Job will inherit all quote details</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         {/* Approval Section */}
                         {currentQuote.status === QuoteStatus.PENDING_INTERNAL && (
                             <ApprovalPanel
@@ -383,39 +458,90 @@ export default function SmartQuoteV3App() {
 
                         {/* Actions */}
                         <div className="bg-white rounded-lg shadow-lg p-6">
-                            <div className="flex flex-wrap gap-3">
-                                <button
-                                    onClick={handleRequestApproval}
-                                    disabled={
-                                        loading ||
-                                        currentQuote.status !== QuoteStatus.DRAFT
-                                    }
-                                    className="flex-1 bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors disabled:opacity-50"
-                                >
-                                    Request Approval
-                                </button>
-                                <button
-                                    onClick={handleConvertToJob}
-                                    disabled={
-                                        loading ||
-                                        currentQuote.status !== QuoteStatus.WON
-                                    }
-                                    className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors disabled:opacity-50"
-                                >
-                                    Convert to Job
-                                </button>
-                                <button
-                                    onClick={handleExportPdf}
-                                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
-                                >
-                                    Export PDF
-                                </button>
-                                <button
-                                    onClick={handleExportXlsx}
-                                    className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
-                                >
-                                    Export Excel
-                                </button>
+                            <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                                Quote Actions
+                            </h3>
+
+                            {/* Status indicator */}
+                            <div className="mb-4 p-3 bg-slate-50 rounded-lg">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-sm text-gray-600">Current Status:</span>
+                                    <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+                                        {currentQuote.status.replace('_', ' ').toUpperCase()}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="space-y-3">
+                                {/* Approval Button */}
+                                <div className="relative group">
+                                    <button
+                                        onClick={handleRequestApproval}
+                                        disabled={
+                                            loading ||
+                                            currentQuote.status !== QuoteStatus.DRAFT
+                                        }
+                                        className="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                        title={currentQuote.status !== QuoteStatus.DRAFT ? 'Only DRAFT quotes can request approval' : 'Request approval for this quote'}
+                                    >
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        Request Approval
+                                    </button>
+                                    {currentQuote.status !== QuoteStatus.DRAFT && (
+                                        <div className="absolute left-0 right-0 mt-1 p-2 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                                            Only DRAFT quotes can request approval (current: {currentQuote.status})
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Convert to Job Button */}
+                                <div className="relative group">
+                                    <button
+                                        onClick={handleConvertToJob}
+                                        disabled={
+                                            loading ||
+                                            currentQuote.status !== QuoteStatus.WON
+                                        }
+                                        className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                        title={currentQuote.status !== QuoteStatus.WON ? 'Only WON quotes can be converted to jobs' : 'Convert this quote to a job'}
+                                    >
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                        </svg>
+                                        Convert to Job
+                                    </button>
+                                    {currentQuote.status !== QuoteStatus.WON && (
+                                        <div className="absolute left-0 right-0 mt-1 p-2 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                                            Only WON quotes can be converted to jobs (current: {currentQuote.status})
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Export Buttons */}
+                                <div className="flex gap-3">
+                                    <button
+                                        onClick={handleExportPdf}
+                                        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
+                                        title="Export quote as PDF for client"
+                                    >
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                        </svg>
+                                        Export PDF
+                                    </button>
+                                    <button
+                                        onClick={handleExportXlsx}
+                                        className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
+                                        title="Export quote as Excel spreadsheet"
+                                    >
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                        Export Excel
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -6,6 +6,8 @@
 // ENUMS
 // ============================================================================
 
+export type AppView = 'home' | 'parsing' | 'results' | 'history' | 'templates';
+
 export enum QuoteStatus {
     DRAFT = 'draft',
     PENDING_INTERNAL = 'pending_internal',
@@ -69,8 +71,10 @@ export enum PricingRuleType {
 }
 
 // ============================================================================
-// QUOTE TYPES
+// QUOTE TYPES (V3 Database Schema)
 // ============================================================================
+// NOTE: For calculations, use v1 types imported from '../smartquote/types'
+// These v3 types are primarily for database storage and v3-specific features
 
 export interface QuoteDetails {
     quoteRef: string;
@@ -97,7 +101,7 @@ export interface ParsedProduct {
     lineNumber: number;
     productCode: string;
     rawDescription: string;
-    cleanDescription?: string;
+    cleanDescription: string; // Required to match v1 interface
     quantity: number;
     confidence?: number; // 0-100
 }
@@ -109,7 +113,7 @@ export interface CalculatedProduct extends ParsedProduct {
     isHeavy: boolean;
     wastePerUnit: number;
     totalWaste: number;
-    source: 'catalogue' | 'session' | 'manual' | 'learned';
+    source: 'catalogue' | 'user-inputted' | 'default' | 'learned'; // Match v1 values exactly
     isManuallyEdited?: boolean;
 }
 

@@ -85,6 +85,7 @@ class HybridParsingService {
             const enhancedResult: HybridParseResult = {
                 products: result.products.map((p) => ({
                     ...p,
+                    cleanDescription: p.cleanDescription || p.rawDescription, // Ensure cleanDescription is always set
                     confidence: 75, // v1 doesn't have confidence, assume 75%
                 })),
                 details: result.details,
