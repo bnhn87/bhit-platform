@@ -2,8 +2,8 @@
  * Utility for safely parsing auth tokens from request cookies
  */
 
-import type { NextApiRequest } from 'next';
 import { createClient } from '@supabase/supabase-js';
+import type { NextApiRequest } from 'next';
 
 interface TokenData {
   access_token?: string;

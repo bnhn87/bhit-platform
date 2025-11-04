@@ -1,6 +1,6 @@
+import { safeParseAuthToken } from '../../../lib/authTokenParser';
 import { createClient } from '@supabase/supabase-js';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { safeParseAuthToken } from '../../../lib/authTokenParser';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,

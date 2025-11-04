@@ -2,10 +2,10 @@ import { createClient } from '@supabase/supabase-js';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { v4 as uuidv4 } from 'uuid';
 
+import { getUserIdFromRequest } from '../../../lib/authTokenParser';
 import { logJobCreated, logQuoteApproved } from '../../../lib/activityLogger';
 import { convertQuoteToLabourEstimate, sanitizeProductsForJob } from '../../../lib/labour-logic';
 import type { CalculationResults, CalculatedProduct, QuoteDetails } from '../../../modules/smartquote/types';
-import { getUserIdFromRequest } from '../../../lib/authTokenParser';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,

@@ -1,5 +1,6 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
+import type { NextApiRequest, NextApiResponse } from 'next';
+
 import type { UserProfile } from '../../../../types/supabase-types';
 
 /**

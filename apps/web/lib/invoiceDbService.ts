@@ -1,8 +1,8 @@
 // Invoice Database Service
 // Handles all database operations for SmartInvoice feature
 
-import { supabase } from './supabaseClient';
 import type { ExtractedInvoiceData } from './invoiceAiService';
+import { supabase } from './supabaseClient';
 
 export interface Invoice {
   id: string;

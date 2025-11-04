@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { format } from 'date-fns';
 import {
   Upload,
   FileText,
@@ -15,11 +16,9 @@ import {
   Brain,
   Sparkles
 } from 'lucide-react';
-import { format } from 'date-fns';
 import * as XLSX from 'xlsx';
+
 import Layout from '../components/Layout';
-import { theme } from '../lib/theme';
-import { getDashboardCardStyle, getDashboardButtonStyle, getDashboardTypographyStyle } from '../modules/smartquote/utils/dashboardStyles';
 import { processInvoiceWithAI } from '../lib/invoiceAiService';
 import {
   fetchInvoices,
@@ -30,6 +29,8 @@ import {
   subscribeToInvoices,
   type Invoice
 } from '../lib/invoiceDbService';
+import { theme } from '../lib/theme';
+import { getDashboardCardStyle, getDashboardButtonStyle, getDashboardTypographyStyle } from '../modules/smartquote/utils/dashboardStyles';
 
 // Types for invoice data structure
 interface InvoiceData {

@@ -1,9 +1,9 @@
 // apps/web/pages/api/jobs/start.ts
 import type { NextApiRequest, NextApiResponse } from "next";
 
+import { getUserIdFromRequest } from "../../../lib/authTokenParser";
 import { logJobStatusChanged } from "../../../lib/activityLogger";
 import { supabaseAdmin } from "../../../lib/supabaseAdmin";
-import { getUserIdFromRequest } from "../../../lib/authTokenParser";
 
 type Body = { jobId?: string; pin?: string };
 

@@ -5,6 +5,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/router';
+
 import Layout from '../components/Layout';
 import SmartQuoteV2App from '../modules/smartquote-v2/App';
 

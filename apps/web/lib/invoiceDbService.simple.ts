@@ -1,9 +1,8 @@
 // Simplified Invoice Database Service - NO ORGANIZATION REQUIRED
 // Use this version if organization_id column issues persist
 
+import type { Invoice } from './invoiceDbService';
 import { supabase } from './supabaseClient';
-import type { ExtractedInvoiceData } from './invoiceAiService';
-import type { Invoice, Supplier } from './invoiceDbService';
 
 /**
  * Fetch all invoices (simplified - no organization filtering)
