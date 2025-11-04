@@ -3,8 +3,10 @@ const path = require("path");
 const webpack = require("webpack");
 
 module.exports = {
-  reactStrictMode: false,
+  reactStrictMode: true,
   eslint: {
+    // TODO: Re-enable after fixing ESLint errors
+    // Currently disabled to prevent build failures
     ignoreDuringBuilds: true,
   },
   outputFileTracingRoot: path.join(__dirname),

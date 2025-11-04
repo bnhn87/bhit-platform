@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 import { logTaskCompleted } from '../../../../lib/activityLogger';
+import { safeParseUrlEncodedJson } from '../../../../lib/safeParsing';
 
 const supabaseServiceRole = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -16,8 +17,10 @@ async function getUserIdFromRequest(req: NextApiRequest): Promise<string | null>
 
     if (!tokenMatch) return null;
 
-    const tokenData = JSON.parse(decodeURIComponent(tokenMatch[1]));
-    const token = tokenData.access_token || tokenData[0];
+    const tokenData = safeParseUrlEncodedJson<{ access_token?: string } | [string]>(tokenMatch[1]);
+    if (!tokenData) return null;
+
+    const token = (tokenData as { access_token?: string }).access_token || (tokenData as [string])[0];
 
     if (!token) return null;
 

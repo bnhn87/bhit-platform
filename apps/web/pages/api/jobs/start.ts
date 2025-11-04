@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import { logJobStatusChanged } from "../../../lib/activityLogger";
 import { supabaseAdmin } from "../../../lib/supabaseAdmin";
+import { safeParseUrlEncodedJson } from "../../../lib/safeParsing";
 import { createClient } from '@supabase/supabase-js';
 
 type Body = { jobId?: string; pin?: string };
@@ -15,8 +16,10 @@ async function getUserIdFromRequest(req: NextApiRequest): Promise<string | null>
 
     if (!tokenMatch) return null;
 
-    const tokenData = JSON.parse(decodeURIComponent(tokenMatch[1]));
-    const token = tokenData.access_token || tokenData[0];
+    const tokenData = safeParseUrlEncodedJson<{ access_token?: string } | [string]>(tokenMatch[1]);
+    if (!tokenData) return null;
+
+    const token = (tokenData as { access_token?: string }).access_token || (tokenData as [string])[0];
 
     if (!token) return null;
 
