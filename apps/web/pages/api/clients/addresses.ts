@@ -1,13 +1,21 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
+import { requireAuth } from '../../../lib/apiAuth';
+import { validateRequestBody, ClientAddressSchema } from '../../../lib/apiValidation';
 
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_KEY!
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { method } = req;
+
+    // Require authentication for all methods
+    const user = await requireAuth(req, res);
+    if (!user) {
+        return; // requireAuth already sent 401 response
+    }
 
     try {
         switch (method) {
@@ -58,57 +66,44 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
 
             case 'POST': {
+                // Validate request body
+                const validatedData = validateRequestBody(ClientAddressSchema, req, res);
+                if (!validatedData) {
+                    return; // validateRequestBody already sent 400 response
+                }
+
                 const {
                     client_id,
-                    address_type,
-                    label,
                     address_line1,
                     address_line2,
                     city,
                     postcode,
-                    has_loading_bay,
-                    access_restrictions,
-                    contact_name,
-                    contact_phone,
-                    is_default
-                } = req.body;
+                    type: address_type,
+                    is_primary
+                } = validatedData;
 
-                if (!client_id || !address_type || !label || !address_line1 || !city || !postcode) {
-                    return res.status(400).json({
-                        error: 'Required fields: client_id, address_type, label, address_line1, city, postcode'
-                    });
-                }
-
-                // If setting as default, unset other defaults of same type
-                if (is_default) {
+                // If setting as primary, unset other primary addresses of same type
+                if (is_primary && client_id && address_type) {
                     await supabase
                         .from('client_addresses')
-                        .update({ is_default: false })
+                        .update({ is_primary: false })
                         .eq('client_id', client_id)
-                        .eq('address_type', address_type);
+                        .eq('type', address_type);
                 }
 
                 const { data: newAddress, error } = await supabase
                     .from('client_addresses')
                     .insert({
-                        client_id,
-                        address_type,
-                        label,
-                        address_line1,
-                        address_line2,
-                        city,
+                        ...validatedData,
                         postcode: postcode.toUpperCase(),
-                        has_loading_bay: has_loading_bay || false,
-                        access_restrictions,
-                        contact_name,
-                        contact_phone,
-                        is_default: is_default || false
+                        created_by: user.id,
                     })
                     .select()
                     .single();
 
                 if (error) {
-                    return res.status(500).json({ error: error.message });
+                    console.error('[clients/addresses] Create error:', error);
+                    return res.status(500).json({ error: 'Failed to create address', details: error.message });
                 }
 
                 return res.status(201).json(newAddress);
