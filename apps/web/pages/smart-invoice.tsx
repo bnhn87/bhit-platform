@@ -14,7 +14,8 @@ import {
   FileSpreadsheet,
   Brain,
   Sparkles,
-  CheckCircle
+  CheckCircle,
+  X
 } from 'lucide-react';
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import * as XLSX from 'xlsx';
@@ -28,6 +29,7 @@ import {
   deleteInvoice,
   uploadInvoiceFile,
   subscribeToInvoices,
+  getInvoiceFileUrl,
   type Invoice
 } from '../lib/invoiceDbService';
 import { theme } from '../lib/theme';
@@ -80,6 +82,7 @@ export default function SmartInvoice() {
   const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [previewFile, setPreviewFile] = useState<{ url: string; fileName: string; fileType: string } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Load invoices from database on mount
@@ -295,6 +298,28 @@ export default function SmartInvoice() {
       setError('Failed to save changes');
       // Reload from database to revert
       loadInvoices();
+    }
+  };
+
+  // Handle file preview
+  const handleViewFile = async (invoice: InvoiceData) => {
+    if (!invoice.fileUrl) {
+      alert('No file available for this invoice');
+      return;
+    }
+
+    try {
+      const signedUrl = await getInvoiceFileUrl(invoice.fileUrl);
+      const fileType = invoice.fileName.toLowerCase().endsWith('.pdf') ? 'pdf' : 'image';
+
+      setPreviewFile({
+        url: signedUrl,
+        fileName: invoice.fileName,
+        fileType
+      });
+    } catch (error) {
+      console.error('Failed to get file URL:', error);
+      alert('Failed to load file preview');
     }
   };
 
@@ -800,6 +825,7 @@ export default function SmartInvoice() {
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                       <button
                         title="View Original"
+                        onClick={() => handleViewFile(invoice)}
                         style={{
                           background: 'transparent',
                           border: 'none',
@@ -919,6 +945,159 @@ export default function SmartInvoice() {
           </div>
         )}
       </div>
+
+      {/* File Preview Modal */}
+      {previewFile && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0, 0, 0, 0.95)',
+            zIndex: 10000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '2rem',
+            backdropFilter: 'blur(8px)'
+          }}
+          onClick={() => setPreviewFile(null)}
+        >
+          <div
+            style={{
+              position: 'relative',
+              width: '100%',
+              maxWidth: '90vw',
+              maxHeight: '90vh',
+              background: theme.colors.panel,
+              borderRadius: theme.radii.lg,
+              overflow: 'hidden',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+              border: `1px solid ${theme.colors.border}`
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '1rem 1.5rem',
+                borderBottom: `1px solid ${theme.colors.border}`,
+                background: theme.colors.panelAlt
+              }}
+            >
+              <h3 style={{
+                fontSize: '1.125rem',
+                fontWeight: 600,
+                color: theme.colors.text,
+                margin: 0
+              }}>
+                {previewFile.fileName}
+              </h3>
+              <button
+                onClick={() => setPreviewFile(null)}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: theme.colors.textSubtle,
+                  cursor: 'pointer',
+                  padding: '0.5rem',
+                  borderRadius: theme.radii.sm,
+                  transition: 'all 0.2s',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.color = theme.colors.text;
+                  e.currentTarget.style.background = theme.colors.muted;
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.color = theme.colors.textSubtle;
+                  e.currentTarget.style.background = 'transparent';
+                }}
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            {/* Preview Content */}
+            <div
+              style={{
+                width: '100%',
+                height: 'calc(90vh - 80px)',
+                overflow: 'auto',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: theme.colors.background
+              }}
+            >
+              {previewFile.fileType === 'pdf' ? (
+                <iframe
+                  src={previewFile.url}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    border: 'none'
+                  }}
+                  title={previewFile.fileName}
+                />
+              ) : (
+                <img
+                  src={previewFile.url}
+                  alt={previewFile.fileName}
+                  style={{
+                    maxWidth: '100%',
+                    maxHeight: '100%',
+                    objectFit: 'contain'
+                  }}
+                />
+              )}
+            </div>
+
+            {/* Footer with Download */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-end',
+                padding: '1rem 1.5rem',
+                borderTop: `1px solid ${theme.colors.border}`,
+                background: theme.colors.panelAlt
+              }}
+            >
+              <a
+                href={previewFile.url}
+                download={previewFile.fileName}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  padding: '0.625rem 1rem',
+                  background: theme.colors.accent,
+                  color: 'white',
+                  borderRadius: theme.radii.md,
+                  textDecoration: 'none',
+                  fontSize: '0.875rem',
+                  fontWeight: 600,
+                  transition: 'all 0.2s'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.background = theme.colors.accentAlt;
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.background = theme.colors.accent;
+                }}
+              >
+                <Download size={16} />
+                Download
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 }
