@@ -98,7 +98,16 @@ export function TaskBannerSettingsComponent({ isDirector }: TaskBannerSettingsPr
           'Authorization': `Bearer ${session.access_token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(settings)
+        body: JSON.stringify({
+          show_background: settings.show_background,
+          background_color: settings.background_color,
+          text_style: settings.text_style,
+          text_color: settings.text_color,
+          font_size: settings.font_size,
+          scroll_speed: settings.scroll_speed,
+          message_spacing: settings.message_spacing,
+          empty_message: settings.empty_message
+        })
       });
 
       const data = await res.json();

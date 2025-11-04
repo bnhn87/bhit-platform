@@ -195,13 +195,20 @@ export default function AppNav() {
     const updateBannerHeight = () => {
       const banner = document.querySelector('.task-banner') as HTMLElement;
       if (banner) {
-        setBannerHeight(banner.offsetHeight);
+        const height = banner.offsetHeight;
+        console.log('[AppNav] Banner height detected:', height);
+        setBannerHeight(height);
       } else {
+        console.log('[AppNav] No banner found, setting height to 0');
         setBannerHeight(0);
       }
     };
 
+    // Try multiple times to catch banner after it renders
     updateBannerHeight();
+
+    // Retry after a short delay in case banner hasn't rendered yet
+    const timeoutId = setTimeout(updateBannerHeight, 100);
 
     // Update on window resize
     window.addEventListener('resize', updateBannerHeight);
@@ -214,6 +221,7 @@ export default function AppNav() {
     }
 
     return () => {
+      clearTimeout(timeoutId);
       window.removeEventListener('resize', updateBannerHeight);
       observer.disconnect();
     };
@@ -284,7 +292,7 @@ export default function AppNav() {
 
         @media (max-width: 900px) { main { padding-top: 8px } }
       `}</style>
-      <nav style={{ ...bar, top: bannerHeight }}>
+      <nav style={{ ...bar, top: `${bannerHeight}px` }}>
         <Link href="/dashboard" style={brand}>BHIT&nbsp;OS</Link>
 
         {/* LEFT: core links (never duplicated) */}
