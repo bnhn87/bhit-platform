@@ -9,11 +9,26 @@
 // - Feedback loops for corrections
 
 import { GoogleGenAI, Type } from "@google/genai";
+
 import { EnhancedParseResult } from '../types';
 
-// Use placeholder during build if env var is missing
-const apiKey = process.env.GEMINI_API_KEY || 'placeholder-gemini-key';
-const ai = new GoogleGenAI({ apiKey });
+// Support both server-side and client-side API keys
+const getAPIKey = (): string => {
+    const apiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+    if (!apiKey) {
+        throw new Error("GEMINI_API_KEY or NEXT_PUBLIC_GEMINI_API_KEY environment variable not set. Please add it to your .env.local file.");
+    }
+    return apiKey;
+};
+
+let ai: GoogleGenAI | null = null;
+
+const getAI = (): GoogleGenAI => {
+    if (!ai) {
+        ai = new GoogleGenAI({ apiKey: getAPIKey() });
+    }
+    return ai;
+};
 
 // Enhanced response schema with confidence
 const responseSchema = {
@@ -194,7 +209,7 @@ const attemptParse = async (
     const topP = 0.9 + (attempt * 0.02);
     const topK = Math.min(40 + (attempt * 10), 60);
     
-    const response = await ai.models.generateContent({
+    const response = await getAI().models.generateContent({
         model: "gemini-2.0-flash-exp",
         contents: { parts: requestParts },
         config: {
@@ -277,7 +292,10 @@ export const parseQuoteContentEnhanced = async (
             if (result.products.some(p => !p.quantity)) errors.push('missing_quantities');
             
             if (attempt < maxRetries) {
-                console.log(`Attempt ${attempt}: Confidence ${result.confidenceScore.toFixed(2)}, retrying...`);
+                // Log retry attempt for debugging (only in development)
+                if (process.env.NODE_ENV === 'development') {
+                    console.log(`[SmartQuote v2] Attempt ${attempt}: Confidence ${result.confidenceScore.toFixed(2)}, retrying...`);
+                }
                 await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
                 continue;
             }
@@ -287,9 +305,12 @@ export const parseQuoteContentEnhanced = async (
             
         } catch (error) {
             lastError = error instanceof Error ? error : new Error(String(error));
-            
+
             if (attempt < maxRetries) {
-                console.log(`Attempt ${attempt} failed:`, lastError.message);
+                // Log error for debugging (only in development)
+                if (process.env.NODE_ENV === 'development') {
+                    console.error(`[SmartQuote v2] Attempt ${attempt} failed:`, lastError.message);
+                }
                 await new Promise(resolve => setTimeout(resolve, 1500 * attempt));
                 continue;
             }

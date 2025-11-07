@@ -16,6 +16,10 @@ function getAI(): GoogleGenAI {
     return ai;
 }
 
+/**
+ * JSON schema defining the structure of the AI's response
+ * This ensures consistent parsing results from Google Gemini AI
+ */
 const responseSchema = {
     type: Type.OBJECT,
     properties: {
@@ -102,7 +106,11 @@ Return empty array if no products found.`;
 
 const promptText = "Extract products and quote details from the documents below:";
 
-// Validation function for parsed products
+/**
+ * Validates a parsed product to ensure it has all required fields and sensible values
+ * @param product - The parsed product to validate
+ * @returns true if the product is valid, false otherwise
+ */
 const validateParsedProduct = (product: ParsedProduct): boolean => {
     return (
         product.quantity > 0 &&
@@ -113,7 +121,12 @@ const validateParsedProduct = (product: ParsedProduct): boolean => {
     );
 };
 
-// Calculate confidence score for a parsed product
+/**
+ * Calculates a confidence score (0-1) for how accurately we believe the product was parsed
+ * Higher scores indicate the AI is more confident in the extraction accuracy
+ * @param product - The parsed product to score
+ * @returns Confidence score between 0 and 1
+ */
 const calculateConfidence = (product: ParsedProduct): number => {
     let confidence = 0.5; // Base confidence
 
@@ -340,6 +353,22 @@ const attemptParse = async (content: ParseContent, attempt: number): Promise<Par
     return result;
 };
 
+/**
+ * Parses quote content using Google Gemini AI with intelligent retry logic
+ * This is the main entry point for AI-powered quote parsing
+ *
+ * @param content - Array of text strings or file objects to parse
+ * @returns Parsed quote data including products, details, and excluded items
+ * @throws Error if parsing fails after all retry attempts
+ *
+ * @example
+ * ```typescript
+ * const result = await parseQuoteContent([
+ *   "Quote for ABC Corp\nFLX-4P-2816 x5\nCHAIR x10"
+ * ]);
+ * console.log(result.products); // Array of parsed products
+ * ```
+ */
 export const parseQuoteContent = async (content: ParseContent): Promise<ParseResult> => {
     const MAX_RETRIES = 3;
     let lastError: Error | null = null;
@@ -355,7 +384,9 @@ export const parseQuoteContent = async (content: ParseContent): Promise<ParseRes
 
             // If no products found, retry (unless it's the last attempt)
             if (attempt < MAX_RETRIES) {
-                console.log(`Attempt ${attempt} found no products, retrying...`);
+                if (process.env.NODE_ENV === 'development') {
+                    console.log(`[SmartQuote] Attempt ${attempt} found no products, retrying...`);
+                }
                 continue;
             }
 
@@ -365,7 +396,9 @@ export const parseQuoteContent = async (content: ParseContent): Promise<ParseRes
             lastError = error instanceof Error ? error : new Error(String(error));
 
             if (attempt < MAX_RETRIES) {
-                console.log(`Parse attempt ${attempt} failed, retrying...`);
+                if (process.env.NODE_ENV === 'development') {
+                    console.error(`[SmartQuote] Parse attempt ${attempt} failed:`, lastError.message);
+                }
                 // Wait briefly before retry
                 await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
                 continue;

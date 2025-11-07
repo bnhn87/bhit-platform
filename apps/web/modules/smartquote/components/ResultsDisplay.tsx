@@ -1159,7 +1159,6 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ products, result
                     }}
                     onProductValidated={(_lineNumber, _validatedData) => {
                         // This callback can be used for additional validation logic if needed
-                        // console.log(`Product ${lineNumber} validated:`, validatedData);
                     }}
                 />
             )}

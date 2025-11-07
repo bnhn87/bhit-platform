@@ -189,7 +189,9 @@ export const UnknownProductInput: React.FC<UnknownProductInputProps> = ({ produc
                                 onAttached={(productId, canonicalName) => {
                                     // When attached to existing product, we don't get times back
                                     // We need to fetch them from catalogue
-                                    console.log(`Product ${product.productCode} attached to ${canonicalName}`);
+                                    if (process.env.NODE_ENV === 'development') {
+                                        console.log(`[SmartQuote] Product ${product.productCode} attached to ${canonicalName}`);
+                                    }
                                 }}
                                 onSaveNew={(installTimeHours, wasteVolumeM3) => {
                                     handleProductResolved(product.productCode, installTimeHours, wasteVolumeM3);

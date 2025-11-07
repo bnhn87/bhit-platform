@@ -14,8 +14,6 @@ interface ExportControlsProps {
 }
 
 export const ExportControls: React.FC<ExportControlsProps> = ({ onExportPdf, onExportXlsx, onSaveQuote, onCreateJob }) => {
-    // console.log('🎛️ ExportControls rendered with onCreateJob:', !!onCreateJob);
-    
     return (
         <div style={{
             background: theme.colors.panel,
@@ -66,10 +64,7 @@ export const ExportControls: React.FC<ExportControlsProps> = ({ onExportPdf, onE
                 
                 {onCreateJob && (
                     <button
-                        onClick={() => {
-                            // console.log('🚨 CREATE JOB BUTTON CLICKED!');
-                            onCreateJob();
-                        }}
+                        onClick={onCreateJob}
                         style={{
                             width: "100%",
                             display: "flex",

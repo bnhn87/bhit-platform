@@ -31,7 +31,8 @@ export class SmartQuoteErrorBoundary extends Component<Props, State> {
     }
 
     componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-        console.error('SmartQuote Error:', error, errorInfo);
+        // Always log errors in ErrorBoundary - these are critical
+        console.error('[SmartQuote] Critical Error:', error, errorInfo);
 
         this.setState({
             error,
