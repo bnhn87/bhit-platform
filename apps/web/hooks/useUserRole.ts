@@ -31,7 +31,7 @@ export function useUserRole(): UseUserRoleResult {
       const { data, error } = await supabase
         .from("users")
         .select("role")
-        .eq("id", uid)
+        .eq("account_id", uid)
         .maybeSingle();
 
       if (error) {

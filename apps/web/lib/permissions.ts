@@ -12,7 +12,7 @@ export async function getUserPermissions(): Promise<UserPermissions | null> {
   const { data: userData } = await supabase
     .from('users')
     .select('role')
-    .eq('id', user.id)
+    .eq('account_id', user.id)
     .single();
 
   const { data: permissions } = await supabase

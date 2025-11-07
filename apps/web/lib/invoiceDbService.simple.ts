@@ -73,7 +73,7 @@ export async function testConnection(): Promise<{
     const { data: userData, error: userError } = await supabase
       .from('users')
       .select('id, role')
-      .eq('id', authData.user.id)
+      .eq('account_id', authData.user.id)
       .single();
 
     if (userError) {
