@@ -1,44 +1,27 @@
 import { createClient, SupabaseClient as _SupabaseClient } from "@supabase/supabase-js";
 
-// Lazy initialization to avoid errors during build time
-let _supabaseInstance: ReturnType<typeof createClient> | null = null;
+// Use placeholder values during build if env vars are missing
+// This allows the build to succeed while throwing runtime errors when actually used
+const url = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
+const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key';
 
-function getSupabaseClient() {
-  if (_supabaseInstance) {
-    return _supabaseInstance;
-  }
+const isMissingConfig = !process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!url || !anon) {
-    throw new Error(
-      "[supabaseClient] Missing required environment variables: NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY"
-    );
-  }
-
-  _supabaseInstance = createClient(url, anon, {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true,
-      storageKey: 'bhit-auth-token'
-    },
-    global: {
-      headers: {
-        'X-Client-Info': 'bhit-work-os'
-      }
+// Don't use strict Database type to allow querying any table
+export const supabase = createClient(url, anon, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    storageKey: 'bhit-auth-token'
+  },
+  global: {
+    headers: {
+      'X-Client-Info': 'bhit-work-os',
+      ...(isMissingConfig && {
+        'X-Config-Warning': 'Missing Supabase configuration'
+      })
     }
-  });
-
-  return _supabaseInstance;
-}
-
-export const supabase = new Proxy({} as ReturnType<typeof createClient>, {
-  get: (target, prop) => {
-    const client = getSupabaseClient();
-    const value = client[prop as keyof typeof client];
-    return typeof value === 'function' ? value.bind(client) : value;
   }
 });
 

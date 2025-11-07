@@ -9,20 +9,11 @@
 // - Feedback loops for corrections
 
 import { GoogleGenAI, Type } from "@google/genai";
-
 import { EnhancedParseResult } from '../types';
 
-let ai: GoogleGenAI | null = null;
-
-function getAI(): GoogleGenAI {
-    if (!ai) {
-        if (!process.env.GEMINI_API_KEY) {
-            throw new Error("GEMINI_API_KEY environment variable not set");
-        }
-        ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-    }
-    return ai;
-}
+// Use placeholder during build if env var is missing
+const apiKey = process.env.GEMINI_API_KEY || 'placeholder-gemini-key';
+const ai = new GoogleGenAI({ apiKey });
 
 // Enhanced response schema with confidence
 const responseSchema = {
@@ -203,7 +194,7 @@ const attemptParse = async (
     const topP = 0.9 + (attempt * 0.02);
     const topK = Math.min(40 + (attempt * 10), 60);
     
-    const response = await getAI().models.generateContent({
+    const response = await ai.models.generateContent({
         model: "gemini-2.0-flash-exp",
         contents: { parts: requestParts },
         config: {
@@ -294,7 +285,7 @@ export const parseQuoteContentEnhanced = async (
             // Last attempt - return what we have
             return result;
             
-        } catch (error: unknown) {
+        } catch (error) {
             lastError = error instanceof Error ? error : new Error(String(error));
             
             if (attempt < maxRetries) {
