@@ -17,7 +17,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 // GET: Fetch banner settings (singleton)
 async function handleGet(req: NextApiRequest, res: NextApiResponse) {
   try {
+    // Use schema() to bypass cache issues
     const { data: settings, error } = await supabaseAdmin
+      .schema('public')
       .from('task_banner_settings')
       .select('*')
       .limit(1)
@@ -108,6 +110,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 
     // Get the singleton settings ID first
     const { data: currentSettings, error: selectError } = await supabaseAdmin
+      .schema('public')
       .from('task_banner_settings')
       .select('id')
       .limit(1)
@@ -124,6 +127,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
       console.log('[Task Banner Settings] No settings found, creating default record...');
 
       const { data: newSettings, error: insertError } = await supabaseAdmin
+        .schema('public')
         .from('task_banner_settings')
         .insert({
           show_background: true,
@@ -149,6 +153,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 
       // Now update the newly created settings
       const { data: updatedSettings, error: updateError } = await supabaseAdmin
+        .schema('public')
         .from('task_banner_settings')
         .update(updates)
         .eq('id', newSettings.id)
@@ -165,6 +170,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 
     // Update existing settings
     const { data: updatedSettings, error } = await supabaseAdmin
+      .schema('public')
       .from('task_banner_settings')
       .update(updates)
       .eq('id', currentSettings.id)
