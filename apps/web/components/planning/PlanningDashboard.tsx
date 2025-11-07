@@ -38,7 +38,7 @@ export default function PlanningDashboard({
     try {
       const projectData = await planningService.getProjects();
       setProjects(projectData);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Failed to load projects:', error);
     } finally {
       setLoading(false);
@@ -58,7 +58,7 @@ export default function PlanningDashboard({
       if (onCreateProject) {
         onCreateProject(newProject);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Failed to create project:', error);
     }
   };

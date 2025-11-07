@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { safeParseUrlEncodedJson } from '../../../lib/safeParsing';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -25,13 +26,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Parse the token JSON
-    let token;
-    try {
-      const tokenData = JSON.parse(decodeURIComponent(tokenMatch[1]));
-      token = tokenData.access_token || tokenData[0];
-    } catch (e) {
+    const tokenData = safeParseUrlEncodedJson<{ access_token?: string } | [string]>(tokenMatch[1]);
+    if (!tokenData) {
       return res.status(401).json({ error: 'Could not parse auth token' });
     }
+
+    const token = (tokenData as { access_token?: string }).access_token || (tokenData as [string])[0];
 
     if (!token) {
       return res.status(401).json({ error: 'No access token found' });

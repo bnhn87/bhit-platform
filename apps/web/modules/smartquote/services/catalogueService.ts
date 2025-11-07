@@ -96,7 +96,7 @@ export class CatalogueService {
 
             this.lastCacheRefresh = now;
             console.log(`Catalogue cache refreshed with ${this.cache.size} entries`);
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Error refreshing catalogue cache:', error);
         }
     }
@@ -288,7 +288,7 @@ export class CatalogueService {
                 matchedBy: 'fuzzy',
                 confidence: 0.8
             };
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Database search error:', error);
             return null;
         }
@@ -361,7 +361,7 @@ export class CatalogueService {
             // Refresh cache after update
             await this.refreshCache();
             return true;
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Error saving product:', error);
             return false;
         }
@@ -407,7 +407,7 @@ export class CatalogueService {
             // Refresh cache
             await this.refreshCache();
             return true;
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Error attaching alias:', error);
             return false;
         }

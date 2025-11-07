@@ -18,4 +18,6 @@ bhit-dumps/
 # Misc
 .DS_Store
 *.log
-.DS_Store
+
+# TypeScript build cache
+*.tsbuildinfo

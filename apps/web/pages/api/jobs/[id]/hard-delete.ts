@@ -104,10 +104,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       job_id: id
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Hard delete API error:', error);
     return res.status(500).json({
-      error: error?.message || 'Internal server error'
+      error: error instanceof Error ? error.message : 'Internal server error'
     });
   }
 }

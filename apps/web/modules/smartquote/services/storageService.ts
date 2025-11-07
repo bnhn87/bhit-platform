@@ -69,7 +69,7 @@ const attemptSave = async (quoteToSave: SavedQuote, attempt: number): Promise<Sa
             conflictResolved: hasConflict
         };
 
-    } catch (error) {
+    } catch (error: unknown) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 
         // Check if it's a quota exceeded error
@@ -99,7 +99,7 @@ export const saveQuoteWithRetry = async (quoteToSave: SavedQuote, maxRetries: nu
             const result = await attemptSave(quoteToSave, attempt);
             return result;
 
-        } catch (error) {
+        } catch (error: unknown) {
             lastError = error instanceof Error ? error : new Error(String(error));
 
             if (attempt < maxRetries) {
@@ -238,7 +238,7 @@ export const saveQuoteVersion = async (
         // Save to localStorage using retry logic
         return await saveQuoteWithRetry(updatedQuote);
 
-    } catch (error) {
+    } catch (error: unknown) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to save quote version';
         return {
             success: false,
@@ -287,7 +287,7 @@ export const getQuoteVersion = (quoteId: string, version: number): SavedQuote | 
             auditTrail: quote.auditTrail?.filter(e => (e.version || 0) <= version)
         };
 
-    } catch (error) {
+    } catch (error: unknown) {
         console.error('Failed to get quote version:', error);
         return null;
     }
@@ -324,7 +324,7 @@ export const logQuoteAction = async (
 
         return await saveQuoteWithRetry(updatedQuote);
 
-    } catch (error) {
+    } catch (error: unknown) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to log quote action';
         return {
             success: false,

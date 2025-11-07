@@ -94,7 +94,7 @@ export async function logActivity(params: LogActivityParams): Promise<boolean> {
     }
 
     return true;
-  } catch (error) {
+  } catch (error: unknown) {
     // Silent fail for activity logging - it's not critical
     if (process.env.NODE_ENV === 'development') {
       console.warn('Activity logger exception (non-critical):', error);

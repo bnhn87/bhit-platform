@@ -70,7 +70,7 @@ export default function NewJobPage() {
 
     if (error) {
       console.error("Insert jobs error:", error);
-      setMsg(error.message || "Insert failed.");
+      setMsg(error instanceof Error ? error.message : "Insert failed.");
       return;
     }
     const id = data?.id as string | undefined;

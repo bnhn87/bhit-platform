@@ -182,7 +182,7 @@ export default function LabourScheduler() {
         setAllocations(allocationsMap);
       }
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error loading job data:', error);
     } finally {
       setLoading(false);
@@ -324,7 +324,7 @@ export default function LabourScheduler() {
       }
 
       alert('Schedule saved successfully!');
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error saving schedule:', error);
       alert('Failed to save schedule');
     }

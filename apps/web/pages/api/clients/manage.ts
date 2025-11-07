@@ -1,13 +1,21 @@
-import { createClient } from '@supabase/supabase-js';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { createClient } from '@supabase/supabase-js';
+import { requireAuth } from '../../../lib/apiAuth';
+import { validateRequestBody, ClientSchema } from '../../../lib/apiValidation';
 
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_KEY!
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { method } = req;
+
+    // Require authentication for all methods
+    const user = await requireAuth(req, res);
+    if (!user) {
+        return; // requireAuth already sent 401 response
+    }
 
     try {
         switch (method) {
@@ -54,11 +62,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
 
             case 'POST': {
-                const { name, company_name, email, phone } = req.body;
-
-                if (!name) {
-                    return res.status(400).json({ error: 'Name is required' });
+                // Validate request body
+                const validatedData = validateRequestBody(ClientSchema, req, res);
+                if (!validatedData) {
+                    return; // validateRequestBody already sent 400 response
                 }
+
+                const { name, company_name, email, phone } = validatedData;
 
                 // Check if client exists
                 if (email) {
@@ -80,13 +90,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         name,
                         company_name: company_name || name,
                         email,
-                        phone
+                        phone,
+                        created_by: user.id,
                     })
                     .select()
                     .single();
 
                 if (error) {
-                    return res.status(500).json({ error: error.message });
+                    console.error('[clients/manage] Create error:', error);
+                    return res.status(500).json({ error: 'Failed to create client', details: error.message });
                 }
 
                 return res.status(201).json(newClient);
@@ -94,21 +106,31 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             case 'PUT': {
                 const { id } = req.query;
-                const updates = req.body;
 
-                if (!id) {
-                    return res.status(400).json({ error: 'Client ID is required' });
+                if (!id || typeof id !== 'string') {
+                    return res.status(400).json({ error: 'Valid client ID is required' });
+                }
+
+                // Validate request body (partial updates allowed)
+                const validatedData = validateRequestBody(ClientSchema.partial(), req, res);
+                if (!validatedData) {
+                    return; // validateRequestBody already sent 400 response
                 }
 
                 const { data: updatedClient, error } = await supabase
                     .from('clients')
-                    .update(updates)
+                    .update({
+                        ...validatedData,
+                        updated_by: user.id,
+                        updated_at: new Date().toISOString(),
+                    })
                     .eq('id', id)
                     .select()
                     .single();
 
                 if (error) {
-                    return res.status(500).json({ error: error.message });
+                    console.error('[clients/manage] Update error:', error);
+                    return res.status(500).json({ error: 'Failed to update client', details: error.message });
                 }
 
                 return res.status(200).json(updatedClient);

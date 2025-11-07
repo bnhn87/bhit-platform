@@ -77,7 +77,7 @@ export default async function handler(
 
     // Use Supabase Auth Admin API to update user status
     // Note: Supabase uses "banned" status, not "active"
-    const { data: updatedUser, error: updateError } = await adminClient.auth.admin.updateUserById(
+    const { error: updateError } = await adminClient.auth.admin.updateUserById(
       user_id,
       {
         ban_duration: is_active ? 'none' : '876000h' // ~100 years if inactive
@@ -96,10 +96,10 @@ export default async function handler(
       message: `User ${is_active ? 'activated' : 'deactivated'} successfully`
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Toggle user status error:', error);
     return res.status(500).json({
-      error: error?.message || 'Internal server error'
+      error: error instanceof Error ? error.message : 'Internal server error'
     });
   }
 }

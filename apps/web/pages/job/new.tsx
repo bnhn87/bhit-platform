@@ -104,7 +104,7 @@ export default function NewJobPage() {
 
     if (error) {
       // console.error("Insert jobs error:", error);
-      setMsg(error.message || "Insert failed due to security policy or missing fields.");
+      setMsg(error instanceof Error ? error.message : "Insert failed due to security policy or missing fields.");
       return;
     }
 

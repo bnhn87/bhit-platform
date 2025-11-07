@@ -53,7 +53,9 @@ export const ProductAliasAttacher: React.FC<ProductAliasAttacherProps> = ({
 
             // If no products from DB, use config as fallback
             if (!products || products.length === 0) {
-                console.log('No products from DB, using config catalogue');
+                if (process.env.NODE_ENV === 'development') {
+                    console.log('[SmartQuote] No products from DB, using config catalogue');
+                }
                 const config = await getDefaultConfig();
 
                 // Convert config products to the expected format
@@ -68,7 +70,7 @@ export const ProductAliasAttacher: React.FC<ProductAliasAttacherProps> = ({
             }
 
             setCatalogueProducts(products as CatalogueProduct[]);
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Failed to load catalogue:', error);
 
             // Last resort fallback - use config directly
@@ -144,7 +146,7 @@ export const ProductAliasAttacher: React.FC<ProductAliasAttacherProps> = ({
                     setMessage('Failed to attach alias - database may not be configured');
                 }
             }
-        } catch (error) {
+        } catch (error: unknown) {
             setMessage('Using config catalogue - select a product to use its times');
             console.error('Attach error:', error);
         } finally {
@@ -182,7 +184,7 @@ export const ProductAliasAttacher: React.FC<ProductAliasAttacherProps> = ({
             } else {
                 setMessage('Failed to save product');
             }
-        } catch (error) {
+        } catch (error: unknown) {
             setMessage('Error saving product');
             console.error(error);
         } finally {

@@ -27,7 +27,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         data: data || []
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error fetching metrics:', error);
       return res.status(500).json({
         error: 'Failed to fetch metrics',
@@ -83,7 +83,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         data
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error creating metric:', error);
       return res.status(500).json({
         error: 'Failed to create metric',

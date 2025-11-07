@@ -18,7 +18,7 @@ class AnalyticsService {
                     quote_id: quoteId,
                     ...metrics
                 });
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Failed to record analytics:', error);
         }
     }
@@ -34,7 +34,7 @@ class AnalyticsService {
             const avg = data.reduce((sum, item) => 
                 sum + (item.avg_confidence_score || 0), 0) / data.length;
             return Math.round(avg * 100);
-        } catch (error) {
+        } catch (error: unknown) {
             return 0;
         }
     }

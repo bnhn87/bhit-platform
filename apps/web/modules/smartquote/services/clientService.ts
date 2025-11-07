@@ -61,7 +61,7 @@ class ClientService {
             }
 
             return data;
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Error in searchClient:', error);
             return null;
         }
@@ -99,7 +99,7 @@ class ClientService {
             }
 
             return data;
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Error in getOrCreateClient:', error);
             return null;
         }
@@ -124,7 +124,7 @@ class ClientService {
             }
 
             return data || [];
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Error in getClientAddresses:', error);
             return [];
         }
@@ -153,7 +153,7 @@ class ClientService {
             }
 
             return data;
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Error in addClientAddress:', error);
             return null;
         }
@@ -320,7 +320,7 @@ class ClientService {
             });
             if (siteCongestion) congestionCharges += 15.00;
 
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Error calculating logistics:', error);
         }
 
@@ -354,7 +354,7 @@ class ClientService {
             }
 
             return data || [];
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Error in getRecentAddresses:', error);
             return [];
         }
@@ -385,7 +385,7 @@ class ClientService {
             }
 
             return true;
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Error in linkQuoteToClient:', error);
             return false;
         }

@@ -291,7 +291,7 @@ const CrewCard: React.FC<{ results: CalculationResults; details: QuoteDetails; o
 };
 
 export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ products, results, quoteDetails, config, onDetailsChange, onProductsChange, onSaveLearnedProduct }) => {
-    const { labour, waste, pricing } = results;
+    const { labour, crew, waste, pricing } = results;
     const [editingTimes, setEditingTimes] = useState<Record<number, string>>({});
 
     // Feature flags
@@ -1159,7 +1159,6 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ products, result
                     }}
                     onProductValidated={(_lineNumber, _validatedData) => {
                         // This callback can be used for additional validation logic if needed
-                        // console.log(`Product ${lineNumber} validated:`, validatedData);
                     }}
                 />
             )}

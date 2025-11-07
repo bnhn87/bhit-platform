@@ -38,7 +38,7 @@ export default function App() {
         // If no projects, start with a sample one
         setProjects([getSampleProject()]);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Failed to load projects from storage, creating a sample project.", error);
       setProjects([getSampleProject()]);
     }
@@ -51,7 +51,7 @@ export default function App() {
     
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Failed to save projects to storage", error);
     }
   }, [projects, isLoaded, isBrowser]);

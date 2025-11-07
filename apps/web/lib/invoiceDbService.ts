@@ -111,7 +111,7 @@ export async function fetchInvoices(filters?: {
     }
 
     return data || [];
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('fetchInvoices error:', error);
     throw error;
   }
@@ -194,7 +194,7 @@ export async function createInvoiceFromExtraction(
     }
 
     return data;
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('createInvoiceFromExtraction error:', error);
     throw error;
   }
@@ -224,7 +224,7 @@ export async function updateInvoice(
     }
 
     return data;
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('updateInvoice error:', error);
     throw error;
   }
@@ -244,7 +244,7 @@ export async function deleteInvoice(invoiceId: string): Promise<void> {
       console.error('Error deleting invoice:', error);
       throw error;
     }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('deleteInvoice error:', error);
     throw error;
   }
@@ -277,7 +277,7 @@ export async function approveInvoice(invoiceId: string): Promise<Invoice> {
     }
 
     return data;
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('approveInvoice error:', error);
     throw error;
   }
@@ -307,7 +307,7 @@ export async function markInvoicePaid(
     }
 
     return data;
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('markInvoicePaid error:', error);
     throw error;
   }
@@ -344,7 +344,7 @@ export async function recordCorrection(
       console.error('Error recording correction:', error);
       throw error;
     }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('recordCorrection error:', error);
     throw error;
   }
@@ -366,7 +366,7 @@ export async function fetchSuppliers(): Promise<Supplier[]> {
     }
 
     return data || [];
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('fetchSuppliers error:', error);
     throw error;
   }
@@ -392,7 +392,7 @@ export async function upsertSupplier(supplier: Partial<Supplier>): Promise<Suppl
     }
 
     return data;
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('upsertSupplier error:', error);
     throw error;
   }
@@ -448,7 +448,7 @@ export async function getInvoiceStats(): Promise<{
     });
 
     return stats;
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('getInvoiceStats error:', error);
     throw error;
   }
@@ -481,7 +481,7 @@ export async function uploadInvoiceFile(
     }
 
     return data.path;
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('uploadInvoiceFile error:', error);
     throw error;
   }
@@ -502,7 +502,7 @@ export async function getInvoiceFileUrl(filePath: string): Promise<string> {
     }
 
     return data.signedUrl;
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('getInvoiceFileUrl error:', error);
     throw error;
   }

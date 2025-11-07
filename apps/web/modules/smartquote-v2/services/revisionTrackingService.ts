@@ -72,7 +72,7 @@ class RevisionTrackingService implements IRevisionTrackingService {
             );
 
             return revision;
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Error creating revision:', error);
             throw error;
         }
@@ -95,7 +95,7 @@ class RevisionTrackingService implements IRevisionTrackingService {
                     action,
                     details
                 });
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Error logging action:', error);
             // Don't throw - logging failure shouldn't break the main operation
         }
@@ -112,7 +112,7 @@ class RevisionTrackingService implements IRevisionTrackingService {
 
             if (error) throw error;
             return data || [];
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Error fetching revisions:', error);
             return [];
         }
@@ -129,7 +129,7 @@ class RevisionTrackingService implements IRevisionTrackingService {
 
             if (error) throw error;
             return data || [];
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Error fetching audit log:', error);
             return [];
         }
@@ -185,7 +185,7 @@ class RevisionTrackingService implements IRevisionTrackingService {
             };
 
             return diff;
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Error comparing revisions:', error);
             throw error;
         }

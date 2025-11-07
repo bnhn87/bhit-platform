@@ -72,7 +72,7 @@ class ImageExtractionService implements IImageExtractionService {
             
             return extractedImages;
             
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Error extracting images from PDF:', error);
             throw error;
         }
@@ -153,7 +153,7 @@ class ImageExtractionService implements IImageExtractionService {
                 images.push(imageRecord);
             }
             
-        } catch (error) {
+        } catch (error: unknown) {
             console.error(`Error extracting images from page ${pageNum}:`, error);
         }
         
@@ -208,7 +208,7 @@ class ImageExtractionService implements IImageExtractionService {
             
             return imageRecord;
             
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Error uploading image:', error);
             throw error;
         }
@@ -226,7 +226,7 @@ class ImageExtractionService implements IImageExtractionService {
             if (error) throw error;
             return data || [];
             
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Error fetching quote images:', error);
             return [];
         }
@@ -255,7 +255,7 @@ class ImageExtractionService implements IImageExtractionService {
                 .delete()
                 .eq('id', imageId);
                 
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Error deleting image:', error);
             throw error;
         }

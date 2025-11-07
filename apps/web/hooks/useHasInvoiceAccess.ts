@@ -14,7 +14,7 @@ export function useHasInvoiceAccess() {
     try {
       const permissions = await getUserPermissions();
       setHasAccess(canAccessInvoicing(permissions));
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error checking invoice access:', error);
       setHasAccess(false);
     } finally {

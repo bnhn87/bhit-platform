@@ -17,6 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 // GET: Fetch banner settings (singleton)
 async function handleGet(req: NextApiRequest, res: NextApiResponse) {
   try {
+    // @ts-expect-error - table exists in DB but not yet in generated types
     const { data: settings, error } = await supabaseAdmin
       .from('task_banner_settings')
       .select('*')
@@ -107,6 +108,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     if (updateData.empty_message !== undefined) updates.empty_message = updateData.empty_message;
 
     // Get the singleton settings ID first
+    // @ts-expect-error - table exists in DB but not yet in generated types
     const { data: currentSettings, error: selectError } = await supabaseAdmin
       .from('task_banner_settings')
       .select('id')
@@ -123,6 +125,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     if (!currentSettings || selectError?.code === 'PGRST116') {
       console.log('[Task Banner Settings] No settings found, creating default record...');
 
+      // @ts-expect-error - table exists in DB but not yet in generated types
       const { data: newSettings, error: insertError } = await supabaseAdmin
         .from('task_banner_settings')
         .insert({
@@ -148,6 +151,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
       console.log('[Task Banner Settings] Created default settings, now updating...');
 
       // Now update the newly created settings
+      // @ts-expect-error - table exists in DB but not yet in generated types
       const { data: updatedSettings, error: updateError } = await supabaseAdmin
         .from('task_banner_settings')
         .update(updates)
@@ -164,6 +168,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     }
 
     // Update existing settings
+    // @ts-expect-error - table exists in DB but not yet in generated types
     const { data: updatedSettings, error } = await supabaseAdmin
       .from('task_banner_settings')
       .update(updates)

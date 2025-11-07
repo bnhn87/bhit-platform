@@ -29,7 +29,7 @@ export default function TestAuth() {
 
         const data = await response.json();
         setResult(data);
-      } catch (error: any) {
+      } catch (error: unknown) {
         setResult({ error: error.message });
       } finally {
         setLoading(false);

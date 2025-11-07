@@ -24,7 +24,7 @@ export async function logJobEdit(
         old_value: oldValue,
         new_value: newValue
       });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Failed to log job edit:", error);
     // We don't throw the error as we don't want to break the UI if logging fails
   }

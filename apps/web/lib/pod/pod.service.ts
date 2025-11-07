@@ -4,7 +4,6 @@ import { supabase } from '../supabaseClient';
 import type {
   DeliveryPOD,
   PODVersion,
-  CreatePODRequest,
   UpdatePODRequest,
   PODStatistics,
   PODNeedingReview,

@@ -53,7 +53,7 @@ export const loadProductCatalogueFromDatabase = async (): Promise<Record<string,
 
     return catalogue;
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Failed to load product catalogue from database:', error);
     return getDefaultProductCatalogue();
   }
@@ -88,7 +88,7 @@ export const saveProductToDatabase = async (productCode: string, reference: Prod
 
     return true;
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Failed to save product to database:', error);
     return false;
   }
@@ -106,7 +106,7 @@ export const trackProductUsage = async (productCode: string): Promise<void> => {
     if (error) {
       console.error('Error tracking product usage:', error);
     }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Failed to track product usage:', error);
   }
 };
@@ -131,7 +131,7 @@ export const searchProducts = async (searchTerm: string): Promise<DatabaseProduc
 
     return products || [];
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Failed to search products:', error);
     return [];
   }
@@ -186,7 +186,7 @@ export const getProductByCode = async (productCode: string): Promise<ProductRefe
 
     return null;
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Failed to get product by code:', error);
     return null;
   }
@@ -222,7 +222,7 @@ const seedDefaultProducts = async (): Promise<void> => {
     if (error) {
       console.error('Error seeding default products:', error);
     }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Failed to seed default products:', error);
   }
 };
@@ -283,7 +283,7 @@ export const hybridProductService = {
       if (stored) {
         return JSON.parse(stored);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Failed to load from localStorage:', error);
     }
 
@@ -300,7 +300,7 @@ export const hybridProductService = {
         const current = await this.loadProductCatalogue();
         current[productCode] = reference;
         localStorage.setItem('bhit_product_catalogue', JSON.stringify(current));
-      } catch (error) {
+      } catch (error: unknown) {
         console.error('Failed to save to localStorage fallback:', error);
       }
     }
@@ -318,7 +318,7 @@ export const hybridProductService = {
     try {
       const catalogue = await this.loadProductCatalogue();
       return catalogue[productCode] || null;
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Failed to get product from fallback:', error);
       return null;
     }

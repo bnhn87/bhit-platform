@@ -49,7 +49,7 @@ export default async function handler(
       hasAccess: ['admin', 'director'].includes(profile?.role?.toLowerCase())
     });
 
-  } catch (error: any) {
-    return res.status(500).json({ error: error.message });
+  } catch (error: unknown) {
+    return res.status(500).json({ error: error instanceof Error ? error.message : 'Unknown error' });
   }
 }

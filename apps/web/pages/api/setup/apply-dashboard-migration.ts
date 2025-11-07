@@ -103,7 +103,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       totalStatements: statements.length
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Migration error:', error);
     return res.status(500).json({
       error: 'Failed to apply migration',

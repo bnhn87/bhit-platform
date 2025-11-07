@@ -3,8 +3,10 @@ const path = require("path");
 const webpack = require("webpack");
 
 module.exports = {
-  reactStrictMode: false,
+  reactStrictMode: true,
   eslint: {
+    // TODO: Re-enable after fixing ESLint errors
+    // Currently disabled to prevent build failures
     ignoreDuringBuilds: true,
   },
   outputFileTracingRoot: path.join(__dirname),
@@ -14,13 +16,10 @@ module.exports = {
     config.resolve.alias["@/hooks"] = path.resolve(__dirname, "hooks");
     config.resolve.alias["@/components"] = path.resolve(__dirname, "components");
     config.resolve.alias["@/modules"] = path.resolve(__dirname, "modules");
-    
-    config.plugins.push(
-      new webpack.DefinePlugin({
-        "process.env.GEMINI_API_KEY": JSON.stringify(process.env.GEMINI_API_KEY || "")
-      })
-    );
-    
+
+    // SECURITY: API keys should NEVER be exposed to client-side code
+    // All API calls using GEMINI_API_KEY must be made from server-side API routes only
+
     return config;
   },
 };

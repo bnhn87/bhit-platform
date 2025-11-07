@@ -87,7 +87,7 @@ export const QuoteDetailsForm: React.FC<QuoteDetailsFormProps> = ({ details, onD
         }
     };
 
-    const ErrorMessage: React.FC<{ message: string | null }> = ({ message }) => {
+    const ErrorMessage: React.FC<{ message: string | null | undefined }> = ({ message }) => {
         if (!message) return null;
         return (
             <div style={{

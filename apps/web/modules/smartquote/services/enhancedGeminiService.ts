@@ -1,7 +1,6 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
 import { ParseResult, ParseContent, ParsedProduct } from '../types';
-
 import { loadConfig } from './configService';
 
 let ai: GoogleGenAI | null = null;
@@ -588,7 +587,7 @@ export const parseQuoteContent = async (content: ParseContent): Promise<ParseRes
 
             return result;
 
-        } catch (error) {
+        } catch (error: unknown) {
             lastError = error instanceof Error ? error : new Error(String(error));
 
             if (attempt < MAX_RETRIES) {

@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { requireAuth } from '../../lib/apiAuth';
 
 // Create a Supabase client with service role key
 const supabaseAdmin = createClient(
@@ -10,6 +11,12 @@ const supabaseAdmin = createClient(
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
+  }
+
+  // Require authentication for debug endpoints
+  const user = await requireAuth(req, res);
+  if (!user) {
+    return; // requireAuth already sent 401 response
   }
 
   try {
@@ -103,7 +110,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Debug documents error:', error);
     return res.status(500).json({
       error: 'Failed to debug documents',

@@ -24,7 +24,7 @@ export default function FloorPlanTab({ jobId, canManage: _canManage }: { jobId: 
         }
         
         setHasFloorPlan(!!data);
-      } catch (error) {
+      } catch (error: unknown) {
         console.error('Error checking floor plan:', error);
       } finally {
         setLoading(false);

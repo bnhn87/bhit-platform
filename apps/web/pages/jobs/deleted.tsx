@@ -93,9 +93,9 @@ export default function DeletedJobs() {
 
       alert('✓ Job permanently deleted');
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Hard delete error:', error);
-      alert(`Failed to delete job: ${error.message}`);
+      alert(`Failed to delete job: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setDeleting(null);
     }
@@ -115,9 +115,9 @@ export default function DeletedJobs() {
 
       alert('✓ Job restored successfully');
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Restore error:', error);
-      alert(`Failed to restore job: ${error.message}`);
+      alert(`Failed to restore job: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -180,7 +180,7 @@ export default function DeletedJobs() {
             failCount++;
             console.error(`Failed to delete job ${jobId}:`, result.error);
           }
-        } catch (error) {
+        } catch (error: unknown) {
           failCount++;
           console.error(`Error deleting job ${jobId}:`, error);
         }
@@ -196,9 +196,9 @@ export default function DeletedJobs() {
         alert(`⚠️ ${successCount} job(s) deleted, ${failCount} failed`);
       }
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Bulk delete error:', error);
-      alert(`Failed to delete jobs: ${error.message}`);
+      alert(`Failed to delete jobs: ${error instanceof Error ? error.message : "Unknown error"}`);
     } finally {
       setBulkDeleting(false);
     }

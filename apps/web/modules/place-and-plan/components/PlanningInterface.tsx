@@ -1,8 +1,14 @@
 
 'use client';
 
-import { Upload, Sparkles, ArrowLeft, AlertTriangle, CheckCircle, Ruler, X, BoxSelect as _BoxSelect, Trash2, Slice as _Slice, ArrowDownUp, ArrowLeftRight, Layers, ShieldAlert, RefreshCcw, ClipboardList, Scan, Layers2, UnfoldVertical as _UnfoldVertical, Undo2, Redo2, Check, Ratio, Save, Download } from 'lucide-react';
+
 import React, { useEffect, useState } from 'react';
+import {
+  Check, ArrowLeft, Save, Download, RefreshCw, Loader2, Upload,
+  ClipboardList, Sparkles, AlertTriangle, ArrowDownUp, ArrowLeftRight,
+  CheckCircle, Layers, Layers2, Ratio, RefreshCcw, Ruler, Scan, ShieldAlert, X,
+  Undo2, Redo2, Trash2
+} from 'lucide-react';
 
 import { useAiPlanner } from '../hooks/useAiPlanner';
 import { Project, RichFurniture, ViewTransform, BaseFurniture as _BaseFurniture } from '../types';

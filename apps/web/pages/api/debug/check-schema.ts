@@ -68,9 +68,9 @@ export default async function handler(
       has_account_id_column: allProfiles?.[0] ? 'account_id' in allProfiles[0] : null
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     return res.status(500).json({
-      error: error?.message || 'Unknown error'
+      error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 }

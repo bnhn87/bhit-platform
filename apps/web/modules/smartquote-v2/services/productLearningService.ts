@@ -40,7 +40,7 @@ class ProductLearningService implements IProductLearningService {
             // Update co-occurrence data
             await this.updateCoOccurrence(productCode, selectedWith);
             
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Failed to record product selection:', error);
         }
     }
@@ -58,7 +58,7 @@ class ProductLearningService implements IProductLearningService {
                 .rpc('smartquote_v2_update_product_cooccurrence', {
                     product_codes: [productCode, ...selectedWith]
                 });
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Failed to update co-occurrence:', error);
         }
     }
@@ -81,7 +81,7 @@ class ProductLearningService implements IProductLearningService {
                 reason: 'frequently_paired' as const
             }));
             
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Failed to get suggestions:', error);
             return [];
         }
@@ -111,7 +111,7 @@ class ProductLearningService implements IProductLearningService {
             // Trigger recalculation of learned times
             await this.recalculateLearnedTimes(productCode);
             
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Failed to record time adjustment:', error);
         }
     }
@@ -156,7 +156,7 @@ class ProductLearningService implements IProductLearningService {
                     last_updated: new Date().toISOString()
                 });
             
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Failed to recalculate learned times:', error);
         }
     }
@@ -182,7 +182,7 @@ class ProductLearningService implements IProductLearningService {
                 lastUpdated: data.last_updated
             };
             
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Failed to get learned time:', error);
             return null;
         }
@@ -209,7 +209,7 @@ class ProductLearningService implements IProductLearningService {
                 lastUpdated: item.last_updated
             }));
             
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Failed to get high confidence times:', error);
             return [];
         }

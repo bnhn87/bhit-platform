@@ -103,7 +103,7 @@ export default async function handler(
     }
 
     // Update user metadata with permissions (preserves existing metadata)
-    const { data: updatedUser, error: updateError } = await adminClient.auth.admin.updateUserById(user_id, {
+    const { error: updateError } = await adminClient.auth.admin.updateUserById(user_id, {
       user_metadata: {
         ...currentUserData.user.user_metadata,
         permissions: permissionsData
@@ -118,7 +118,7 @@ export default async function handler(
     }
 
     // Log activity
-    await logPermissionsUpdated(user_id, currentUserData.user.email, user.id);
+    await logPermissionsUpdated(user_id, currentUserData.user.email ?? 'unknown', user.id);
 
     return res.status(200).json({
       success: true,
@@ -126,10 +126,10 @@ export default async function handler(
       message: 'Permissions updated successfully'
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Update permissions error:', error);
     return res.status(500).json({
-      error: error?.message || 'Internal server error'
+      error: error instanceof Error ? error.message : 'Internal server error'
     });
   }
 }

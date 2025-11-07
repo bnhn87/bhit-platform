@@ -20,6 +20,18 @@ export interface ExtractedInvoiceData {
   confidence: number;
   extractedText: string;
   rawData: Record<string, any>;
+  // Per-field confidence scores (0-100)
+  fieldConfidence?: {
+    date?: number;
+    invoiceNumber?: number;
+    supplier?: number;
+    description?: number;
+    category?: number;
+    netAmount?: number;
+    vatAmount?: number;
+    grossAmount?: number;
+    [key: string]: number | undefined;
+  };
 }
 
 export interface ProcessingResult {
@@ -109,7 +121,22 @@ const responseSchema = {
     },
     confidence: {
       type: Type.NUMBER,
-      description: "Confidence score from 0-100"
+      description: "Overall confidence score from 0-100"
+    },
+    fieldConfidence: {
+      type: Type.OBJECT,
+      description: "Per-field confidence scores (0-100)",
+      properties: {
+        date: { type: Type.NUMBER, nullable: true },
+        invoiceNumber: { type: Type.NUMBER, nullable: true },
+        supplier: { type: Type.NUMBER, nullable: true },
+        description: { type: Type.NUMBER, nullable: true },
+        category: { type: Type.NUMBER, nullable: true },
+        netAmount: { type: Type.NUMBER, nullable: true },
+        vatAmount: { type: Type.NUMBER, nullable: true },
+        grossAmount: { type: Type.NUMBER, nullable: true }
+      },
+      nullable: true
     }
   },
   required: ["confidence"]
@@ -132,7 +159,8 @@ Extract invoice data from subcontractor invoices with high accuracy.
 - grossAmount: Total/gross amount (numeric only)
 - paymentTerms: Payment terms (e.g., "30 days")
 - dueDate: Payment due date if specified (YYYY-MM-DD format)
-- confidence: Your confidence in the extraction (0-100)
+- confidence: Your overall confidence in the extraction (0-100)
+- fieldConfidence: Individual confidence scores per field (0-100)
 
 **UK-Specific Rules:**
 - Currency is GBP (£)
@@ -147,8 +175,14 @@ Extract invoice data from subcontractor invoices with high accuracy.
 - Materials: Supplies, equipment, parts, materials
 - Other: Everything else
 
+**Confidence Scoring:**
+- 90-100: Clearly visible and unambiguous
+- 70-89: Visible but could be interpreted differently
+- 50-69: Partially visible or unclear formatting
+- 0-49: Not found, inferred, or very uncertain
+
 **If a field is not found or unclear, set it to null.**
-**Return your confidence score based on clarity and completeness of data.**`;
+**Return your overall confidence score AND individual field confidence scores.**`;
 
 /**
  * Process invoice file with AI using Gemini
@@ -171,7 +205,7 @@ export async function processInvoiceWithAI(
       data: validateAndEnrichData(extractedData),
       processingTime: Date.now() - startTime,
     };
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Invoice processing error:', error);
     return {
       success: false,
@@ -209,7 +243,7 @@ async function extractWithGemini(
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       lastError = error instanceof Error ? error : new Error(String(error));
 
       if (attempt < MAX_RETRIES) {
@@ -281,6 +315,7 @@ async function attemptExtraction(
     confidence: parsedData.confidence || 0,
     extractedText: jsonText,
     rawData: parsedData,
+    fieldConfidence: parsedData.fieldConfidence || {},
   };
 
   return extractedData;
@@ -337,30 +372,6 @@ function categorizeFromDescription(description: string): 'Vehicle' | 'Labour' | 
   return 'Other';
 }
 
-/**
- * Parse date string to YYYY-MM-DD format
- */
-function parseDate(dateStr: string | null | undefined): string | null {
-  if (!dateStr) return null;
-
-  try {
-    const date = new Date(dateStr);
-    if (!isNaN(date.getTime())) {
-      return date.toISOString().split('T')[0];
-    }
-
-    // Try UK format DD/MM/YYYY
-    const ukMatch = dateStr.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
-    if (ukMatch) {
-      const [_, day, month, year] = ukMatch;
-      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-    }
-
-    return null;
-  } catch {
-    return null;
-  }
-}
 
 /**
  * Normalize UK vehicle registration

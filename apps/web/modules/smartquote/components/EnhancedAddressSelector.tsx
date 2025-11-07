@@ -129,7 +129,9 @@ export const EnhancedAddressSelector: React.FC<AddressSelectorProps> = ({
                 setRecentAddresses(convertedRecent);
 
             } catch (error) {
-                console.error('Error loading client data:', error);
+                if (process.env.NODE_ENV === 'development') {
+                    console.error('[SmartQuote] Error loading client data:', error);
+                }
             } finally {
                 setLoadingAddresses(false);
             }

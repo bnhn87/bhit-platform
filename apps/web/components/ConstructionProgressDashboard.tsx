@@ -87,7 +87,7 @@ export default function ConstructionProgressDashboard() {
       if (data && data.length > 0 && !selectedJob) {
         setSelectedJob(data[0].job_id);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error loading dashboard data:', error);
     } finally {
       setLoading(false);
@@ -117,7 +117,7 @@ export default function ConstructionProgressDashboard() {
 
       if (alertsError) throw alertsError;
       setAlerts(alertsData || []);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error loading job details:', error);
     }
   }, []);

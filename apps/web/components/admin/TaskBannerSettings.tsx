@@ -90,7 +90,19 @@ export function TaskBannerSettingsComponent({ isDirector }: TaskBannerSettingsPr
         return;
       }
 
-      console.log('Saving settings:', settings);
+      // Only send the updatable fields, not metadata like id, created_at, updated_at
+      const updatePayload = {
+        show_background: settings.show_background,
+        background_color: settings.background_color,
+        text_style: settings.text_style,
+        text_color: settings.text_color,
+        font_size: settings.font_size,
+        scroll_speed: settings.scroll_speed,
+        message_spacing: settings.message_spacing,
+        empty_message: settings.empty_message
+      };
+
+      console.log('Saving settings:', updatePayload);
 
       const res = await fetch('/api/task-banner/settings', {
         method: 'PUT',
@@ -98,16 +110,7 @@ export function TaskBannerSettingsComponent({ isDirector }: TaskBannerSettingsPr
           'Authorization': `Bearer ${session.access_token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          show_background: settings.show_background,
-          background_color: settings.background_color,
-          text_style: settings.text_style,
-          text_color: settings.text_color,
-          font_size: settings.font_size,
-          scroll_speed: settings.scroll_speed,
-          message_spacing: settings.message_spacing,
-          empty_message: settings.empty_message
-        })
+        body: JSON.stringify(updatePayload)
       });
 
       const data = await res.json();

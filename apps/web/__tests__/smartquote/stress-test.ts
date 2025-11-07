@@ -76,7 +76,7 @@ export const stressTests = {
             const config = await getDefaultConfig();
             const resolved = resolveProductDetails(emptyProducts, config, {}, {});
             results.push({ test: 'empty products', passed: resolved.resolved.length === 0 });
-        } catch (error) {
+        } catch (error: unknown) {
             results.push({ test: 'empty products', error: error.message });
         }
 
@@ -84,7 +84,7 @@ export const stressTests = {
         try {
             const errors = validateQuoteDetails(null as any);
             results.push({ test: 'null quote details', errors: errors.length });
-        } catch (error) {
+        } catch (error: unknown) {
             results.push({ test: 'null quote details', error: error.message });
         }
 
@@ -92,7 +92,7 @@ export const stressTests = {
         try {
             const errors = validateProducts(undefined as any);
             results.push({ test: 'undefined products', errors: errors.length });
-        } catch (error) {
+        } catch (error: unknown) {
             results.push({ test: 'undefined products', error: error.message });
         }
 
@@ -109,7 +109,7 @@ export const stressTests = {
             const malformed = generateMalformedProduct();
             const isValid = validateRawProduct(malformed);
             results.push({ test: 'malformed product validation', passed: !isValid });
-        } catch (error) {
+        } catch (error: unknown) {
             results.push({ test: 'malformed product', error: error.message });
         }
 
@@ -118,7 +118,7 @@ export const stressTests = {
             const edgeCase = generateEdgeCaseQuoteDetails();
             const errors = validateQuoteDetails(edgeCase);
             results.push({ test: 'edge case details', errorCount: errors.length });
-        } catch (error) {
+        } catch (error: unknown) {
             results.push({ test: 'edge case details', error: error.message });
         }
 
@@ -127,7 +127,7 @@ export const stressTests = {
             const invalidJSON = '{"invalid": json"}}}';
             JSON.parse(invalidJSON);
             results.push({ test: 'invalid JSON', passed: false });
-        } catch (error) {
+        } catch (error: unknown) {
             results.push({ test: 'invalid JSON', passed: true });
         }
 
@@ -152,7 +152,7 @@ export const stressTests = {
                 resolved: resolved.length,
                 unresolved: unresolved.length
             });
-        } catch (error) {
+        } catch (error: unknown) {
             results.push({ test: '1000 products', error: error.message });
         }
 
@@ -170,7 +170,7 @@ export const stressTests = {
                 duration: `${duration}ms`,
                 passed: duration < 5000 // Should complete within 5 seconds
             });
-        } catch (error) {
+        } catch (error: unknown) {
             results.push({ test: '10000 products', error: error.message });
         }
 
@@ -214,7 +214,7 @@ export const stressTests = {
                 { maxRetries: 3, delayMs: 100 }
             );
             results.push({ test: 'save with retry', success: saveResult.success });
-        } catch (error) {
+        } catch (error: unknown) {
             results.push({ test: 'save with retry', error: error.message });
         }
 
@@ -222,7 +222,7 @@ export const stressTests = {
         try {
             const quotes = await hybridStorageService.loadQuotes();
             results.push({ test: 'load quotes', count: quotes.length });
-        } catch (error) {
+        } catch (error: unknown) {
             results.push({ test: 'load quotes', error: error.message });
         }
 
@@ -230,7 +230,7 @@ export const stressTests = {
         try {
             await hybridStorageService.deleteQuote('non-existent-id');
             results.push({ test: 'delete non-existent', passed: true });
-        } catch (error) {
+        } catch (error: unknown) {
             results.push({ test: 'delete non-existent', error: error.message });
         }
 
@@ -286,7 +286,7 @@ export const stressTests = {
                 failed,
                 duration: `${duration}ms`
             });
-        } catch (error) {
+        } catch (error: unknown) {
             results.push({ test: 'concurrent saves', error: error.message });
         }
 
@@ -330,7 +330,7 @@ export const stressTests = {
 
             const result = calculateAll(zeroProducts, details, config);
             results.push({ test: 'zero quantities', totalCost: result.pricing.totalCost });
-        } catch (error) {
+        } catch (error: unknown) {
             results.push({ test: 'zero quantities', error: error.message });
         }
 
@@ -371,7 +371,7 @@ export const stressTests = {
                 test: 'very large numbers',
                 passed: result.pricing.totalCost > 0 && !isNaN(result.pricing.totalCost) && isFinite(result.pricing.totalCost)
             });
-        } catch (error) {
+        } catch (error: unknown) {
             results.push({ test: 'very large numbers', error: error.message });
         }
 
@@ -407,7 +407,7 @@ export const stressTests = {
                 totalProducts: mixedProducts.length,
                 validProducts: validProducts.length
             });
-        } catch (error) {
+        } catch (error: unknown) {
             results.push({ test: 'mixed valid/invalid', error: error.message });
         }
 
@@ -428,7 +428,7 @@ export const stressTests = {
                 recoverable: handled.recoverable,
                 hasRecoveryAction: !!handled.recoveryAction
             });
-        } catch (error) {
+        } catch (error: unknown) {
             results.push({ test: 'network error', error: error.message });
         }
 
@@ -441,7 +441,7 @@ export const stressTests = {
                 userMessage: handled.userMessage,
                 recoverable: handled.recoverable
             });
-        } catch (error) {
+        } catch (error: unknown) {
             results.push({ test: 'API key error', error: error.message });
         }
 
@@ -454,7 +454,7 @@ export const stressTests = {
                 userMessage: handled.userMessage,
                 containsErrorCode: handled.userMessage.includes('DB-SCHEMA')
             });
-        } catch (error) {
+        } catch (error: unknown) {
             results.push({ test: 'schema error', error: error.message });
         }
 
@@ -474,7 +474,7 @@ export const stressTests = {
             allResults.concurrentOperations = await this.testConcurrentOperations();
             allResults.calculationEdgeCases = await this.testCalculationEdgeCases();
             allResults.errorHandling = await this.testErrorHandling();
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Test suite failed:', error);
             allResults.error = error.message;
         }

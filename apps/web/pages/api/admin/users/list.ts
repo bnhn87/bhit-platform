@@ -1,6 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import type { UserProfile } from '../../../../types/supabase-types';
+
 /**
  * API Route: List Users
  * GET /api/admin/users/list
@@ -8,6 +10,13 @@ import type { NextApiRequest, NextApiResponse } from 'next';
  * Returns all users in the admin's account with permissions
  * Requires admin or director role
  */
+
+interface ProfileData {
+  id: string;
+  email: string;
+  role: string;
+  created_at: string;
+}
 
 export default async function handler(
   req: NextApiRequest,
@@ -70,7 +79,7 @@ export default async function handler(
     }
 
     // Get all users with their permissions using admin client
-    const { data: profiles, error: profilesError } = await adminClient
+    const profilesResponse = await adminClient
       .from('profiles')
       .select(`
         id,
@@ -80,19 +89,23 @@ export default async function handler(
       `)
       .order('created_at', { ascending: false });
 
+    const profiles = profilesResponse.data as ProfileData[] | null;
+    const profilesError = profilesResponse.error;
+
     if (profilesError) {
       console.error('Failed to fetch profiles:', profilesError);
       return res.status(500).json({ error: 'Failed to fetch profiles' });
     }
 
     // Get auth users data for last_sign_in_at, full_name, and permissions
-    const { data: authUsers, error: authError } = await adminClient.auth.admin.listUsers();
+    const { data: authUsers } = await adminClient.auth.admin.listUsers();
 
     // Merge profiles with auth data and extract permissions from user_metadata
-    const users = profiles?.map((profile: any) => {
-      const authUser: any = authUsers?.users?.find((u: any) => u.id === profile.id);
+    const users = profiles?.map((profile: UserProfile) => {
+      const authUser = authUsers?.users?.find((u) => u.id === profile.id);
       // Check if user is banned (inactive)
-      const isBanned = authUser?.banned_until && new Date(authUser.banned_until) > new Date();
+      const bannedUntil = (authUser as { banned_until?: string })?.banned_until;
+      const isBanned = bannedUntil && new Date(bannedUntil) > new Date();
 
       // Extract permissions from auth user_metadata
       const perms = authUser?.user_metadata?.permissions || {};
@@ -124,10 +137,10 @@ export default async function handler(
       users: users || []
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('List users error:', error);
     return res.status(500).json({
-      error: error?.message || 'Internal server error'
+      error: error instanceof Error ? error.message : 'Internal server error'
     });
   }
 }

@@ -66,7 +66,7 @@ class WorkingMemoryService {
                 if (stored) {
                     this.memoryCache.set(key, JSON.parse(stored));
                 }
-            } catch (error) {
+            } catch (error: unknown) {
                 console.warn(`Failed to load ${key} from storage:`, error);
             }
         });
@@ -78,7 +78,7 @@ class WorkingMemoryService {
         try {
             localStorage.setItem(key, JSON.stringify(value));
             this.memoryCache.set(key, value);
-        } catch (error) {
+        } catch (error: unknown) {
             console.error(`Failed to save ${key} to storage:`, error);
         }
     }
@@ -99,7 +99,7 @@ class WorkingMemoryService {
                 this.memoryCache.set(key, parsed);
                 return parsed as T;
             }
-        } catch (error) {
+        } catch (error: unknown) {
             console.warn(`Failed to get ${key} from storage:`, error);
         }
 
@@ -323,7 +323,7 @@ class WorkingMemoryService {
                 }
             });
             return true;
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Failed to import memory:', error);
             return false;
         }

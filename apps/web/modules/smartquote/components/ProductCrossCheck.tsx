@@ -157,7 +157,9 @@ export function ProductCrossCheck({ products, onProductUpdate, onProductValidate
           }
         }
       } catch (error) {
-        console.error('Error checking product:', error);
+        if (process.env.NODE_ENV === 'development') {
+            console.error('[SmartQuote] Error checking product:', error);
+        }
         issues.push('Failed to check against database');
         status = 'error';
         confidence = 0.1;

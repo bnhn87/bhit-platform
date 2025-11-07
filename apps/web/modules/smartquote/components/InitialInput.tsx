@@ -107,7 +107,7 @@ const fileToGenerativePart = async (file: File): Promise<string | { mimeType: st
                     }
 
                     reject(new Error("Both parsing methods yielded no text content from the PDF."));
-                } catch (error) {
+                } catch (error: unknown) {
                     const errorMessage = error instanceof Error ? error.message : String(error);
                     reject(new Error(`Failed to parse PDF "${file.name}". Error: ${errorMessage}`));
                 } finally {
@@ -138,7 +138,9 @@ const fileToGenerativePart = async (file: File): Promise<string | { mimeType: st
                         resolve(`Word Document (${file.name}):\n${result.value}`);
                     })
                     .catch((err: unknown) => {
-                        console.error(`Error parsing DOCX ${file.name}:`, err);
+                        if (process.env.NODE_ENV === 'development') {
+                            console.error(`[SmartQuote] Error parsing DOCX ${file.name}:`, err);
+                        }
                         const errorMessage = err instanceof Error ? err.message : String(err);
                         reject(new Error(`Failed to parse Word file "${file.name}". Error: ${errorMessage}`));
                     });
@@ -249,7 +251,9 @@ export const InitialInput: React.FC<InitialInputProps> = ({ onParse }) => {
         } catch (err) {
              const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred while processing files.';
              setError(errorMessage);
-             console.error(err);
+             if (process.env.NODE_ENV === 'development') {
+                console.error('[SmartQuote] File processing error:', err);
+             }
         }
     };
 

@@ -25,12 +25,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (!userId) {
     const { data, error } = await admin.auth.admin.createUser({ email, password, email_confirm: true });
-    if (error) return res.status(400).json({ error: error.message });
+    if (error) return res.status(400).json({ error: error instanceof Error ? error.message : 'Unknown error' });
     userId = data.user?.id || undefined;
   } else {
     // ensure password set
     const { error } = await admin.auth.admin.updateUserById(userId, { password });
-    if (error) return res.status(400).json({ error: error.message });
+    if (error) return res.status(400).json({ error: error instanceof Error ? error.message : 'Unknown error' });
   }
 
   if (!userId) return res.status(500).json({ error: "No user id returned" });
