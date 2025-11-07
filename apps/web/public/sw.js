@@ -1,8 +1,8 @@
 // Service Worker for BHIT Work OS - Construction Progress Tracking
 // Provides offline-first functionality with smart caching and sync
 
-const CACHE_NAME = 'bhit-work-os-v1.0.0';
-const API_CACHE_NAME = 'bhit-api-cache-v1.0.0';
+const CACHE_NAME = 'bhit-work-os-v1.0.1';
+const API_CACHE_NAME = 'bhit-api-cache-v1.0.1';
 const OFFLINE_URL = '/offline.html';
 
 // Resources to cache for offline use
@@ -75,69 +75,91 @@ self.addEventListener('activate', (event) => {
 // Fetch event - implement caching strategies
 self.addEventListener('fetch', (event) => {
   const { request } = event;
-  const url = new URL(request.url);
 
   // Skip non-GET requests and extension requests
   if (request.method !== 'GET' || request.url.includes('extension')) {
     return;
   }
 
-  // Handle different types of requests
-  if (url.pathname.startsWith('/api/')) {
-    event.respondWith(handleApiRequest(request));
-  } else if (url.pathname.startsWith('/_next/static/')) {
-    event.respondWith(handleStaticAssets(request));
-  } else {
-    event.respondWith(handlePageRequest(request));
+  try {
+    const url = new URL(request.url);
+
+    // Handle different types of requests
+    if (url.pathname.startsWith('/api/')) {
+      event.respondWith(handleApiRequest(request));
+    } else if (url.pathname.startsWith('/_next/static/')) {
+      event.respondWith(handleStaticAssets(request));
+    } else {
+      event.respondWith(handlePageRequest(request));
+    }
+  } catch (error) {
+    console.error('[SW] Invalid URL in fetch event:', request.url, error);
+    // Let the browser handle invalid URLs
+    return;
   }
 });
 
 // Handle API requests with network-first strategy
 async function handleApiRequest(request) {
-  const url = new URL(request.url);
-  
-  // Check if this is a cacheable read-only API
-  const isCacheable = CACHEABLE_API_PATTERNS.some(pattern => pattern.test(url.pathname));
-  
-  if (request.method === 'GET' && isCacheable) {
-    try {
-      // Try network first
-      const networkResponse = await fetch(request);
-      
-      if (networkResponse.ok) {
-        // Cache successful responses
-        const cache = await caches.open(API_CACHE_NAME);
-        cache.put(request, networkResponse.clone());
-        return networkResponse;
-      }
-    } catch (error) {
-      console.log('[SW] Network failed for API request, trying cache');
-    }
-    
-    // Fall back to cache
-    const cachedResponse = await caches.match(request);
-    if (cachedResponse) {
-      return cachedResponse;
-    }
-  }
-  
-  // For write operations or non-cacheable APIs, handle offline
-  if (!navigator.onLine && (request.method === 'POST' || request.method === 'PATCH')) {
-    return handleOfflineApiRequest(request);
-  }
-  
-  // Try network for all other requests
   try {
-    return await fetch(request);
-  } catch (error) {
+    const url = new URL(request.url);
+
+    // Check if this is a cacheable read-only API
+    const isCacheable = CACHEABLE_API_PATTERNS.some(pattern => pattern.test(url.pathname));
+
+    if (request.method === 'GET' && isCacheable) {
+      try {
+        // Try network first
+        const networkResponse = await fetch(request);
+
+        if (networkResponse.ok) {
+          // Cache successful responses
+          const cache = await caches.open(API_CACHE_NAME);
+          cache.put(request, networkResponse.clone());
+          return networkResponse;
+        }
+      } catch (error) {
+        console.log('[SW] Network failed for API request, trying cache');
+      }
+
+      // Fall back to cache
+      const cachedResponse = await caches.match(request);
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+    }
+
+    // For write operations or non-cacheable APIs, handle offline
+    if (!navigator.onLine && (request.method === 'POST' || request.method === 'PATCH')) {
+      return handleOfflineApiRequest(request);
+    }
+
+    // Try network for all other requests
+    try {
+      return await fetch(request);
+    } catch (error) {
+      return new Response(
+        JSON.stringify({
+          error: 'Network unavailable',
+          offline: true,
+          message: 'This request will be retried when connection returns'
+        }),
+        {
+          status: 503,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
+    }
+  } catch (urlError) {
+    console.error('[SW] Invalid URL in handleApiRequest:', request.url, urlError);
+    // Return error response for invalid URLs
     return new Response(
-      JSON.stringify({ 
-        error: 'Network unavailable', 
-        offline: true,
-        message: 'This request will be retried when connection returns'
+      JSON.stringify({
+        error: 'Invalid URL',
+        message: 'The request URL could not be parsed'
       }),
-      { 
-        status: 503,
+      {
+        status: 400,
         headers: { 'Content-Type': 'application/json' }
       }
     );

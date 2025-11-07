@@ -199,7 +199,7 @@ export async function checkFeatureFlags(flagKeys: string[]): Promise<Record<stri
               const { data: userData } = await supabase
                 .from('users')
                 .select('role')
-                .eq('id', user.id)
+                .eq('account_id', user.id)
                 .single();
 
               if (userData && flag.conditions?.allowed_roles?.includes(userData.role)) {

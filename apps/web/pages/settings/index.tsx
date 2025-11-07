@@ -39,7 +39,7 @@ export default function SettingsPage() {
         const { data: userData } = await supabase
           .from('users')
           .select('account_id')
-          .eq('id', user.id)
+          .eq('account_id', user.id)
           .single();
         if (userData) {
           setAccountId(userData.account_id);

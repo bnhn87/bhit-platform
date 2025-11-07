@@ -21,7 +21,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { data: usersData, error: usersError } = await supabaseAdmin
       .from('users')
       .select('role')
-      .eq('id', user.id)
+      .eq('account_id', user.id)
       .maybeSingle();
 
     // Check profiles table

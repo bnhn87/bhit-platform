@@ -1,4 +1,5 @@
 // apps/web/components/AppNav.tsx
+import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -145,10 +146,6 @@ export default function AppNav() {
       observer.disconnect();
     };
   }, []);
-
-  // Get navigation items from centralized config
-  const coreItems = getCoreNavItems();
-  const roleItems = getNavItemsForRole(role);
 
   // Get navigation items from centralized config
   const coreItems = getCoreNavItems();
