@@ -16,7 +16,8 @@ import "@/styles/globals.css";
 const PerformanceMonitor = dynamic(() => import("@/components/PerformanceMonitor"), { ssr: false });
 
 // Initialize security service
-import "@/lib/securityService";
+// TEMPORARILY DISABLED - blocking authentication requests
+// import "@/lib/securityService";
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   const [topOffset, setTopOffset] = React.useState(0);

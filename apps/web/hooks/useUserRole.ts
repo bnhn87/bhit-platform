@@ -21,9 +21,11 @@ export function useUserRole(): UseUserRoleResult {
     try {
       const { data: authData } = await supabase.auth.getUser();
       const uid = authData?.user?.id || null;
+      console.log('[useUserRole] Auth user ID:', uid);
       setUserId(uid);
 
       if (!uid) {
+        console.log('[useUserRole] No auth user, setting role to guest');
         setRole("guest");
         return;
       }
@@ -34,13 +36,16 @@ export function useUserRole(): UseUserRoleResult {
         .eq("account_id", uid)
         .maybeSingle();
 
+      console.log('[useUserRole] Query result:', { data, error });
+
       if (error) {
-        // useUserRole: users select error
+        console.error('[useUserRole] Error fetching role:', error);
         setRole("guest");
         return;
       }
 
       const r = (data?.role as UserRole) || "guest";
+      console.log('[useUserRole] Final role:', r);
       setRole(r);
     } finally {
       setLoading(false);
