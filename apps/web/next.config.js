@@ -4,12 +4,15 @@ const webpack = require("webpack");
 
 module.exports = {
   reactStrictMode: true,
+  swcMinify: false,
+  experimental: {
+    forceSwcTransforms: false,
+  },
   eslint: {
     // TODO: Re-enable after fixing ESLint errors
     // Currently disabled to prevent build failures
     ignoreDuringBuilds: true,
   },
-  outputFileTracingRoot: path.join(__dirname),
   webpack: (config) => {
     config.resolve.alias["@"] = path.resolve(__dirname);
     config.resolve.alias["@/lib"] = path.resolve(__dirname, "lib");
