@@ -26,6 +26,7 @@ export class PODService {
     supplierId?: string;
     uploadedBy: string;
   }) {
+    // @ts-expect-error - delivery_pods table exists in DB but not in generated types
     const { data: pod, error } = await supabaseAdmin
       .from('delivery_pods')
       .insert({
@@ -52,6 +53,7 @@ export class PODService {
    */
   static async getById(id: string): Promise<PODDetailResponse> {
     // Get POD
+    // @ts-expect-error - delivery_pods table exists in DB but not in generated types
     const { data: pod, error: podError } = await supabaseAdmin
       .from('delivery_pods')
       .select(`
@@ -71,6 +73,7 @@ export class PODService {
       .createSignedUrl(pod.file_path, 3600); // 1 hour
 
     // Get version history
+    // @ts-expect-error - pod_versions table exists in DB but not in generated types
     const { data: versions } = await supabaseAdmin
       .from('pod_versions')
       .select('*')
@@ -89,6 +92,7 @@ export class PODService {
    * Update POD data
    */
   static async update(id: string, updates: UpdatePODRequest) {
+    // @ts-expect-error - delivery_pods table exists in DB but not in generated types
     const { data, error } = await supabaseAdmin
       .from('delivery_pods')
       .update({
@@ -107,6 +111,7 @@ export class PODService {
    * Approve POD
    */
   static async approve(id: string, userId: string, notes?: string) {
+    // @ts-expect-error - delivery_pods table exists in DB but not in generated types
     const { data, error } = await supabaseAdmin
       .from('delivery_pods')
       .update({
@@ -127,6 +132,7 @@ export class PODService {
    * Reject POD
    */
   static async reject(id: string, userId: string, reason: string) {
+    // @ts-expect-error - delivery_pods table exists in DB but not in generated types
     const { data, error } = await supabaseAdmin
       .from('delivery_pods')
       .update({
@@ -148,8 +154,9 @@ export class PODService {
    * Get PODs needing review
    */
   static async getReviewQueue(): Promise<PODNeedingReview[]> {
+    // @ts-expect-error - pods_needing_review view exists in DB but not in generated types
     const { data, error } = await supabaseAdmin
-      .from('pods_needing_review' as any) // Using view
+      .from('pods_needing_review')
       .select('*')
       .limit(100);
 
@@ -161,8 +168,9 @@ export class PODService {
    * Get statistics
    */
   static async getStatistics(): Promise<PODStatistics> {
+    // @ts-expect-error - pod_statistics view exists in DB but not in generated types
     const { data, error } = await supabaseAdmin
-      .from('pod_statistics' as any) // Using view
+      .from('pod_statistics')
       .select('*')
       .single();
 
@@ -174,6 +182,7 @@ export class PODService {
    * Search/filter PODs
    */
   static async search(params: SearchPODsRequest): Promise<PODListResponse> {
+    // @ts-expect-error - delivery_pods table exists in DB but not in generated types
     let query = supabaseAdmin
       .from('delivery_pods')
       .select('*, supplier:suppliers(name)', { count: 'exact' })
@@ -223,8 +232,9 @@ export class PODService {
    * Get recent activity
    */
   static async getRecentActivity(limit = 20) {
+    // @ts-expect-error - recent_pod_activity view exists in DB but not in generated types
     const { data, error } = await supabaseAdmin
-      .from('recent_pod_activity' as any)
+      .from('recent_pod_activity')
       .select('*')
       .limit(limit);
 
@@ -236,6 +246,7 @@ export class PODService {
    * Soft delete POD
    */
   static async delete(id: string, userId: string) {
+    // @ts-expect-error - delivery_pods table exists in DB but not in generated types
     const { error } = await supabaseAdmin
       .from('delivery_pods')
       .update({
