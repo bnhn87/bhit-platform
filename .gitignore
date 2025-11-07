@@ -15,9 +15,9 @@ out/
 *.tar.gz
 bhit-dumps/
 
-# TypeScript
-*.tsbuildinfo
-
 # Misc
 .DS_Store
 *.log
+
+# TypeScript build cache
+*.tsbuildinfo

@@ -2,6 +2,7 @@
 
 import { NextApiRequest, NextApiResponse } from 'next';
 import OpenAI from 'openai';
+import { safeJsonParse } from '../../lib/safeParsing';
 
 // Fallback mock parsing when API keys are not available
 const mockParseQuote = (text: string) => {
@@ -178,16 +179,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       throw new Error('No content returned from AI');
     }
 
-    // Parse and validate with error handling
-    let parsed: { products?: unknown[] };
-    try {
-      parsed = JSON.parse(content);
-    } catch (parseError) {
-      throw new Error(`Failed to parse AI response: ${parseError instanceof Error ? parseError.message : 'Invalid JSON'}`);
-    }
-
+    // Parse and validate
+    const parsed = safeJsonParse<{ products?: unknown[] }>(content);
     if (!parsed || !Array.isArray(parsed.products)) {
-      throw new Error('Invalid format: response must contain products array');
+      throw new Error('Invalid format: Expected object with products array');
     }
 
     res.status(200).json(parsed);

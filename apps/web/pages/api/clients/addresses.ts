@@ -1,13 +1,22 @@
-import { createClient } from '@supabase/supabase-js';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { createClient } from '@supabase/supabase-js';
+import { requireAuth } from '../../../lib/apiAuth';
+import { validateRequestBody, ClientAddressSchema } from '../../../lib/apiValidation';
+import { safeParseIntWithDefault } from '../../../lib/safeParsing';
 
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_KEY!
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { method } = req;
+
+    // Require authentication for all methods
+    const user = await requireAuth(req, res);
+    if (!user) {
+        return; // requireAuth already sent 401 response
+    }
 
     try {
         switch (method) {
@@ -16,6 +25,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
                 if (recent) {
                     // Get recent addresses across all clients
+                    const limit = safeParseIntWithDefault(recent as string, 10);
+                    if (limit < 1 || limit > 100) {
+                        return res.status(400).json({ error: 'Limit must be between 1 and 100' });
+                    }
+
                     const { data: addresses, error } = await supabase
                         .from('client_addresses')
                         .select(`
@@ -24,10 +38,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         `)
                         .eq('is_active', true)
                         .order('updated_at', { ascending: false })
-                        .limit(parseInt(recent as string) || 10);
+                        .limit(limit);
 
                     if (error) {
-                        return res.status(500).json({ error: error instanceof Error ? error.message : 'Unknown error' });
+                        return res.status(500).json({ error: error.message });
                     }
 
                     return res.status(200).json(addresses || []);
@@ -48,7 +62,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     const { data: addresses, error } = await query.order('is_default', { ascending: false });
 
                     if (error) {
-                        return res.status(500).json({ error: error instanceof Error ? error.message : 'Unknown error' });
+                        return res.status(500).json({ error: error.message });
                     }
 
                     return res.status(200).json(addresses || []);
@@ -58,57 +72,44 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
 
             case 'POST': {
+                // Validate request body
+                const validatedData = validateRequestBody(ClientAddressSchema, req, res);
+                if (!validatedData) {
+                    return; // validateRequestBody already sent 400 response
+                }
+
                 const {
                     client_id,
-                    address_type,
-                    label,
                     address_line1,
                     address_line2,
                     city,
                     postcode,
-                    has_loading_bay,
-                    access_restrictions,
-                    contact_name,
-                    contact_phone,
-                    is_default
-                } = req.body;
+                    type: address_type,
+                    is_primary
+                } = validatedData;
 
-                if (!client_id || !address_type || !label || !address_line1 || !city || !postcode) {
-                    return res.status(400).json({
-                        error: 'Required fields: client_id, address_type, label, address_line1, city, postcode'
-                    });
-                }
-
-                // If setting as default, unset other defaults of same type
-                if (is_default) {
+                // If setting as primary, unset other primary addresses of same type
+                if (is_primary && client_id && address_type) {
                     await supabase
                         .from('client_addresses')
-                        .update({ is_default: false })
+                        .update({ is_primary: false })
                         .eq('client_id', client_id)
-                        .eq('address_type', address_type);
+                        .eq('type', address_type);
                 }
 
                 const { data: newAddress, error } = await supabase
                     .from('client_addresses')
                     .insert({
-                        client_id,
-                        address_type,
-                        label,
-                        address_line1,
-                        address_line2,
-                        city,
+                        ...validatedData,
                         postcode: postcode.toUpperCase(),
-                        has_loading_bay: has_loading_bay || false,
-                        access_restrictions,
-                        contact_name,
-                        contact_phone,
-                        is_default: is_default || false
+                        created_by: user.id,
                     })
                     .select()
                     .single();
 
                 if (error) {
-                    return res.status(500).json({ error: error instanceof Error ? error.message : 'Unknown error' });
+                    console.error('[clients/addresses] Create error:', error);
+                    return res.status(500).json({ error: 'Failed to create address', details: error.message });
                 }
 
                 return res.status(201).json(newAddress);
@@ -148,7 +149,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     .single();
 
                 if (error) {
-                    return res.status(500).json({ error: error instanceof Error ? error.message : 'Unknown error' });
+                    return res.status(500).json({ error: error.message });
                 }
 
                 return res.status(200).json(updatedAddress);
@@ -168,7 +169,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     .eq('id', id);
 
                 if (error) {
-                    return res.status(500).json({ error: error instanceof Error ? error.message : 'Unknown error' });
+                    return res.status(500).json({ error: error.message });
                 }
 
                 return res.status(200).json({ success: true });
@@ -179,7 +180,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 res.status(405).end(`Method ${method} Not Allowed`);
                 return;
         }
-    } catch (error: unknown) {
+    } catch (error) {
         console.error('API Error:', error);
         res.status(500).json({ error: 'Internal server error' });
         return;

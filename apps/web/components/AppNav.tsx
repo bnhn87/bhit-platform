@@ -150,6 +150,10 @@ export default function AppNav() {
   const coreItems = getCoreNavItems();
   const roleItems = getNavItemsForRole(role);
 
+  // Get navigation items from centralized config
+  const coreItems = getCoreNavItems();
+  const roleItems = getNavItemsForRole(role);
+
   async function signOut() {
     await supabase.auth.signOut();
     window.location.href = "/login";

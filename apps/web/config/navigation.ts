@@ -151,13 +151,6 @@ export const ROLE_BASED_NAV: Record<UserRole, NavItem[]> = {
       enabled: true,
       description: "Application settings"
     },
-    {
-      id: 210,
-      label: "210. POD Manager",
-      href: "/pods",
-      enabled: true,
-      description: "Proof of Delivery management"
-    },
   ],
 
   director: [
@@ -266,13 +259,6 @@ export const ROLE_BASED_NAV: Record<UserRole, NavItem[]> = {
       enabled: true,
       description: "Application settings"
     },
-    {
-      id: 316,
-      label: "316. POD Manager",
-      href: "/pods",
-      enabled: true,
-      description: "Proof of Delivery management"
-    },
   ],
 
   admin: [
@@ -373,13 +359,6 @@ export const ROLE_BASED_NAV: Record<UserRole, NavItem[]> = {
       href: "/settings",
       enabled: true,
       description: "Application settings"
-    },
-    {
-      id: 415,
-      label: "415. POD Manager",
-      href: "/pods",
-      enabled: true,
-      description: "Proof of Delivery management"
     },
   ],
 };

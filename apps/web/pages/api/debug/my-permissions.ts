@@ -1,6 +1,6 @@
-import { safeParseAuthToken } from '../../../lib/authTokenParser';
 import { createClient } from '@supabase/supabase-js';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { safeParseUrlEncodedJson } from '../../../lib/safeParsing';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -15,17 +15,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Debug: show all cookies
     const cookieList = cookies.split(';').map(c => c.trim().split('=')[0]);
 
-    const tokenData = safeParseAuthToken(req);
+    const tokenMatch = cookies.match(/sb-[^-]+-auth-token=([^;]+)/);
 
-    if (!tokenData) {
+    if (!tokenMatch) {
       return res.status(401).json({
-        error: 'No auth token in cookies or failed to parse',
+        error: 'No auth token in cookies',
         availableCookies: cookieList,
         hint: 'Looking for pattern: sb-*-auth-token'
       });
     }
 
-    const token = tokenData.access_token || tokenData[0];
+    // Parse the token JSON
+    const tokenData = safeParseUrlEncodedJson<{ access_token?: string } | [string]>(tokenMatch[1]);
+    if (!tokenData) {
+      return res.status(401).json({ error: 'Could not parse auth token' });
+    }
+
+    const token = (tokenData as { access_token?: string }).access_token || (tokenData as [string])[0];
 
     if (!token) {
       return res.status(401).json({ error: 'No access token found' });
@@ -71,10 +77,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       raw_user_meta_data: authUser?.user?.user_metadata
     });
 
-  } catch (error: unknown) {
+  } catch (error: any) {
     console.error('Debug permissions error:', error);
     return res.status(500).json({
-      error: error instanceof Error ? error.message : 'Internal server error'
+      error: error?.message || 'Internal server error'
     });
   }
 }

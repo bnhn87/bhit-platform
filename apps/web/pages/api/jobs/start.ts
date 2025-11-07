@@ -1,12 +1,46 @@
 // apps/web/pages/api/jobs/start.ts
-import { createClient } from '@supabase/supabase-js';
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { getUserIdFromRequest } from "../../../lib/authTokenParser";
 import { logJobStatusChanged } from "../../../lib/activityLogger";
 import { supabaseAdmin } from "../../../lib/supabaseAdmin";
+import { safeParseUrlEncodedJson } from "../../../lib/safeParsing";
+import { createClient } from '@supabase/supabase-js';
 
 type Body = { jobId?: string; pin?: string };
+
+// Helper to extract user ID from auth token
+async function getUserIdFromRequest(req: NextApiRequest): Promise<string | null> {
+  try {
+    const cookies = req.headers.cookie || '';
+    const tokenMatch = cookies.match(/sb-[^-]+-auth-token=([^;]+)/);
+
+    if (!tokenMatch) return null;
+
+    const tokenData = safeParseUrlEncodedJson<{ access_token?: string } | [string]>(tokenMatch[1]);
+    if (!tokenData) return null;
+
+    const token = (tokenData as { access_token?: string }).access_token || (tokenData as [string])[0];
+
+    if (!token) return null;
+
+    const userClient = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        global: {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      }
+    );
+
+    const { data: { user } } = await userClient.auth.getUser();
+    return user?.id || null;
+  } catch (error) {
+    return null;
+  }
+}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
