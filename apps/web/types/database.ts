@@ -460,8 +460,46 @@ export interface Database {
           updated_at?: string
         }
       }
+      // Generic table types for tables not yet fully typed
+      // These allow the code to compile while we gradually add proper types
+      profiles: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
+      generated_tasks: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
+      product_progress: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
+      org_settings: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
+      delivery_pods: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
+      client_addresses: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
+      job_drawings: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
+      product_catalogue: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
+      labour_allocations: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
+      feature_flags: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
+      invoices: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
+      product_catalogue_items: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
+      product_aliases: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
+      clients: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
+      suppliers: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
+      task_banner_settings: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
+      labour_shifts: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
+      job_documents: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
+      daily_closeout_forms: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
+      tasks: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
+      job_notes: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
+      user_profiles: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
+      task_banner_items: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
+      pod_versions: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
+      job_shares: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
+      user_permissions: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
+      user_banner_permissions: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
+      user_banner_preferences: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
+      quote_revisions: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
+      email_drafts: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
+      product_learning: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
+      image_extractions: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
+      analytics_events: { Row: Record<string, any>; Insert: Record<string, any>; Update: Record<string, any> }
     }
     Views: {
+      pods_needing_review: { Row: Record<string, any> }
+      pod_statistics: { Row: Record<string, any> }
+      recent_pod_activity: { Row: Record<string, any> }
       [_ in never]: never
     }
     Functions: {
