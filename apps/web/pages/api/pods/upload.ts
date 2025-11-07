@@ -74,6 +74,7 @@ export default async function handler(
     const fileHash = crypto.createHash('sha256').update(fileBuffer).digest('hex');
 
     // Check for duplicate
+    // @ts-expect-error - delivery_pods table exists in DB but not in generated types
     const { data: existingPOD } = await supabase
       .from('delivery_pods')
       .select('id')
