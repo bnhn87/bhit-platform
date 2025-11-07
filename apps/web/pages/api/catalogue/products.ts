@@ -144,8 +144,8 @@ async function addAliases(
         created_by: userId
     }));
 
-    const { error } = await supabase
-        .from('product_aliases')
+    const { error } = await (supabase
+        .from('product_aliases') as any)
         .insert(aliasInserts)
         .select();
 

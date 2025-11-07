@@ -16,7 +16,7 @@ export const theme = {
     info: "#3b82f6", // Alias for accent
     muted: "#223041"
   },
-  radii: { xs: 6, sm: 8, md: 12, lg: 16, xl: 20 },
+  radii: { xs: 6, sm: 8, md: 12, lg: 16, xl: 20, full: 9999 },
   spacing: (n: number) => `${n * 4}px`,
   shadow: "0 6px 24px rgba(0,0,0,0.25)"
 } as const;

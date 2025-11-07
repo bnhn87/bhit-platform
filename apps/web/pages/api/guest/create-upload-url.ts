@@ -33,8 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // Verify token + pin → get job
   const { data: rows, error: vErr } = await supabaseAdmin.rpc("verify_guest_pin", { token, pin } as never);
   if (vErr) return res.status(400).json({ error: vErr.message });
-  if (!rows) return res.status(401).json({ error: "Invalid token or PIN" });
-  const job = Array.isArray(rows) ? rows[0] : rows;
+  const job = rows ? (Array.isArray(rows) ? rows[0] : rows) : null;
   if (!(job as { id?: string })?.id) return res.status(401).json({ error: "Invalid token or PIN" });
 
   const bucket = "job-photos";

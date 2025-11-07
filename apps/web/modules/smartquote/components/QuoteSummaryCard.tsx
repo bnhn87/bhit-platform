@@ -56,10 +56,10 @@ export const QuoteSummaryCard: React.FC<QuoteSummaryCardProps> = ({ results, det
         }
     ];
 
-    const labourCost = pricing.fitterCost + pricing.supervisorCost;
+    const labourCost = pricing.vanCost + pricing.fitterCost + pricing.supervisorCost;
     const costBreakdown = [
         { label: 'Labour', value: labourCost, percentage: (labourCost / pricing.totalCost) * 100 },
-        { label: 'Vans', value: pricing.vanCost, percentage: (pricing.vanCost / pricing.totalCost) * 100 },
+        { label: 'Transport', value: pricing.transportCost, percentage: (pricing.transportCost / pricing.totalCost) * 100 },
         { label: 'Parking', value: pricing.parkingCost, percentage: (pricing.parkingCost / pricing.totalCost) * 100 },
         { label: 'Rework', value: pricing.reworkingCost || 0, percentage: ((pricing.reworkingCost || 0) / pricing.totalCost) * 100 }
     ].filter(item => item.value > 0);

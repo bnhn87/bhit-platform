@@ -37,11 +37,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             .from('product_aliases')
             .select('id, product_id')
             .eq('alias_code', productCode)
-            .single();
+            .single() as { data: { id: string; product_id: string } | null; error: any };
 
         if (existingAlias) {
             // If it exists but points to a different product, we need to update it
-            if ((existingAlias as any).product_id !== targetProductId) {
+            if (existingAlias.product_id !== targetProductId) {
                 const { error: updateError } = await (supabase
                     .from('product_aliases') as any)
                     .update({
@@ -88,7 +88,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             .from('product_catalogue_items') as any)
             .select('canonical_name, canonical_code, install_time_hours')
             .eq('id', targetProductId)
-            .single();
+            .single() as { data: { canonical_name: string; canonical_code: string; install_time_hours: number } | null; error: any };
 
         if (productError) throw productError;
         if (!product) throw new Error('Product not found');
@@ -97,7 +97,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             message: 'Alias attached successfully',
             alias: newAlias,
             product: product,
-            recommendation: `Future quotes with "${productCode}" will now automatically use ${product.install_time_hours} hours`
+            recommendation: `Future quotes with "${productCode}" will now automatically use ${product?.install_time_hours ?? 'N/A'} hours`
         });
 
     } catch (error) {

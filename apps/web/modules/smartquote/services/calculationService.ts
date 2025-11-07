@@ -291,7 +291,8 @@ export const resolveProductDetails = async (
         if (dbLookup.found && dbLookup.product) {
             reference = {
                 installTimeHours: dbLookup.product.installTimeHours,
-                wasteVolumeM3: dbLookup.product.wasteVolumeM3
+                wasteVolumeM3: dbLookup.product.wasteVolumeM3,
+                isHeavy: false // Database products don't currently track isHeavy
             };
             source = 'catalogue';
         } else {

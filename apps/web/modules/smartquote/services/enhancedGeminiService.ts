@@ -1,7 +1,6 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
 import { ParseResult, ParseContent, ParsedProduct } from '../types';
-
 import { loadConfig } from './configService';
 
 let ai: GoogleGenAI | null = null;
