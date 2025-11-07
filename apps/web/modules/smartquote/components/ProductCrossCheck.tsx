@@ -156,7 +156,7 @@ export function ProductCrossCheck({ products, onProductUpdate, onProductValidate
             issues.push(`Product not in database. Found ${suggestions.length} similar products`);
           }
         }
-      } catch (error) {
+      } catch (error: unknown) {
         console.error('Error checking product:', error);
         issues.push('Failed to check against database');
         status = 'error';

@@ -141,7 +141,7 @@ export const createJobFromQuote = async (
 
         return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to create job from quote';
         return {
             success: false,
@@ -176,7 +176,7 @@ export const getCurrentUserContext = async (): Promise<CreateJobOptions | null> 
             accountId
         };
 
-    } catch (error) {
+    } catch (error: unknown) {
         console.error('Failed to get user context:', error);
         return null;
     }

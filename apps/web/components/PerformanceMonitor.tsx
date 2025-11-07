@@ -150,7 +150,7 @@ export default function PerformanceMonitor({
         }));
 
         return response;
-      } catch (error) {
+      } catch (error: unknown) {
         const _endTime = performance.now();
 
         setMetrics(prev => ({

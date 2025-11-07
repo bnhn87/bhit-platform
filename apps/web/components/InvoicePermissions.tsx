@@ -48,7 +48,7 @@ export function InvoicePermissions({ isDirector, accountId }: InvoicePermissions
       const permMap = new Map();
       perms?.forEach(p => permMap.set(p.user_id, true));
       setPermissions(permMap);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error loading users:', error);
       setMessage('Failed to load users');
     } finally {
@@ -88,7 +88,7 @@ export function InvoicePermissions({ isDirector, accountId }: InvoicePermissions
 
       setMessage(grant ? 'Permission granted successfully' : 'Permission revoked successfully');
       setTimeout(() => setMessage(null), 3000);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error updating permission:', error);
       setMessage('Failed to update permission');
     } finally {

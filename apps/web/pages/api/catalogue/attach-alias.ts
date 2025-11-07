@@ -33,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         // Check if the alias already exists
-        const { data: existingAlias, error: checkError } = await supabase
+        const { data: existingAlias } = await supabase
             .from('product_aliases')
             .select('id, product_id')
             .eq('alias_code', productCode)
@@ -100,7 +100,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             recommendation: `Future quotes with "${productCode}" will now automatically use ${product?.install_time_hours ?? 'N/A'} hours`
         });
 
-    } catch (error) {
+    } catch (error: unknown) {
         console.error('Attach alias error:', error);
         return res.status(500).json({
             error: 'Failed to attach alias',

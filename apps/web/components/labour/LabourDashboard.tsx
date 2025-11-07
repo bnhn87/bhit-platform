@@ -72,7 +72,7 @@ export default function LabourDashboard({ jobId, targetCompletionDate: _targetCo
           isLoading: false
         }));
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Failed to load labour data:', error);
       setData(prev => ({ ...prev, isLoading: false }));
     }

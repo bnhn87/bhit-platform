@@ -48,7 +48,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       try {
         await processUpdate(update, results);
         results.synced++;
-      } catch (error) {
+      } catch (error: unknown) {
         // Failed to process update
         results.failed++;
         results.errors.push({
@@ -103,7 +103,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       sync_timestamp: Date.now()
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     // Batch sync API error
     return res.status(500).json({ 
       error: 'Failed to process batch sync',

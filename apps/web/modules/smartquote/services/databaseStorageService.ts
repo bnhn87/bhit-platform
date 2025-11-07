@@ -150,7 +150,7 @@ export const loadQuotesFromDatabase = async (): Promise<SavedQuote[]> => {
       return convertToSavedQuote(quote, lines);
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Failed to load quotes from database:', error);
     return [];
   }
@@ -237,7 +237,7 @@ export const saveQuoteToDatabase = async (quoteToSave: SavedQuote): Promise<bool
 
     return true;
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Failed to save quote to database:', error);
     return false;
   }
@@ -261,7 +261,7 @@ export const deleteQuoteFromDatabase = async (quoteId: string): Promise<boolean>
 
     return true;
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Failed to delete quote from database:', error);
     return false;
   }
@@ -288,7 +288,7 @@ export const hybridStorageService = {
           return parsed.sort((a, b) => new Date(b.savedAt).getTime() - new Date(a.savedAt).getTime());
         }
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Failed to load quotes from localStorage:', error);
     }
 
@@ -307,7 +307,7 @@ export const hybridStorageService = {
         const updatedQuotes = [quote, ...filteredQuotes];
         localStorage.setItem('bhit_saved_quotes', JSON.stringify(updatedQuotes));
         return { success: true, usedFallback: true };
-      } catch (error) {
+      } catch (error: unknown) {
         console.error('Failed to save quote to localStorage fallback:', error);
         return { success: false, usedFallback: false };
       }
@@ -326,7 +326,7 @@ export const hybridStorageService = {
         const existingQuotes = await this.loadQuotes();
         const updatedQuotes = existingQuotes.filter(q => q.id !== quoteId);
         localStorage.setItem('bhit_saved_quotes', JSON.stringify(updatedQuotes));
-      } catch (error) {
+      } catch (error: unknown) {
         console.error('Failed to delete quote from localStorage fallback:', error);
       }
     }

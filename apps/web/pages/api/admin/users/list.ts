@@ -1,6 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import type { UserProfile } from '../../../../types/supabase-types';
+
 /**
  * API Route: List Users
  * GET /api/admin/users/list
@@ -96,13 +98,14 @@ export default async function handler(
     }
 
     // Get auth users data for last_sign_in_at, full_name, and permissions
-    const { data: authUsers, error: authError } = await adminClient.auth.admin.listUsers();
+    const { data: authUsers } = await adminClient.auth.admin.listUsers();
 
     // Merge profiles with auth data and extract permissions from user_metadata
-    const users = profiles?.map((profile: ProfileData) => {
-      const authUser: any = authUsers?.users?.find((u: any) => u.id === profile.id);
+    const users = profiles?.map((profile: UserProfile) => {
+      const authUser = authUsers?.users?.find((u) => u.id === profile.id);
       // Check if user is banned (inactive)
-      const isBanned = authUser?.banned_until && new Date(authUser.banned_until) > new Date();
+      const bannedUntil = (authUser as { banned_until?: string })?.banned_until;
+      const isBanned = bannedUntil && new Date(bannedUntil) > new Date();
 
       // Extract permissions from auth user_metadata
       const perms = authUser?.user_metadata?.permissions || {};
@@ -134,10 +137,10 @@ export default async function handler(
       users: users || []
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('List users error:', error);
     return res.status(500).json({
-      error: error?.message || 'Internal server error'
+      error: error instanceof Error ? error.message : 'Internal server error'
     });
   }
 }

@@ -134,7 +134,7 @@ class Logger {
         },
         body: JSON.stringify(entry),
       });
-    } catch (error) {
+    } catch (error: unknown) {
       // Fallback to console if remote logging fails
       console.error('Failed to log to remote service:', error);
     }
@@ -270,7 +270,7 @@ export function withLogging<T extends unknown[], R>(
       const result = await fn(...args);
       log.debug(`Completed ${name}`, { success: true });
       return result;
-    } catch (error) {
+    } catch (error: unknown) {
       log.error(`Failed ${name}`, error as Error, { args });
       throw error;
     } finally {

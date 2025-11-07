@@ -46,7 +46,7 @@ export default function PhotoGrid({
     setUploading(true);
     try {
       await onUpload(files);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Upload failed:", error);
     } finally {
       setUploading(false);

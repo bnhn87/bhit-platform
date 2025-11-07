@@ -39,7 +39,7 @@ export async function getFloorPlanForJob(jobId: string): Promise<JobFloorPlan | 
       floorPlanWidth: data.floor_plan_width,
       floorPlanHeight: data.floor_plan_height
     };
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error fetching floor plan:', error);
     throw error;
   }
@@ -68,7 +68,7 @@ export async function saveFloorPlan(floorPlan: JobFloorPlan): Promise<void> {
     if (error) {
       throw new Error(`Failed to save floor plan: ${error.message}`);
     }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error saving floor plan:', error);
     throw error;
   }
@@ -101,7 +101,7 @@ export async function getGeneratedTasksForJob(jobId: string): Promise<Installati
       dependencies: task.dependencies || [],
       isGenerated: task.is_generated
     }));
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error fetching generated tasks:', error);
     throw error;
   }
@@ -134,7 +134,7 @@ export async function saveGeneratedTasks(tasks: InstallationTask[]): Promise<voi
     if (error) {
       throw new Error(`Failed to save generated tasks: ${error.message}`);
     }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error saving generated tasks:', error);
     throw error;
   }
@@ -151,7 +151,7 @@ export async function deleteFloorPlan(floorPlanId: string): Promise<void> {
     if (error) {
       throw new Error(`Failed to delete floor plan: ${error.message}`);
     }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error deleting floor plan:', error);
     throw error;
   }
@@ -168,7 +168,7 @@ export async function deleteGeneratedTasksForJob(jobId: string): Promise<void> {
     if (error) {
       throw new Error(`Failed to delete generated tasks: ${error.message}`);
     }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error deleting generated tasks:', error);
     throw error;
   }

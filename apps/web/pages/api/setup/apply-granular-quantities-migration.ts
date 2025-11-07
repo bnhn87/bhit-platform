@@ -112,7 +112,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       note: 'If columns were not added automatically, please execute the migration SQL manually in your database'
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Migration error:', error);
     return res.status(500).json({
       error: 'Failed to apply migration',

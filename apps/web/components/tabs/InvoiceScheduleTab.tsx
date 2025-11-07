@@ -153,7 +153,7 @@ const InvoiceScheduleTab: React.FC = () => {
       });
 
       setJobs(transformedJobs);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error loading invoice data:', error);
     } finally {
       setLoading(false);
@@ -264,7 +264,7 @@ const InvoiceScheduleTab: React.FC = () => {
 
       // Show success message
       alert('Job marked as complete successfully!');
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error marking job complete:', error);
       alert('Failed to mark job as complete. Please try again.');
     }

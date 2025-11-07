@@ -3,8 +3,8 @@
 // ========================================
 // This page runs SmartQuote v2 within the BHIT Work OS dashboard
 
-import { useRouter } from 'next/router';
 import React from 'react';
+import { useRouter } from 'next/router';
 
 import Layout from '../components/Layout';
 import SmartQuoteV2App from '../modules/smartquote-v2/App';

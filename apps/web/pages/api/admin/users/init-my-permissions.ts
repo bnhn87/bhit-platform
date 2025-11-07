@@ -78,7 +78,7 @@ export default async function handler(
     };
 
     // Update user metadata
-    const { data: updatedUser, error: updateError } = await adminClient.auth.admin.updateUserById(
+    const { error: updateError } = await adminClient.auth.admin.updateUserById(
       user.id,
       {
         user_metadata: {
@@ -99,10 +99,10 @@ export default async function handler(
       user_id: user.id
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Init permissions error:', error);
     return res.status(500).json({
-      error: error?.message || 'Internal server error'
+      error: error instanceof Error ? error.message : 'Internal server error'
     });
   }
 }

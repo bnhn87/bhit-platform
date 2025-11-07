@@ -94,7 +94,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // });
 
     res.status(200).json(response);
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('PDF AI processing error:', error);
     
     // Provide helpful error messages

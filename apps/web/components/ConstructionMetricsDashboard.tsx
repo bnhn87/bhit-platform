@@ -148,7 +148,7 @@ export default function ConstructionMetricsDashboard() {
 
       setMetrics(metricsData);
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error loading metrics:', error);
     } finally {
       setLoading(false);

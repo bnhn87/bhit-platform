@@ -293,7 +293,7 @@ export async function withRetry<T>(
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
       return await fn();
-    } catch (error) {
+    } catch (error: unknown) {
       lastError = error instanceof Error ? error : new Error(String(error));
       
       // Don't retry if it's not a network/temporary error

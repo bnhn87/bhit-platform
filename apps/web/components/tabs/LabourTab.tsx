@@ -260,7 +260,7 @@ const LabourTab: React.FC<LabourTabProps> = ({ jobId }) => {
         setAllocations(allocationsMap);
       }
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error loading job data:', error);
       console.error('Job ID that failed:', jobId);
       console.error('Error details:', error instanceof Error ? error.message : error);
@@ -424,7 +424,7 @@ const LabourTab: React.FC<LabourTabProps> = ({ jobId }) => {
       }
 
       return quoteData;
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error loading SmartQuote data:', error);
       return null;
     }
@@ -520,7 +520,7 @@ const LabourTab: React.FC<LabourTabProps> = ({ jobId }) => {
 
       alert(`Labour allocated based on SmartQuote!\n\nEstimated job duration: ${estimatedDays} days\nTotal hours: ${Math.round(totalQuoteHours)}\nDaily allocation: ${dailyVanCrews} van crews, ${dailyFootInstallers} foot installers`);
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error allocating per SmartQuote:', error);
       alert('Error loading SmartQuote data. Please try again.');
     }
@@ -584,7 +584,7 @@ const LabourTab: React.FC<LabourTabProps> = ({ jobId }) => {
       }
 
       alert('Schedule saved successfully!');
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error saving schedule:', error);
       alert('Failed to save schedule');
     }

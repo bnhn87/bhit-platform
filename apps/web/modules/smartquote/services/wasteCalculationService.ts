@@ -145,7 +145,7 @@ export function enhanceProductWithWaste(
         wasteVolumeM3: calculateWasteVolume(
             productCode,
             existingRef.installTimeHours,
-            existingRef.isHeavy
+            existingRef.isHeavy ?? false
         )
     };
 }

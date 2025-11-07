@@ -380,7 +380,7 @@ export const resolveProductDetails = async (
                 totalTime: product.quantity * timePerUnit,
                 wastePerUnit,
                 totalWaste: product.quantity * wastePerUnit,
-                isHeavy: reference.isHeavy,
+                isHeavy: reference.isHeavy ?? false,
                 source: source
             });
         } else {

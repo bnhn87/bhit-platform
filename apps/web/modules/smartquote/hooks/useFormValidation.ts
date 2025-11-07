@@ -86,7 +86,7 @@ export const useFormValidation = <T extends Record<string, any>>(
         clearAllErrors,
         markFieldTouched,
         hasErrors: Object.values(errors).some(error => error !== null),
-        getFieldError: (fieldName: string) => touched[fieldName] ? errors[fieldName] : null
+        getFieldError: (fieldName: string) => (touched[fieldName] ? errors[fieldName] : null) ?? undefined
     };
 };
 

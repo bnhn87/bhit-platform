@@ -37,7 +37,7 @@ export default function ExportModal({ isOpen, onClose, project }: ExportModalPro
       if (type === 'png') await exportAsPng(project.name);
       if (type === 'pdf') await exportAsPdf(project);
       if (type === 'json') exportAsJson(project);
-    } catch (error) {
+    } catch (error: unknown) {
         console.error("Export failed:", error);
         // You could show a notification here
     } finally {

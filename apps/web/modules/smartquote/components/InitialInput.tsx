@@ -107,7 +107,7 @@ const fileToGenerativePart = async (file: File): Promise<string | { mimeType: st
                     }
 
                     reject(new Error("Both parsing methods yielded no text content from the PDF."));
-                } catch (error) {
+                } catch (error: unknown) {
                     const errorMessage = error instanceof Error ? error.message : String(error);
                     reject(new Error(`Failed to parse PDF "${file.name}". Error: ${errorMessage}`));
                 } finally {

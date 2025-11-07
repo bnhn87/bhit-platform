@@ -98,7 +98,7 @@ export default function DailyCloseOut({ jobId, onCloseoutComplete }: DailyCloseO
           }
         });
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Failed to generate auto summary:', error);
     } finally {
       setIsLoading(false);
@@ -136,7 +136,7 @@ export default function DailyCloseOut({ jobId, onCloseoutComplete }: DailyCloseO
       } else {
         throw new Error(result.error || 'Failed to create closeout');
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Failed to submit closeout:', error);
       alert('Failed to submit closeout. Please try again.');
     } finally {

@@ -79,10 +79,10 @@ export default async function handler(
       has_service_key: !!process.env.SUPABASE_SERVICE_ROLE_KEY
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     return res.status(500).json({
-      error: error?.message || 'Unknown error',
-      stack: error?.stack
+      error: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined
     });
   }
 }

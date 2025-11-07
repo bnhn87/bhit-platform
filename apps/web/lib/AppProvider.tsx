@@ -210,7 +210,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           payload: { language: savedLanguage } 
         });
       }
-    } catch (error) {
+    } catch (error: unknown) {
       log.warn('Failed to load preferences from localStorage', { error });
     }
   }, [state.sidebarCollapsed]);

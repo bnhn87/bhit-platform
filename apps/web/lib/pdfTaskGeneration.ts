@@ -66,7 +66,7 @@ const extractTextFromPdf = async (file: File): Promise<string> => {
     
     // console.log(`Total extracted text: ${fullText.length} characters`);
     return fullText.trim();
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error extracting text from PDF:', error);
     throw new Error(`Failed to extract text from PDF: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
@@ -163,7 +163,7 @@ Respond with only a JSON array, no additional text:`;
       console.error('Response text:', responseText);
       throw new Error('Failed to parse task generation response. The AI may have returned invalid JSON.');
     }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error generating tasks from text:', error);
     throw error;
   }
@@ -263,7 +263,7 @@ export const generateTasksFromSelectedDocuments = async (jobId: string, document
     // console.log(`Successfully generated ${allTasks.length} total tasks from ${processedCount} document(s)`);
     return allTasks;
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error in generateTasksFromSelectedDocuments:', error);
     throw error;
   }

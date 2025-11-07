@@ -46,7 +46,7 @@ const LabourOverviewTile: React.FC<LabourOverviewTileProps> = ({ jobId }) => {
       );
 
       setAllocations(activeAllocations);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error in loadLabourAllocations:', error);
     } finally {
       setLoading(false);

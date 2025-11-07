@@ -256,7 +256,7 @@ export const ManualProductSelector: React.FC<ManualProductSelectorProps> = ({ co
                  totalTime: p.quantity * timePerUnit,
                  wastePerUnit,
                  totalWaste: p.quantity * wastePerUnit,
-                 isHeavy: ref.isHeavy,
+                 isHeavy: ref.isHeavy ?? false,
                  source: 'user-inputted',
              }
         });

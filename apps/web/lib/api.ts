@@ -264,7 +264,7 @@ export async function withRetry<T>(
       }
       
       lastError = result;
-    } catch (error) {
+    } catch (error: unknown) {
       lastError = error;
     }
     

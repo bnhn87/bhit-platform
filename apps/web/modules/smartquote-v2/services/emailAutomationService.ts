@@ -106,7 +106,7 @@ class EmailAutomationService implements IEmailAutomationService {
                 throw parseError;
             }
             
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Error processing email:', error);
             throw error;
         }
@@ -175,7 +175,7 @@ class EmailAutomationService implements IEmailAutomationService {
             
             return draft;
             
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Error creating draft:', error);
             throw error;
         }
@@ -263,7 +263,7 @@ class EmailAutomationService implements IEmailAutomationService {
             
             return quote.id;
             
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Error approving draft:', error);
             throw error;
         }
@@ -284,7 +284,7 @@ class EmailAutomationService implements IEmailAutomationService {
                 })
                 .eq('id', draftId);
                 
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Error rejecting draft:', error);
             throw error;
         }
@@ -305,7 +305,7 @@ class EmailAutomationService implements IEmailAutomationService {
             if (error) throw error;
             return data || [];
             
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Error fetching pending drafts:', error);
             return [];
         }

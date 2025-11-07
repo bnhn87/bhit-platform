@@ -1,3 +1,4 @@
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { format } from 'date-fns';
 import {
   Upload,
@@ -13,16 +14,12 @@ import {
   Trash2,
   FileSpreadsheet,
   Brain,
-  Sparkles,
-  CheckCircle,
-  X
+  Sparkles
 } from 'lucide-react';
-import React, { useState, useCallback, useRef, useEffect } from 'react';
 import * as XLSX from 'xlsx';
 
 import Layout from '../components/Layout';
 import { processInvoiceWithAI } from '../lib/invoiceAiService';
-import { processInvoiceWithLearning, createActiveLearningRequestsForInvoice } from '../lib/smartInvoiceProcessor';
 import {
   fetchInvoices,
   createInvoiceFromExtraction,
@@ -30,11 +27,7 @@ import {
   deleteInvoice,
   uploadInvoiceFile,
   subscribeToInvoices,
-  getInvoiceFileUrl,
-  recordCorrection,
-  getCorrectionHistory,
-  type Invoice,
-  type InvoiceCorrection
+  type Invoice
 } from '../lib/invoiceDbService';
 import { theme } from '../lib/theme';
 import { getDashboardCardStyle, getDashboardButtonStyle, getDashboardTypographyStyle } from '../modules/smartquote/utils/dashboardStyles';
@@ -66,52 +59,12 @@ interface InvoiceData {
   extractionStatus: 'pending' | 'processing' | 'complete' | 'failed';
   extractedFields: Record<string, any>;
   manuallyEdited: boolean;
-  fieldConfidence?: Record<string, number>; // Per-field confidence scores
 }
 
 interface EditingCell {
   rowId: string;
   field: keyof InvoiceData;
   value: any;
-}
-
-// ConfidenceBadge Component
-function ConfidenceBadge({ score, size = 'sm' }: { score: number; size?: 'sm' | 'md' }) {
-  const getConfidenceColor = (score: number) => {
-    if (score >= 90) return '#10b981'; // green
-    if (score >= 70) return '#f59e0b'; // yellow/orange
-    return '#ef4444'; // red
-  };
-
-  const getConfidenceLabel = (score: number) => {
-    if (score >= 90) return '🟢';
-    if (score >= 70) return '🟡';
-    return '🔴';
-  };
-
-  if (!score || score === 0) return null;
-
-  const dotSize = size === 'sm' ? '8px' : '10px';
-
-  return (
-    <div
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '0.25rem',
-        fontSize: size === 'sm' ? '0.75rem' : '0.875rem'
-      }}
-      title={`AI Confidence: ${score.toFixed(0)}%`}
-    >
-      <div style={{
-        width: dotSize,
-        height: dotSize,
-        borderRadius: '50%',
-        backgroundColor: getConfidenceColor(score),
-      }} />
-      {size === 'md' && <span style={{ color: theme.colors.textSecondary }}>{score.toFixed(0)}%</span>}
-    </div>
-  );
 }
 
 export default function SmartInvoice() {
@@ -126,14 +79,6 @@ export default function SmartInvoice() {
   const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-<<<<<<< HEAD
-  const [previewFile, setPreviewFile] = useState<{ url: string; fileName: string; fileType: string } | null>(null);
-=======
-  const [isDragging, setIsDragging] = useState(false);
-  const [previewInvoice, setPreviewInvoice] = useState<InvoiceData | null>(null);
-  const [showLowConfidenceOnly, setShowLowConfidenceOnly] = useState(false);
-  const [correctionModalInvoice, setCorrectionModalInvoice] = useState<InvoiceData | null>(null);
->>>>>>> origin/claude/fix-smartinvoice-error-011CUn13FLPhduCk1XB83MH4
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Load invoices from database on mount
@@ -162,43 +107,29 @@ export default function SmartInvoice() {
       const dbInvoices = await fetchInvoices();
 
       // Map database invoices to component format
-      const mappedInvoices: InvoiceData[] = dbInvoices.map((inv: Invoice) => {
-        // Try to parse field confidence from extracted_text JSON
-        let fieldConfidence: Record<string, number> = {};
-        try {
-          if (inv.extracted_text) {
-            const extracted = JSON.parse(inv.extracted_text);
-            fieldConfidence = extracted.fieldConfidence || {};
-          }
-        } catch (e) {
-          // No field confidence available for this invoice
-        }
-
-        return {
-          id: inv.id,
-          uploadedAt: new Date(inv.created_at),
-          fileName: inv.file_path ? inv.file_path.split('/').pop() || 'Unknown' : 'Unknown',
-          fileUrl: inv.file_path,
-          date: inv.invoice_date,
-          invoiceNumber: inv.invoice_number,
-          supplier: inv.supplier_name,
-          description: inv.description || null,
-          category: inv.category,
-          vehicleReg: inv.vehicle_reg || null,
-          jobReference: inv.job_reference || null,
-          netAmount: inv.net_amount ? parseFloat(inv.net_amount.toString()) : null,
-          vatAmount: inv.vat_amount ? parseFloat(inv.vat_amount.toString()) : null,
-          grossAmount: inv.gross_amount ? parseFloat(inv.gross_amount.toString()) : null,
-          paymentStatus: (inv.status === 'paid' ? 'Paid' : inv.status === 'pending' ? 'Pending' : 'Overdue') as 'Pending' | 'Paid' | 'Overdue',
-          paymentMethod: null,
-          notes: inv.notes || null,
-          aiConfidence: inv.confidence_score ? parseFloat(inv.confidence_score.toString()) : 0,
-          extractionStatus: 'complete' as const,
-          extractedFields: {},
-          manuallyEdited: false,
-          fieldConfidence,
-        };
-      });
+      const mappedInvoices: InvoiceData[] = dbInvoices.map((inv: Invoice) => ({
+        id: inv.id,
+        uploadedAt: new Date(inv.created_at),
+        fileName: inv.file_path ? inv.file_path.split('/').pop() || 'Unknown' : 'Unknown',
+        fileUrl: inv.file_path,
+        date: inv.invoice_date,
+        invoiceNumber: inv.invoice_number,
+        supplier: inv.supplier_name,
+        description: inv.description || null,
+        category: inv.category,
+        vehicleReg: inv.vehicle_reg || null,
+        jobReference: inv.job_reference || null,
+        netAmount: inv.net_amount ? parseFloat(inv.net_amount.toString()) : null,
+        vatAmount: inv.vat_amount ? parseFloat(inv.vat_amount.toString()) : null,
+        grossAmount: inv.gross_amount ? parseFloat(inv.gross_amount.toString()) : null,
+        paymentStatus: (inv.status === 'paid' ? 'Paid' : inv.status === 'pending' ? 'Pending' : 'Overdue') as 'Pending' | 'Paid' | 'Overdue',
+        paymentMethod: null,
+        notes: inv.notes || null,
+        aiConfidence: inv.confidence_score ? parseFloat(inv.confidence_score.toString()) : 0,
+        extractionStatus: 'complete' as const,
+        extractedFields: {},
+        manuallyEdited: false,
+      }));
 
       setInvoices(mappedInvoices);
     } catch (err) {
@@ -236,39 +167,24 @@ export default function SmartInvoice() {
     { key: 'notes', label: 'Notes', width: '200px', type: 'text' },
   ];
 
-  // Handle file upload - PARALLEL PROCESSING for 90% faster uploads
+  // Handle file upload
   const handleFileUpload = useCallback(async (files: FileList) => {
     setIsProcessing(true);
-    const fileArray = Array.from(files);
 
-    // Process all files in parallel for maximum speed
-    const promises = fileArray.map(async (file, i) => {
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
       const invoiceId = `inv_${Date.now()}_${i}`;
 
       setUploadProgress(prev => ({ ...prev, [invoiceId]: 10 }));
 
       try {
-        // Process with AI + Learning Systems (patterns, validation, anomalies)
+        // Process with AI
         setUploadProgress(prev => ({ ...prev, [invoiceId]: 30 }));
-        const result = await processInvoiceWithLearning(file);
+        const result = await processInvoiceWithAI(file);
 
         if (!result.success || !result.data) {
           console.error('AI processing failed:', result.error);
-          return { success: false, error: result.error, fileName: file.name };
-        }
-
-        // Log AI learning insights
-        if (result.appliedPatterns && result.appliedPatterns.length > 0) {
-          console.log('🧠 Applied learned patterns:', result.appliedPatterns);
-        }
-        if (result.validationResult && !result.validationResult.is_valid) {
-          console.warn('⚠️ Validation issues:', result.validationResult.critical_issues);
-        }
-        if (result.anomalyDetection && result.anomalyDetection.requires_review) {
-          console.warn('🚨 Anomaly detected:', result.anomalyDetection.description);
-        }
-        if (result.predictedCorrections && result.predictedCorrections.length > 0) {
-          console.log('💡 Predicted corrections available:', result.predictedCorrections.length);
+          continue;
         }
 
         setUploadProgress(prev => ({ ...prev, [invoiceId]: 60 }));
@@ -284,63 +200,14 @@ export default function SmartInvoice() {
 
         setUploadProgress(prev => ({ ...prev, [invoiceId]: 80 }));
 
-        // Save to database (with duplicate detection)
-        let savedInvoiceId: string | undefined;
-        try {
-          const savedInvoice = await createInvoiceFromExtraction(result.data, filePath);
-          savedInvoiceId = savedInvoice.id;
-        } catch (dbError: any) {
-          // Check if it's a duplicate error
-          if (dbError?.message?.includes('DUPLICATE')) {
-            const shouldSkip = confirm(
-              `⚠️ Possible Duplicate Invoice Detected!\n\n` +
-              `${dbError.message.replace('DUPLICATE: ', '')}\n\n` +
-              `This might be a duplicate invoice. Do you want to create it anyway?\n\n` +
-              `Click OK to create anyway, or Cancel to skip this invoice.`
-            );
-
-            if (shouldSkip) {
-              // User confirmed - create anyway by skipping duplicate check
-              const savedInvoice = await createInvoiceFromExtraction(result.data, filePath, true);
-              savedInvoiceId = savedInvoice.id;
-            } else {
-              // User cancelled - skip this invoice
-              setUploadProgress(prev => ({ ...prev, [invoiceId]: 100 }));
-              return { success: false, error: 'Skipped (duplicate)', fileName: file.name };
-            }
-          } else {
-            throw dbError;
-          }
-        }
-
-        // Create active learning requests for low-confidence fields
-        if (savedInvoiceId && result.activeLearningRequests && result.activeLearningRequests.length > 0) {
-          try {
-            await createActiveLearningRequestsForInvoice(savedInvoiceId, result.data);
-            console.log(`📝 Created ${result.activeLearningRequests.length} active learning requests`);
-          } catch (learningError) {
-            console.error('Failed to create active learning requests:', learningError);
-            // Non-critical, continue
-          }
-        }
+        // Save to database
+        await createInvoiceFromExtraction(result.data, filePath);
 
         setUploadProgress(prev => ({ ...prev, [invoiceId]: 100 }));
-        return { success: true, fileName: file.name };
-      } catch (error) {
+      } catch (error: unknown) {
         console.error('Error processing invoice:', error);
-        return { success: false, error, fileName: file.name };
+        setError(`Failed to process ${file.name}`);
       }
-    });
-
-    // Wait for all uploads to complete
-    const results = await Promise.allSettled(promises);
-
-    // Show summary of results
-    const successful = results.filter(r => r.status === 'fulfilled' && r.value.success).length;
-    const failed = results.length - successful;
-
-    if (failed > 0) {
-      setError(`Processed ${successful} of ${results.length} invoices. ${failed} failed.`);
     }
 
     // Reload invoices from database
@@ -376,10 +243,6 @@ export default function SmartInvoice() {
 
   // Handle cell edit
   const handleCellEdit = async (rowId: string, field: keyof InvoiceData, value: any) => {
-    // Capture original value before update for correction tracking
-    const originalInvoice = invoices.find(inv => inv.id === rowId);
-    const originalValue = originalInvoice?.[field];
-
     // Update local state immediately for responsive UI
     setInvoices(prev => prev.map(inv => {
       if (inv.id === rowId) {
@@ -395,18 +258,6 @@ export default function SmartInvoice() {
       return inv;
     }));
     setEditingCell(null);
-
-    // Record correction if value changed (for AI training)
-    if (originalValue !== value && originalValue !== null && originalValue !== undefined) {
-      try {
-        const supplierId = originalInvoice?.id; // Could map to actual supplier_id from database
-        await recordCorrection(rowId, field as string, originalValue, value, supplierId);
-        console.log(`Recorded correction for ${field}: ${originalValue} → ${value}`);
-      } catch (error) {
-        console.error('Error recording correction:', error);
-        // Don't block the update if correction recording fails
-      }
-    }
 
     // Map field names to database columns
     const fieldMapping: Record<string, string> = {
@@ -435,34 +286,14 @@ export default function SmartInvoice() {
       updates.status = value === 'Paid' ? 'paid' : 'pending';
     }
 
-    // Save to database (async, don't block UI)
-    updateInvoice(rowId, updates as any).catch((error) => {
-      console.error('Error updating invoice:', error);
-      setError('Failed to save changes - reverting');
-      // Revert only this invoice, don't reload everything
-      loadInvoices();
-    });
-  };
-
-  // Handle file preview
-  const handleViewFile = async (invoice: InvoiceData) => {
-    if (!invoice.fileUrl) {
-      alert('No file available for this invoice');
-      return;
-    }
-
+    // Save to database
     try {
-      const signedUrl = await getInvoiceFileUrl(invoice.fileUrl);
-      const fileType = invoice.fileName.toLowerCase().endsWith('.pdf') ? 'pdf' : 'image';
-
-      setPreviewFile({
-        url: signedUrl,
-        fileName: invoice.fileName,
-        fileType
-      });
-    } catch (error) {
-      console.error('Failed to get file URL:', error);
-      alert('Failed to load file preview');
+      await updateInvoice(rowId, updates as any);
+    } catch (error: unknown) {
+      console.error('Error updating invoice:', error);
+      setError('Failed to save changes');
+      // Reload from database to revert
+      loadInvoices();
     }
   };
 
@@ -475,90 +306,15 @@ export default function SmartInvoice() {
     try {
       await deleteInvoice(invoiceId);
       setInvoices(prev => prev.filter(inv => inv.id !== invoiceId));
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error deleting invoice:', error);
       setError('Failed to delete invoice');
     }
   };
 
-  // Bulk operations
-  const handleBulkDelete = async () => {
-    if (!confirm(`Are you sure you want to delete ${selectedInvoices.size} invoices?`)) {
-      return;
-    }
-
-    const deletePromises = Array.from(selectedInvoices).map(id => deleteInvoice(id));
-    await Promise.allSettled(deletePromises);
-
-    setInvoices(prev => prev.filter(inv => !selectedInvoices.has(inv.id)));
-    setSelectedInvoices(new Set());
-  };
-
-  const handleBulkExport = () => {
-    const selectedData = invoices.filter(inv => selectedInvoices.has(inv.id));
-    const ws = XLSX.utils.json_to_sheet(
-      selectedData.map(inv => ({
-        Date: inv.date,
-        'Invoice #': inv.invoiceNumber,
-        Supplier: inv.supplier,
-        Description: inv.description,
-        Category: inv.category,
-        Vehicle: inv.vehicleReg,
-        'Job Ref': inv.jobReference,
-        'Net (£)': inv.netAmount,
-        'VAT (£)': inv.vatAmount,
-        'Gross (£)': inv.grossAmount,
-        Status: inv.paymentStatus,
-        Notes: inv.notes,
-      }))
-    );
-
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Selected Invoices');
-    XLSX.writeFile(wb, `BHIT_Selected_Invoices_${format(new Date(), 'yyyy-MM-dd')}.xlsx`);
-  };
-
-  const handleBulkStatusChange = async (status: 'Pending' | 'Paid') => {
-    const updatePromises = Array.from(selectedInvoices).map(id =>
-      updateInvoice(id, { status: status === 'Paid' ? 'paid' : 'pending' })
-    );
-
-    await Promise.allSettled(updatePromises);
-
-    setInvoices(prev => prev.map(inv =>
-      selectedInvoices.has(inv.id) ? { ...inv, paymentStatus: status } : inv
-    ));
-    setSelectedInvoices(new Set());
-  };
-
-  // Drag & Drop handlers
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(true);
-  }, []);
-
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
-  }, []);
-
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
-
-    const files = e.dataTransfer.files;
-    if (files && files.length > 0) {
-      handleFileUpload(files);
-    }
-  }, [handleFileUpload]);
-
   // Filter and search
   const filteredInvoices = invoices
     .filter(inv => filterCategory === 'all' || inv.category === filterCategory)
-    .filter(inv => !showLowConfidenceOnly || inv.aiConfidence < 80)
     .filter(inv => {
       if (!searchTerm) return true;
       const search = searchTerm.toLowerCase();
@@ -593,44 +349,7 @@ export default function SmartInvoice() {
 
   return (
     <Layout>
-      <div
-        style={{ background: theme.colors.background, minHeight: '100vh', color: theme.colors.text, position: 'relative' }}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-      >
-        {/* Drag & Drop Overlay */}
-        {isDragging && (
-          <div style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(59, 130, 246, 0.1)',
-            backdropFilter: 'blur(4px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 2000,
-            border: `4px dashed ${theme.colors.accent}`,
-            margin: '2rem'
-          }}>
-            <div style={{
-              background: theme.colors.panel,
-              padding: '3rem',
-              borderRadius: theme.radii.lg,
-              boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
-              textAlign: 'center'
-            }}>
-              <Upload size={64} style={{ color: theme.colors.accent, marginBottom: '1rem' }} />
-              <h2 style={{ color: theme.colors.accent, marginBottom: '0.5rem', fontSize: '1.5rem' }}>
-                Drop invoices here
-              </h2>
-              <p style={{ color: theme.colors.textSubtle }}>
-                PDF, PNG, or JPG files supported
-              </p>
-            </div>
-          </div>
-        )}
-
+      <div style={{ background: theme.colors.background, minHeight: '100vh', color: theme.colors.text }}>
         {/* Error notification */}
         {error && (
           <div style={{
@@ -844,85 +563,13 @@ export default function SmartInvoice() {
               <option value="Materials">Materials</option>
               <option value="Other">Other</option>
             </select>
-
-            <button
-              onClick={() => setShowLowConfidenceOnly(!showLowConfidenceOnly)}
-              style={{
-                background: showLowConfidenceOnly ? theme.colors.accent : theme.colors.panel,
-                border: `1px solid ${showLowConfidenceOnly ? theme.colors.accent : theme.colors.border}`,
-                borderRadius: theme.radii.md,
-                padding: '0.5rem 1rem',
-                color: showLowConfidenceOnly ? '#fff' : theme.colors.text,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                fontSize: '0.875rem',
-                fontWeight: showLowConfidenceOnly ? 500 : 400
-              }}
-              title="Show only invoices with confidence below 80%"
-            >
-              <Brain size={16} />
-              {showLowConfidenceOnly ? 'Showing Low Confidence' : 'Show Low Confidence'}
-            </button>
           </div>
 
           <div>
             {selectedInvoices.size > 0 && (
-              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                <span style={{ color: theme.colors.accent, fontWeight: 500, marginRight: '0.5rem' }}>
-                  {selectedInvoices.size} selected
-                </span>
-                <button
-                  onClick={() => handleBulkStatusChange('Paid')}
-                  style={{
-                    ...getDashboardButtonStyle('secondary'),
-                    padding: '0.5rem 1rem',
-                    fontSize: '0.875rem'
-                  }}
-                >
-                  Mark as Paid
-                </button>
-                <button
-                  onClick={() => handleBulkStatusChange('Pending')}
-                  style={{
-                    ...getDashboardButtonStyle('secondary'),
-                    padding: '0.5rem 1rem',
-                    fontSize: '0.875rem'
-                  }}
-                >
-                  Mark as Pending
-                </button>
-                <button
-                  onClick={handleBulkExport}
-                  style={{
-                    ...getDashboardButtonStyle('secondary'),
-                    padding: '0.5rem 1rem',
-                    fontSize: '0.875rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.25rem'
-                  }}
-                >
-                  <Download size={14} />
-                  Export
-                </button>
-                <button
-                  onClick={handleBulkDelete}
-                  style={{
-                    ...getDashboardButtonStyle('secondary'),
-                    padding: '0.5rem 1rem',
-                    fontSize: '0.875rem',
-                    background: theme.colors.danger,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.25rem'
-                  }}
-                >
-                  <Trash2 size={14} />
-                  Delete
-                </button>
-              </div>
+              <span style={{ color: theme.colors.accent, fontWeight: 500 }}>
+                {selectedInvoices.size} selected
+              </span>
             )}
           </div>
         </div>
@@ -1125,18 +772,13 @@ export default function SmartInvoice() {
                             )}
                           </div>
                         ) : (
-                          <div style={{ minHeight: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <span>
-                              {col.type === 'number' && value !== null ?
-                                `£${(value as number).toFixed(2)}` :
-                                col.type === 'date' && value ?
-                                format(new Date(value as string), 'dd/MM/yyyy') :
-                                (value as string) || '-'
-                              }
-                            </span>
-                            {invoice.fieldConfidence && invoice.fieldConfidence[col.key] && (
-                              <ConfidenceBadge score={invoice.fieldConfidence[col.key] || 0} size="sm" />
-                            )}
+                          <div style={{ minHeight: '1.5rem' }}>
+                            {col.type === 'number' && value !== null ?
+                              `£${(value as number).toFixed(2)}` :
+                              col.type === 'date' && value ?
+                              format(new Date(value as string), 'dd/MM/yyyy') :
+                              (value as string) || '-'
+                            }
                           </div>
                         )}
                         {invoice.manuallyEdited && col.key !== 'date' && (
@@ -1157,11 +799,6 @@ export default function SmartInvoice() {
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                       <button
                         title="View Original"
-<<<<<<< HEAD
-                        onClick={() => handleViewFile(invoice)}
-=======
-                        onClick={() => setPreviewInvoice(invoice)}
->>>>>>> origin/claude/fix-smartinvoice-error-011CUn13FLPhduCk1XB83MH4
                         style={{
                           background: 'transparent',
                           border: 'none',
@@ -1280,431 +917,7 @@ export default function SmartInvoice() {
             </div>
           </div>
         )}
-
-        {/* Invoice Preview Modal */}
-        {previewInvoice && (
-          <div
-            style={{
-              position: 'fixed',
-              inset: 0,
-              background: 'rgba(0, 0, 0, 0.9)',
-              backdropFilter: 'blur(8px)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              zIndex: 2000,
-              padding: '2rem'
-            }}
-            onClick={() => setPreviewInvoice(null)}
-          >
-            <div
-              style={{
-                background: theme.colors.panel,
-                borderRadius: theme.radii.lg,
-                boxShadow: '0 25px 100px rgba(0,0,0,0.8)',
-                maxWidth: '1400px',
-                width: '100%',
-                maxHeight: '90vh',
-                display: 'flex',
-                flexDirection: 'column',
-                overflow: 'hidden'
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Header */}
-              <div style={{
-                padding: '1.5rem',
-                borderBottom: `1px solid ${theme.colors.border}`,
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-              }}>
-                <h2 style={{ margin: 0, color: theme.colors.text }}>
-                  Invoice Preview - {previewInvoice.invoiceNumber || 'N/A'}
-                </h2>
-                <button
-                  onClick={() => setPreviewInvoice(null)}
-                  style={{
-                    background: 'transparent',
-                    border: 'none',
-                    color: theme.colors.textSubtle,
-                    cursor: 'pointer',
-                    fontSize: '1.5rem',
-                    padding: '0.25rem 0.5rem',
-                    lineHeight: 1,
-                    borderRadius: theme.radii.sm
-                  }}
-                >
-                  ×
-                </button>
-              </div>
-
-              {/* Content */}
-              <div style={{
-                display: 'flex',
-                flex: 1,
-                overflow: 'hidden'
-              }}>
-                {/* Left: Invoice file */}
-                <div style={{
-                  flex: 2,
-                  background: theme.colors.background,
-                  padding: '1.5rem',
-                  overflow: 'auto',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
-                  {previewInvoice.fileUrl ? (
-                    previewInvoice.fileUrl.endsWith('.pdf') ? (
-                      <iframe
-                        src={previewInvoice.fileUrl}
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          border: 'none',
-                          borderRadius: theme.radii.md
-                        }}
-                      />
-                    ) : (
-                      <img
-                        src={previewInvoice.fileUrl}
-                        alt="Invoice"
-                        style={{
-                          maxWidth: '100%',
-                          maxHeight: '100%',
-                          objectFit: 'contain',
-                          borderRadius: theme.radii.md
-                        }}
-                      />
-                    )
-                  ) : (
-                    <div style={{ textAlign: 'center', color: theme.colors.textSubtle }}>
-                      <FileText size={64} style={{ marginBottom: '1rem', opacity: 0.5 }} />
-                      <p>No file attached</p>
-                    </div>
-                  )}
-                </div>
-
-                {/* Right: Invoice details */}
-                <div style={{
-                  flex: 1,
-                  padding: '1.5rem',
-                  overflow: 'auto',
-                  borderLeft: `1px solid ${theme.colors.border}`
-                }}>
-                  <h3 style={{ marginTop: 0, marginBottom: '1rem', color: theme.colors.text }}>
-                    Invoice Details
-                  </h3>
-
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    <div>
-                      <div style={{ fontSize: '0.75rem', color: theme.colors.textSubtle, marginBottom: '0.25rem' }}>
-                        Supplier
-                      </div>
-                      <div style={{ color: theme.colors.text, fontWeight: 500 }}>
-                        {previewInvoice.supplier || 'N/A'}
-                      </div>
-                    </div>
-
-                    <div>
-                      <div style={{ fontSize: '0.75rem', color: theme.colors.textSubtle, marginBottom: '0.25rem' }}>
-                        Invoice Number
-                      </div>
-                      <div style={{ color: theme.colors.text, fontWeight: 500 }}>
-                        {previewInvoice.invoiceNumber || 'N/A'}
-                      </div>
-                    </div>
-
-                    <div>
-                      <div style={{ fontSize: '0.75rem', color: theme.colors.textSubtle, marginBottom: '0.25rem' }}>
-                        Date
-                      </div>
-                      <div style={{ color: theme.colors.text }}>
-                        {previewInvoice.date || 'N/A'}
-                      </div>
-                    </div>
-
-                    <div>
-                      <div style={{ fontSize: '0.75rem', color: theme.colors.textSubtle, marginBottom: '0.25rem' }}>
-                        Description
-                      </div>
-                      <div style={{ color: theme.colors.text }}>
-                        {previewInvoice.description || 'N/A'}
-                      </div>
-                    </div>
-
-                    <div style={{
-                      display: 'grid',
-                      gridTemplateColumns: '1fr 1fr',
-                      gap: '1rem',
-                      padding: '1rem',
-                      background: theme.colors.background,
-                      borderRadius: theme.radii.md
-                    }}>
-                      <div>
-                        <div style={{ fontSize: '0.75rem', color: theme.colors.textSubtle, marginBottom: '0.25rem' }}>
-                          Net
-                        </div>
-                        <div style={{ color: theme.colors.text, fontWeight: 600 }}>
-                          £{previewInvoice.netAmount?.toFixed(2) || '0.00'}
-                        </div>
-                      </div>
-                      <div>
-                        <div style={{ fontSize: '0.75rem', color: theme.colors.textSubtle, marginBottom: '0.25rem' }}>
-                          VAT
-                        </div>
-                        <div style={{ color: theme.colors.text, fontWeight: 600 }}>
-                          £{previewInvoice.vatAmount?.toFixed(2) || '0.00'}
-                        </div>
-                      </div>
-                      <div style={{ gridColumn: 'span 2', borderTop: `1px solid ${theme.colors.border}`, paddingTop: '1rem' }}>
-                        <div style={{ fontSize: '0.75rem', color: theme.colors.textSubtle, marginBottom: '0.25rem' }}>
-                          Gross Total
-                        </div>
-                        <div style={{ color: theme.colors.accent, fontWeight: 700, fontSize: '1.5rem' }}>
-                          £{previewInvoice.grossAmount?.toFixed(2) || '0.00'}
-                        </div>
-                      </div>
-                    </div>
-
-                    {previewInvoice.category && (
-                      <div>
-                        <div style={{ fontSize: '0.75rem', color: theme.colors.textSubtle, marginBottom: '0.25rem' }}>
-                          Category
-                        </div>
-                        <div style={{
-                          display: 'inline-block',
-                          padding: '0.25rem 0.75rem',
-                          background: `${theme.colors.accent}20`,
-                          color: theme.colors.accent,
-                          borderRadius: theme.radii.md,
-                          fontSize: '0.875rem',
-                          fontWeight: 500
-                        }}>
-                          {previewInvoice.category}
-                        </div>
-                      </div>
-                    )}
-
-                    {previewInvoice.vehicleReg && (
-                      <div>
-                        <div style={{ fontSize: '0.75rem', color: theme.colors.textSubtle, marginBottom: '0.25rem' }}>
-                          Vehicle Reg
-                        </div>
-                        <div style={{ color: theme.colors.text, fontWeight: 500 }}>
-                          {previewInvoice.vehicleReg}
-                        </div>
-                      </div>
-                    )}
-
-                    {previewInvoice.jobReference && (
-                      <div>
-                        <div style={{ fontSize: '0.75rem', color: theme.colors.textSubtle, marginBottom: '0.25rem' }}>
-                          Job Reference
-                        </div>
-                        <div style={{ color: theme.colors.text, fontWeight: 500 }}>
-                          {previewInvoice.jobReference}
-                        </div>
-                      </div>
-                    )}
-
-                    <div>
-                      <div style={{ fontSize: '0.75rem', color: theme.colors.textSubtle, marginBottom: '0.25rem' }}>
-                        Status
-                      </div>
-                      <div style={{
-                        display: 'inline-block',
-                        padding: '0.25rem 0.75rem',
-                        background: previewInvoice.paymentStatus === 'Paid'
-                          ? `${theme.colors.success}20`
-                          : `${theme.colors.warning}20`,
-                        color: previewInvoice.paymentStatus === 'Paid'
-                          ? theme.colors.success
-                          : theme.colors.warning,
-                        borderRadius: theme.radii.md,
-                        fontSize: '0.875rem',
-                        fontWeight: 500
-                      }}>
-                        {previewInvoice.paymentStatus || 'Pending'}
-                      </div>
-                    </div>
-
-                    {previewInvoice.aiExtracted && (
-                      <div style={{
-                        padding: '0.75rem',
-                        background: `${theme.colors.accent}10`,
-                        borderRadius: theme.radii.md,
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem'
-                      }}>
-                        <Sparkles size={16} style={{ color: theme.colors.accent }} />
-                        <span style={{ fontSize: '0.875rem', color: theme.colors.textSubtle }}>
-                          AI Extracted
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
-
-      {/* File Preview Modal */}
-      {previewFile && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(0, 0, 0, 0.95)',
-            zIndex: 10000,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '2rem',
-            backdropFilter: 'blur(8px)'
-          }}
-          onClick={() => setPreviewFile(null)}
-        >
-          <div
-            style={{
-              position: 'relative',
-              width: '100%',
-              maxWidth: '90vw',
-              maxHeight: '90vh',
-              background: theme.colors.panel,
-              borderRadius: theme.radii.lg,
-              overflow: 'hidden',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-              border: `1px solid ${theme.colors.border}`
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Header */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '1rem 1.5rem',
-                borderBottom: `1px solid ${theme.colors.border}`,
-                background: theme.colors.panelAlt
-              }}
-            >
-              <h3 style={{
-                fontSize: '1.125rem',
-                fontWeight: 600,
-                color: theme.colors.text,
-                margin: 0
-              }}>
-                {previewFile.fileName}
-              </h3>
-              <button
-                onClick={() => setPreviewFile(null)}
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  color: theme.colors.textSubtle,
-                  cursor: 'pointer',
-                  padding: '0.5rem',
-                  borderRadius: theme.radii.sm,
-                  transition: 'all 0.2s',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.color = theme.colors.text;
-                  e.currentTarget.style.background = theme.colors.muted;
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.color = theme.colors.textSubtle;
-                  e.currentTarget.style.background = 'transparent';
-                }}
-              >
-                <X size={24} />
-              </button>
-            </div>
-
-            {/* Preview Content */}
-            <div
-              style={{
-                width: '100%',
-                height: 'calc(90vh - 80px)',
-                overflow: 'auto',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background: theme.colors.background
-              }}
-            >
-              {previewFile.fileType === 'pdf' ? (
-                <iframe
-                  src={previewFile.url}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    border: 'none'
-                  }}
-                  title={previewFile.fileName}
-                />
-              ) : (
-                <img
-                  src={previewFile.url}
-                  alt={previewFile.fileName}
-                  style={{
-                    maxWidth: '100%',
-                    maxHeight: '100%',
-                    objectFit: 'contain'
-                  }}
-                />
-              )}
-            </div>
-
-            {/* Footer with Download */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'flex-end',
-                padding: '1rem 1.5rem',
-                borderTop: `1px solid ${theme.colors.border}`,
-                background: theme.colors.panelAlt
-              }}
-            >
-              <a
-                href={previewFile.url}
-                download={previewFile.fileName}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  padding: '0.625rem 1rem',
-                  background: theme.colors.accent,
-                  color: 'white',
-                  borderRadius: theme.radii.md,
-                  textDecoration: 'none',
-                  fontSize: '0.875rem',
-                  fontWeight: 600,
-                  transition: 'all 0.2s'
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.background = theme.colors.accentAlt;
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.background = theme.colors.accent;
-                }}
-              >
-                <Download size={16} />
-                Download
-              </a>
-            </div>
-          </div>
-        </div>
-      )}
     </Layout>
   );
 }

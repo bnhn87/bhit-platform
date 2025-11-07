@@ -1,14 +1,13 @@
-// API Route to fetch invoices
-// Falls back gracefully: DATABASE_URL (direct PG) → Supabase Admin client
+// API Route to fetch invoices - Uses direct PostgreSQL connection
+// This COMPLETELY bypasses PostgREST and its schema cache issues
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Pool } from 'pg';
-import { supabaseAdmin } from '../../../lib/supabaseAdmin';
 
 // Create connection pool (reuses connections for efficiency)
 let pool: Pool | null = null;
 
 function getPool() {
-  if (!pool && process.env.DATABASE_URL) {
+  if (!pool) {
     pool = new Pool({
       connectionString: process.env.DATABASE_URL,
       ssl: { rejectUnauthorized: false },
@@ -29,32 +28,13 @@ export default async function handler(
   }
 
   try {
-    // Try direct PostgreSQL connection first (if DATABASE_URL is configured)
-    if (process.env.DATABASE_URL) {
-      try {
-        const result = await getPool()?.query(
-          'SELECT * FROM invoices ORDER BY invoice_date DESC'
-        );
-        return res.status(200).json(result?.rows || []);
-      } catch (pgError) {
-        console.warn('Direct PG connection failed, falling back to Supabase:', pgError);
-        // Fall through to Supabase fallback
-      }
-    }
+    // Direct PostgreSQL query - bypasses PostgREST entirely
+    const result = await getPool().query(
+      'SELECT * FROM invoices ORDER BY invoice_date DESC'
+    );
 
-    // Fallback: Use Supabase Admin client (bypasses RLS, uses service role)
-    const { data, error } = await supabaseAdmin
-      .from('invoices')
-      .select('*')
-      .order('invoice_date', { ascending: false });
-
-    if (error) {
-      console.error('Supabase query error:', error);
-      throw new Error(error.message);
-    }
-
-    return res.status(200).json(data || []);
-  } catch (error) {
+    return res.status(200).json(result.rows);
+  } catch (error: unknown) {
     console.error('Invoices API error:', error);
     return res.status(500).json({
       error: error instanceof Error ? error.message : 'Unknown error'

@@ -294,7 +294,7 @@ export const parseQuoteContentEnhanced = async (
             // Last attempt - return what we have
             return result;
             
-        } catch (error) {
+        } catch (error: unknown) {
             lastError = error instanceof Error ? error : new Error(String(error));
             
             if (attempt < maxRetries) {

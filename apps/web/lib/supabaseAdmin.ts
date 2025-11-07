@@ -35,7 +35,7 @@ export const executeAdminQuery = async <T>(
       console.error('[Admin Query Error]:', resultObj.error);
       return {
         success: false,
-        error: resultObj.error.message || 'Admin query failed'
+        error: resultObj.error instanceof Error ? resultObj.error.message : 'Admin query failed'
       };
     }
 

@@ -63,7 +63,7 @@ export default function JobFloorPlanner({ jobId, canManage, onGenerateTasks }: P
         setProjects([initialProject]);
         setSelectedProjectId(initialProject.id); // Auto-select for job context
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Failed to load projects from storage, creating a sample project.", error);
       const initialProject = getSampleProject();
       setProjects([initialProject]);
@@ -94,7 +94,7 @@ export default function JobFloorPlanner({ jobId, canManage, onGenerateTasks }: P
           setProjects([project]);
           setSelectedProjectId(project.id);
         }
-      } catch (error) {
+      } catch (error: unknown) {
         console.error('Error loading floor plan from database:', error);
       }
     };
@@ -112,7 +112,7 @@ export default function JobFloorPlanner({ jobId, canManage, onGenerateTasks }: P
     if (isLoaded) {
         try {
           localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
-        } catch (error) {
+        } catch (error: unknown) {
           console.error("Failed to save projects to storage", error);
         }
     }
@@ -169,7 +169,7 @@ export default function JobFloorPlanner({ jobId, canManage, onGenerateTasks }: P
       };
 
       await saveFloorPlan(projectToSave);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error saving floor plan to database:', error);
     }
 

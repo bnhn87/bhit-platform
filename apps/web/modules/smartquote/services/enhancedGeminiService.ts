@@ -587,7 +587,7 @@ export const parseQuoteContent = async (content: ParseContent): Promise<ParseRes
 
             return result;
 
-        } catch (error) {
+        } catch (error: unknown) {
             lastError = error instanceof Error ? error : new Error(String(error));
 
             if (attempt < MAX_RETRIES) {

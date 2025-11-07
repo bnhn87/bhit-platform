@@ -205,7 +205,7 @@ export async function processInvoiceWithAI(
       data: validateAndEnrichData(extractedData),
       processingTime: Date.now() - startTime,
     };
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Invoice processing error:', error);
     return {
       success: false,
@@ -243,7 +243,7 @@ async function extractWithGemini(
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       lastError = error instanceof Error ? error : new Error(String(error));
 
       if (attempt < MAX_RETRIES) {
@@ -372,30 +372,6 @@ function categorizeFromDescription(description: string): 'Vehicle' | 'Labour' | 
   return 'Other';
 }
 
-/**
- * Parse date string to YYYY-MM-DD format
- */
-function parseDate(dateStr: string | null | undefined): string | null {
-  if (!dateStr) return null;
-
-  try {
-    const date = new Date(dateStr);
-    if (!isNaN(date.getTime())) {
-      return date.toISOString().split('T')[0];
-    }
-
-    // Try UK format DD/MM/YYYY
-    const ukMatch = dateStr.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
-    if (ukMatch) {
-      const [_, day, month, year] = ukMatch;
-      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-    }
-
-    return null;
-  } catch {
-    return null;
-  }
-}
 
 /**
  * Normalize UK vehicle registration

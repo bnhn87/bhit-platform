@@ -61,7 +61,7 @@ const LabourCalendarOverview: React.FC<LabourCalendarOverviewProps> = ({
       }));
 
       setAllocations(activeAllocations);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error in loadLabourCalendar:', error);
     } finally {
       setLoading(false);

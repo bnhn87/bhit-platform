@@ -157,10 +157,10 @@ export default async function handler(
       message: 'User created successfully'
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('User creation error:', error);
     return res.status(500).json({
-      error: error?.message || 'Internal server error'
+      error: error instanceof Error ? error.message : 'Internal server error'
     });
   }
 }
