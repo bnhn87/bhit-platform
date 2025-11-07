@@ -3,6 +3,7 @@
 
 import type { ExtractedInvoiceData } from './invoiceAiService';
 import { supabase } from './supabaseClient';
+import { supabaseAdmin } from './supabaseAdmin';
 
 export interface Invoice {
   id: string;
@@ -118,11 +119,53 @@ export async function fetchInvoices(filters?: {
 }
 
 /**
+ * Check for duplicate invoices
+ */
+export async function checkDuplicateInvoice(
+  invoiceNumber: string,
+  supplier: string,
+  grossAmount?: number
+): Promise<Invoice | null> {
+  try {
+    const invoices = await fetchInvoices();
+
+    // Look for exact invoice number + supplier match
+    const exactMatch = invoices.find(
+      inv => inv.invoice_number?.toLowerCase() === invoiceNumber?.toLowerCase() &&
+             inv.supplier_name?.toLowerCase() === supplier?.toLowerCase()
+    );
+
+    if (exactMatch) {
+      return exactMatch;
+    }
+
+    // Look for similar amount + supplier + date (fuzzy match)
+    if (grossAmount) {
+      const similarMatch = invoices.find(
+        inv => inv.supplier_name?.toLowerCase() === supplier?.toLowerCase() &&
+               inv.gross_amount &&
+               Math.abs(inv.gross_amount - grossAmount) < 0.01  // Within 1 penny
+      );
+
+      if (similarMatch) {
+        return similarMatch;
+      }
+    }
+
+    return null;
+  } catch (error) {
+    console.error('Error checking duplicate:', error);
+    return null;
+  }
+}
+
+/**
  * Create a new invoice from AI-extracted data
  */
 export async function createInvoiceFromExtraction(
   extractedData: ExtractedInvoiceData,
-  filePath?: string
+  filePath?: string,
+  skipDuplicateCheck: boolean = false
 ): Promise<Invoice> {
   try {
     const { data: user } = await supabase.auth.getUser();
@@ -130,10 +173,23 @@ export async function createInvoiceFromExtraction(
       throw new Error('User not authenticated');
     }
 
+    // Check for duplicates (unless explicitly skipped)
+    if (!skipDuplicateCheck && extractedData.invoiceNumber && extractedData.supplier) {
+      const duplicate = await checkDuplicateInvoice(
+        extractedData.invoiceNumber,
+        extractedData.supplier,
+        extractedData.grossAmount || undefined
+      );
+
+      if (duplicate) {
+        throw new Error(`DUPLICATE: Similar invoice found (${duplicate.invoice_number}) from ${duplicate.supplier_name}`);
+      }
+    }
+
     // Check if supplier exists, create if not
     let supplierId: string | undefined;
     if (extractedData.supplier) {
-      const { data: existingSupplier } = await supabase
+      const { data: existingSupplier } = await supabaseAdmin
         .from('suppliers')
         .select('id')
         .eq('name', extractedData.supplier)
@@ -143,7 +199,7 @@ export async function createInvoiceFromExtraction(
         supplierId = existingSupplier.id;
       } else {
         // Create new supplier
-        const { data: newSupplier, error: supplierError } = await supabase
+        const { data: newSupplier, error: supplierError } = await supabaseAdmin
           .from('suppliers')
           .insert({
             name: extractedData.supplier,
@@ -182,7 +238,7 @@ export async function createInvoiceFromExtraction(
       created_by: user.user.id,
     };
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('invoices')
       .insert(invoiceData)
       .select()
@@ -208,7 +264,7 @@ export async function updateInvoice(
   updates: Partial<Invoice>
 ): Promise<Invoice> {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('invoices')
       .update({
         ...updates,
@@ -235,7 +291,7 @@ export async function updateInvoice(
  */
 export async function deleteInvoice(invoiceId: string): Promise<void> {
   try {
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('invoices')
       .delete()
       .eq('id', invoiceId);
@@ -260,7 +316,7 @@ export async function approveInvoice(invoiceId: string): Promise<Invoice> {
       throw new Error('User not authenticated');
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('invoices')
       .update({
         approval_status: 'approved',
@@ -291,7 +347,7 @@ export async function markInvoicePaid(
   paidDate?: string
 ): Promise<Invoice> {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('invoices')
       .update({
         status: 'paid',
@@ -329,7 +385,7 @@ export async function recordCorrection(
       throw new Error('User not authenticated');
     }
 
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('invoice_corrections')
       .insert({
         invoice_id: invoiceId,
@@ -351,11 +407,89 @@ export async function recordCorrection(
 }
 
 /**
+ * Get correction history for an invoice
+ */
+export async function getCorrectionHistory(
+  invoiceId: string
+): Promise<InvoiceCorrection[]> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('invoice_corrections')
+      .select('*')
+      .eq('invoice_id', invoiceId)
+      .order('corrected_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching correction history:', error);
+      throw error;
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('getCorrectionHistory error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get all corrections grouped by field (for analytics)
+ */
+export async function getCorrectionsByField(): Promise<Record<string, number>> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('invoice_corrections')
+      .select('field_name');
+
+    if (error) {
+      console.error('Error fetching corrections by field:', error);
+      throw error;
+    }
+
+    // Count corrections per field
+    const counts: Record<string, number> = {};
+    data?.forEach((correction) => {
+      const field = correction.field_name;
+      counts[field] = (counts[field] || 0) + 1;
+    });
+
+    return counts;
+  } catch (error) {
+    console.error('getCorrectionsByField error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get corrections for a specific supplier (for learning patterns)
+ */
+export async function getCorrectionsBySupplier(
+  supplierId: string
+): Promise<InvoiceCorrection[]> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('invoice_corrections')
+      .select('*')
+      .eq('supplier_id', supplierId)
+      .order('corrected_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching corrections by supplier:', error);
+      throw error;
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('getCorrectionsBySupplier error:', error);
+    throw error;
+  }
+}
+
+/**
  * Fetch suppliers
  */
 export async function fetchSuppliers(): Promise<Supplier[]> {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('suppliers')
       .select('*')
       .order('name');
@@ -377,7 +511,7 @@ export async function fetchSuppliers(): Promise<Supplier[]> {
  */
 export async function upsertSupplier(supplier: Partial<Supplier>): Promise<Supplier> {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('suppliers')
       .upsert({
         ...supplier,
@@ -410,7 +544,7 @@ export async function getInvoiceStats(): Promise<{
   paidAmount: number;
 }> {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('invoices')
       .select('status, gross_amount');
 
@@ -471,7 +605,7 @@ export async function uploadInvoiceFile(
     const fileName = `${invoiceNumber}_${timestamp}_${file.name}`;
     const filePath = `invoices/${fileName}`;
 
-    const { data, error } = await supabase.storage
+    const { data, error } = await supabaseAdmin.storage
       .from('documents')
       .upload(filePath, file);
 
@@ -492,7 +626,7 @@ export async function uploadInvoiceFile(
  */
 export async function getInvoiceFileUrl(filePath: string): Promise<string> {
   try {
-    const { data, error } = await supabase.storage
+    const { data, error } = await supabaseAdmin.storage
       .from('documents')
       .createSignedUrl(filePath, 3600); // 1 hour expiry
 
