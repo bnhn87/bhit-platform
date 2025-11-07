@@ -88,6 +88,12 @@ export default function SmartQuoteV3App() {
     };
 
     const handleParse = async (content: any) => {
+        // Validation
+        if (!content || (Array.isArray(content) && content.length === 0)) {
+            setError('Please provide quote content to parse');
+            return;
+        }
+
         setLoading(true);
         setError(null);
 
@@ -106,12 +112,24 @@ export default function SmartQuoteV3App() {
                 {}
             );
 
+            // Include all products - resolved and unresolved
+            // Unresolved products will use default values from config
+            const allProducts = [...resolved, ...unresolved.map(p => ({
+                ...p,
+                description: p.cleanDescription || p.rawDescription,
+                timePerUnit: appConfig.rules.defaultWasteVolumeM3,
+                totalTime: p.quantity * appConfig.rules.defaultWasteVolumeM3,
+                wastePerUnit: appConfig.rules.defaultWasteVolumeM3,
+                totalWaste: p.quantity * appConfig.rules.defaultWasteVolumeM3,
+                isHeavy: false,
+                source: 'default' as const,
+            }))];
+
             if (unresolved.length > 0) {
-                setError(`${unresolved.length} products need manual input`);
-                // TODO: Show manual input dialog
+                showSuccess(`Parsed ${resolved.length} products. ${unresolved.length} using default values - review and adjust.`);
             }
 
-            setProducts(resolved);
+            setProducts(allProducts);
             setQuoteDetails((prev) => ({ ...prev, ...parseResult.details }));
 
             // Create quote in database
@@ -126,7 +144,7 @@ export default function SmartQuoteV3App() {
                         client_name: parseResult.details.client || 'Unknown',
                         project_name: parseResult.details.project,
                         quote_details: parseResult.details,
-                        products: resolved,
+                        products: allProducts,
                         results: {},
                         total_amount: 0,
                         status: QuoteStatus.DRAFT,
@@ -138,13 +156,18 @@ export default function SmartQuoteV3App() {
                     .select()
                     .single();
 
-                if (!createError && newQuote) {
+                if (createError) {
+                    console.error('Failed to save quote to database:', createError);
+                    setError('Quote parsed but failed to save to database. You can still calculate and export.');
+                } else if (newQuote) {
                     setCurrentQuote(newQuote as Quote);
+                    showSuccess('Quote parsed and saved successfully!');
                 }
+            } else {
+                setError('Not authenticated. Quote parsed but not saved.');
             }
 
             setView('results' as any);
-            showSuccess('Quote parsed successfully!');
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to parse quote');
         } finally {
@@ -152,7 +175,7 @@ export default function SmartQuoteV3App() {
         }
     };
 
-    const handleCalculate = (details: QuoteDetails, productsList: CalculatedProduct[]) => {
+    const handleCalculate = async (details: QuoteDetails, productsList: CalculatedProduct[]) => {
         try {
             const calculatedResults = calculateAll(productsList, details, appConfig);
             setResults(calculatedResults);
@@ -161,7 +184,7 @@ export default function SmartQuoteV3App() {
 
             // Update quote in database
             if (currentQuote) {
-                supabase
+                const { data, error: updateError } = await supabase
                     .from('smartquote_v3_quotes')
                     .update({
                         quote_details: details,
@@ -170,15 +193,22 @@ export default function SmartQuoteV3App() {
                         total_amount: calculatedResults.pricing.totalCost,
                     })
                     .eq('id', currentQuote.id)
-                    .then(() => {
-                        setCurrentQuote({
-                            ...currentQuote,
-                            quoteDetails: details,
-                            products: productsList,
-                            results: calculatedResults,
-                            totalAmount: calculatedResults.pricing.totalCost,
-                        });
+                    .select()
+                    .single();
+
+                if (updateError) {
+                    console.error('Failed to update quote in database:', updateError);
+                    setError('Calculation succeeded but failed to save to database');
+                } else if (data) {
+                    setCurrentQuote({
+                        ...currentQuote,
+                        quoteDetails: details,
+                        products: productsList,
+                        results: calculatedResults,
+                        totalAmount: calculatedResults.pricing.totalCost,
                     });
+                    showSuccess('Quote recalculated successfully!');
+                }
             }
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to calculate quote');
@@ -187,6 +217,22 @@ export default function SmartQuoteV3App() {
 
     const handleRequestApproval = async () => {
         if (!currentQuote) return;
+
+        // Validation checks
+        if (!currentQuote.totalAmount || currentQuote.totalAmount <= 0) {
+            setError('Cannot request approval: Quote total is £0. Please calculate the quote first.');
+            return;
+        }
+
+        if (!products || products.length === 0) {
+            setError('Cannot request approval: No products in quote.');
+            return;
+        }
+
+        if (!quoteDetails.client || !quoteDetails.project) {
+            setError('Cannot request approval: Missing client or project information.');
+            return;
+        }
 
         setLoading(true);
         try {
@@ -197,14 +243,32 @@ export default function SmartQuoteV3App() {
                 showSuccess(`Auto-approved: ${autoApproval.reason}`);
                 await statusTrackingService.updateStatus(currentQuote.id, QuoteStatus.APPROVED_INTERNAL);
             } else {
+                // Get applicable approval rules based on quote amount
+                const rules = await approvalWorkflowService.getApprovalRules();
+                const quoteAmount = currentQuote.totalAmount || 0;
+
+                // Find matching rule
+                const matchingRule = rules.find(
+                    rule =>
+                        (!rule.minAmount || quoteAmount >= rule.minAmount) &&
+                        (!rule.maxAmount || quoteAmount <= rule.maxAmount)
+                );
+
+                const approverIds = matchingRule?.requiredApproverUserIds || [];
+
+                if (approverIds.length === 0) {
+                    setError('No approvers found for this quote amount. Please configure approval rules or contact your manager.');
+                    return;
+                }
+
                 // Request manual approval
                 await approvalWorkflowService.requestApproval(
                     currentQuote.id,
-                    [], // TODO: Get approver list
-                    'Please review this quote'
+                    approverIds,
+                    `Please review quote ${currentQuote.quoteRef} for £${quoteAmount.toLocaleString()}`
                 );
                 await statusTrackingService.updateStatus(currentQuote.id, QuoteStatus.PENDING_INTERNAL);
-                showSuccess('Approval requested!');
+                showSuccess(`Approval requested from ${approverIds.length} approver(s)!`);
             }
 
             await loadPendingApprovals();
@@ -217,6 +281,27 @@ export default function SmartQuoteV3App() {
 
     const handleConvertToJob = async () => {
         if (!currentQuote) return;
+
+        // Validation checks
+        if (currentQuote.status !== QuoteStatus.WON) {
+            setError(`Cannot convert to job: Quote must be WON (current status: ${currentQuote.status})`);
+            return;
+        }
+
+        if (!currentQuote.totalAmount || currentQuote.totalAmount <= 0) {
+            setError('Cannot convert to job: Quote total is £0.');
+            return;
+        }
+
+        if (!products || products.length === 0) {
+            setError('Cannot convert to job: No products in quote.');
+            return;
+        }
+
+        if (currentQuote.convertedToJobId) {
+            setError(`This quote has already been converted to job ${currentQuote.convertedToJobId}`);
+            return;
+        }
 
         setLoading(true);
         try {
@@ -235,16 +320,54 @@ export default function SmartQuoteV3App() {
         }
     };
 
-    const handleExportPdf = () => {
-        if (!currentQuote || !results) return;
-        generatePdf(quoteDetails, results);
-        showSuccess('PDF exported!');
+    const handleExportPdf = async () => {
+        if (!currentQuote || !results) {
+            setError('No quote data to export');
+            return;
+        }
+
+        try {
+            await generatePdf(quoteDetails, results);
+            showSuccess('PDF exported successfully!');
+
+            // Log export action
+            const { data: user } = await supabase.auth.getUser();
+            if (user?.user?.id) {
+                await supabase.from('smartquote_v3_audit_trail').insert({
+                    quote_id: currentQuote.id,
+                    action: 'exported_pdf',
+                    performed_by: user.user.id,
+                    details: `Exported quote ${currentQuote.quoteRef} as PDF`,
+                });
+            }
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Failed to export PDF');
+        }
     };
 
-    const handleExportXlsx = () => {
-        if (!currentQuote || !results) return;
-        generateXlsx(quoteDetails, products, results);
-        showSuccess('Excel exported!');
+    const handleExportXlsx = async () => {
+        if (!currentQuote || !results) {
+            setError('No quote data to export');
+            return;
+        }
+
+        try {
+            await generateXlsx(quoteDetails, products, results);
+            showSuccess('Excel exported successfully!');
+
+            // Log export action
+            const { data: user } = await supabase.auth.getUser();
+            if (user?.user?.id) {
+                await supabase.from('smartquote_v3_audit_trail').insert({
+                    quote_id: currentQuote.id,
+                    action: 'exported_xlsx',
+                    performed_by: user.user.id,
+                    details: `Exported quote ${currentQuote.quoteRef} as Excel`,
+                });
+            }
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Failed to export Excel');
+        }
     };
 
     const resetApp = () => {
