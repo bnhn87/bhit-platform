@@ -17,9 +17,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 // GET: Fetch banner settings (singleton)
 async function handleGet(req: NextApiRequest, res: NextApiResponse) {
   try {
-    // Use 'as any' to bypass TypeScript cache issues with newly created table
+    // @ts-expect-error - table exists in DB but not yet in generated types
     const { data: settings, error } = await supabaseAdmin
-      .from('task_banner_settings' as any)
+      .from('task_banner_settings')
       .select('*')
       .limit(1)
       .single();
@@ -108,8 +108,9 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     if (updateData.empty_message !== undefined) updates.empty_message = updateData.empty_message;
 
     // Get the singleton settings ID first
+    // @ts-expect-error - table exists in DB but not yet in generated types
     const { data: currentSettings, error: selectError } = await supabaseAdmin
-      .from('task_banner_settings' as any)
+      .from('task_banner_settings')
       .select('id')
       .limit(1)
       .single();
@@ -124,8 +125,9 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     if (!currentSettings || selectError?.code === 'PGRST116') {
       console.log('[Task Banner Settings] No settings found, creating default record...');
 
+      // @ts-expect-error - table exists in DB but not yet in generated types
       const { data: newSettings, error: insertError } = await supabaseAdmin
-        .from('task_banner_settings' as any)
+        .from('task_banner_settings')
         .insert({
           show_background: true,
           background_color: 'black',
@@ -149,8 +151,9 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
       console.log('[Task Banner Settings] Created default settings, now updating...');
 
       // Now update the newly created settings
+      // @ts-expect-error - table exists in DB but not yet in generated types
       const { data: updatedSettings, error: updateError } = await supabaseAdmin
-        .from('task_banner_settings' as any)
+        .from('task_banner_settings')
         .update(updates)
         .eq('id', newSettings.id)
         .select()
@@ -165,8 +168,9 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     }
 
     // Update existing settings
+    // @ts-expect-error - table exists in DB but not yet in generated types
     const { data: updatedSettings, error } = await supabaseAdmin
-      .from('task_banner_settings' as any)
+      .from('task_banner_settings')
       .update(updates)
       .eq('id', currentSettings.id)
       .select()
