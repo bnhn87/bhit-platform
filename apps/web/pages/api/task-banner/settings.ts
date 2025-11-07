@@ -17,10 +17,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 // GET: Fetch banner settings (singleton)
 async function handleGet(req: NextApiRequest, res: NextApiResponse) {
   try {
-    // Use schema() to bypass cache issues
+    // Use 'as any' to bypass TypeScript cache issues with newly created table
     const { data: settings, error } = await supabaseAdmin
-      .schema('public')
-      .from('task_banner_settings')
+      .from('task_banner_settings' as any)
       .select('*')
       .limit(1)
       .single();
@@ -110,8 +109,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 
     // Get the singleton settings ID first
     const { data: currentSettings, error: selectError } = await supabaseAdmin
-      .schema('public')
-      .from('task_banner_settings')
+      .from('task_banner_settings' as any)
       .select('id')
       .limit(1)
       .single();
@@ -127,8 +125,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
       console.log('[Task Banner Settings] No settings found, creating default record...');
 
       const { data: newSettings, error: insertError } = await supabaseAdmin
-        .schema('public')
-        .from('task_banner_settings')
+        .from('task_banner_settings' as any)
         .insert({
           show_background: true,
           background_color: 'black',
@@ -153,8 +150,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 
       // Now update the newly created settings
       const { data: updatedSettings, error: updateError } = await supabaseAdmin
-        .schema('public')
-        .from('task_banner_settings')
+        .from('task_banner_settings' as any)
         .update(updates)
         .eq('id', newSettings.id)
         .select()
@@ -170,8 +166,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 
     // Update existing settings
     const { data: updatedSettings, error } = await supabaseAdmin
-      .schema('public')
-      .from('task_banner_settings')
+      .from('task_banner_settings' as any)
       .update(updates)
       .eq('id', currentSettings.id)
       .select()
