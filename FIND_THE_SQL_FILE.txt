@@ -1,0 +1,40 @@
+# HOW TO FIND THE FIXED SQL FILE
+
+## File Name:
+DEPLOY_SMARTINVOICE_MIGRATIONS_FIXED.sql
+
+## Location on GitHub:
+https://github.com/bnhn87/bhit-platform/blob/claude/fix-smartinvoice-error-011CUn13FLPhduCk1XB83MH4/DEPLOY_SMARTINVOICE_MIGRATIONS_FIXED.sql
+
+## To Pull to Your Computer:
+
+1. Open Terminal/Command Prompt
+2. Navigate to your project:
+   cd /path/to/bhit-platform
+
+3. Pull the latest changes:
+   git fetch --all
+   git checkout claude/fix-smartinvoice-error-011CUn13FLPhduCk1XB83MH4
+   git pull origin claude/fix-smartinvoice-error-011CUn13FLPhduCk1XB83MH4
+
+4. The file will be in your root directory:
+   ls -lh DEPLOY_SMARTINVOICE_MIGRATIONS_FIXED.sql
+
+## OR Download Directly from GitHub:
+
+1. Go to: https://github.com/bnhn87/bhit-platform
+2. Switch to branch: claude/fix-smartinvoice-error-011CUn13FLPhduCk1XB83MH4
+3. Find file: DEPLOY_SMARTINVOICE_MIGRATIONS_FIXED.sql
+4. Click "Raw" button
+5. Copy all contents (Ctrl+A, Ctrl+C)
+6. Paste into Supabase SQL Editor
+
+## Quick Check:
+
+Run this command in your project directory:
+   git log --oneline -1
+
+Should show:
+   5e40b8e Add fixed migration without organization dependency + quick fix guide
+
+If you see this, the file is there!

@@ -3,7 +3,24 @@
 // Visit: http://localhost:3000/api/test-smartinvoice-setup
 
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { Pool } from 'pg';
 import { supabaseAdmin } from '../../lib/supabaseAdmin';
+
+// Create connection pool for direct PostgreSQL access (bypasses PostgREST cache)
+let pool: Pool | null = null;
+
+function getPool() {
+  if (!pool && process.env.DATABASE_URL) {
+    pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+      ssl: { rejectUnauthorized: false },
+      max: 20,
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 2000,
+    });
+  }
+  return pool;
+}
 
 interface SetupCheck {
   name: string;
@@ -71,38 +88,62 @@ export default async function handler(
     overallStatus = 'fail';
   }
 
-  // Check 2: Database Connection
+  // Check 2: Database Connection (try DATABASE_URL first to bypass PostgREST cache)
   if (hasSupabaseUrl && hasServiceKey) {
     try {
-      const { error: connectionError } = await supabaseAdmin
-        .from('invoices')
-        .select('id')
-        .limit(1);
+      let connectionSuccess = false;
+      let connectionMethod = '';
 
-      if (connectionError) {
-        if (connectionError.message.includes('relation "invoices" does not exist') ||
-            connectionError.message.includes('relation "public.invoices" does not exist')) {
-          checks.push({
-            name: 'Database Tables',
-            status: 'fail',
-            message: 'Invoices table does not exist',
-            details: 'Run migrations: 041_invoice_system.sql, 042_document_templates.sql, 043_active_learning.sql'
-          });
-          overallStatus = 'fail';
-        } else {
-          checks.push({
-            name: 'Database Connection',
-            status: 'fail',
-            message: 'Database connection failed',
-            details: connectionError.message
-          });
-          overallStatus = 'fail';
+      // Try direct PostgreSQL connection first (bypasses PostgREST cache issues)
+      if (process.env.DATABASE_URL) {
+        try {
+          const result = await getPool()?.query('SELECT 1 FROM invoices LIMIT 1');
+          connectionSuccess = true;
+          connectionMethod = 'Direct PostgreSQL (DATABASE_URL)';
+        } catch (pgError) {
+          console.warn('Direct PG connection failed, trying Supabase fallback:', pgError);
+          // Fall through to Supabase fallback
         }
-      } else {
+      }
+
+      // Fallback: Use Supabase Admin client
+      if (!connectionSuccess) {
+        const { error: connectionError } = await supabaseAdmin
+          .from('invoices')
+          .select('id')
+          .limit(1);
+
+        if (connectionError) {
+          if (connectionError.message.includes('relation "invoices" does not exist') ||
+              connectionError.message.includes('relation "public.invoices" does not exist') ||
+              connectionError.message.includes('schema cache')) {
+            checks.push({
+              name: 'Database Tables',
+              status: 'fail',
+              message: 'Invoices table does not exist or PostgREST cache is stale',
+              details: 'Run: NOTIFY pgrst, \'reload schema\'; in Supabase SQL Editor, or add DATABASE_URL to .env.local'
+            });
+            overallStatus = 'fail';
+          } else {
+            checks.push({
+              name: 'Database Connection',
+              status: 'fail',
+              message: 'Database connection failed',
+              details: connectionError.message
+            });
+            overallStatus = 'fail';
+          }
+        } else {
+          connectionSuccess = true;
+          connectionMethod = 'Supabase Admin Client (PostgREST)';
+        }
+      }
+
+      if (connectionSuccess) {
         checks.push({
           name: 'Database Connection',
           status: 'pass',
-          message: 'Successfully connected to database'
+          message: `Successfully connected to database via ${connectionMethod}`
         });
       }
     } catch (error) {
@@ -115,7 +156,7 @@ export default async function handler(
       overallStatus = 'fail';
     }
 
-    // Check 3: Required Tables
+    // Check 3: Required Tables (try DATABASE_URL first to bypass PostgREST cache)
     try {
       const requiredTables = [
         'suppliers',
@@ -130,21 +171,53 @@ export default async function handler(
         'validation_results'
       ];
 
-      const { data: tables, error: tablesError } = await supabaseAdmin
-        .from('information_schema.tables')
-        .select('table_name')
-        .eq('table_schema', 'public')
-        .in('table_name', requiredTables);
+      let existingTables: string[] = [];
+      let schemaCheckSuccess = false;
 
-      if (tablesError) {
-        checks.push({
-          name: 'Database Schema',
-          status: 'warning',
-          message: 'Could not verify database schema',
-          details: tablesError.message
-        });
-      } else if (tables) {
-        const existingTables = tables.map((t: any) => t.table_name);
+      // Try direct PostgreSQL query first (bypasses PostgREST cache)
+      if (process.env.DATABASE_URL) {
+        try {
+          const result = await getPool()?.query(`
+            SELECT table_name
+            FROM information_schema.tables
+            WHERE table_schema = 'public'
+            AND table_name = ANY($1::text[])
+          `, [requiredTables]);
+
+          if (result?.rows) {
+            existingTables = result.rows.map((row: any) => row.table_name);
+            schemaCheckSuccess = true;
+          }
+        } catch (pgError) {
+          console.warn('Direct PG schema check failed, trying Supabase fallback:', pgError);
+          // Fall through to Supabase fallback
+        }
+      }
+
+      // Fallback: Use Supabase Admin client
+      if (!schemaCheckSuccess) {
+        const { data: tables, error: tablesError } = await supabaseAdmin
+          .from('information_schema.tables')
+          .select('table_name')
+          .eq('table_schema', 'public')
+          .in('table_name', requiredTables);
+
+        if (tablesError) {
+          checks.push({
+            name: 'Database Schema',
+            status: 'warning',
+            message: 'Could not verify database schema (PostgREST cache may be stale)',
+            details: `${tablesError.message}. Try adding DATABASE_URL to .env.local`
+          });
+          schemaCheckSuccess = false;
+        } else if (tables) {
+          existingTables = tables.map((t: any) => t.table_name);
+          schemaCheckSuccess = true;
+        }
+      }
+
+      // Analyze results
+      if (schemaCheckSuccess) {
         const missingTables = requiredTables.filter(t => !existingTables.includes(t));
 
         if (missingTables.length === 0) {
@@ -158,14 +231,14 @@ export default async function handler(
             name: 'Database Schema',
             status: 'warning',
             message: `Missing ${missingTables.length} tables: ${missingTables.join(', ')}`,
-            details: 'Some features may not work. Run the corresponding migrations.'
+            details: 'Some features may not work. Run DEPLOY_SMARTINVOICE_MIGRATIONS_FIXED.sql'
           });
         } else {
           checks.push({
             name: 'Database Schema',
             status: 'fail',
             message: 'Most tables are missing',
-            details: `Missing: ${missingTables.join(', ')}`
+            details: `Missing: ${missingTables.join(', ')}. Run DEPLOY_SMARTINVOICE_MIGRATIONS_FIXED.sql`
           });
           overallStatus = 'fail';
         }
