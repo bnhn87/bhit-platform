@@ -242,12 +242,17 @@ export default function AdminPanelPage() {
         setTimeout(() => setSaveMessage(null), 3000);
     };
 
-    const roleLower = role?.toLowerCase();
-    if (roleLower !== "director" && roleLower !== "admin") {
+    const roleLower = role?.toLowerCase() || '';
+    const hasAccess = roleLower === "director" || roleLower === "admin";
+
+    if (!hasAccess) {
         return (
             <div style={{ padding: '24px', textAlign: 'center' }}>
                 <h1 style={{ color: theme.colors.text }}>Access Denied</h1>
                 <p style={{ color: theme.colors.textSubtle }}>This area is restricted to Directors and Admins only.</p>
+                <p style={{ color: theme.colors.textSubtle, marginTop: 8, fontSize: 12 }}>
+                    Your current role: {role || 'none'} (detected as: {roleLower || 'none'})
+                </p>
             </div>
         );
     }
@@ -395,7 +400,7 @@ export default function AdminPanelPage() {
                 </Section>
 
                 <Section title="Task Banner Settings" description="Control the scrolling LED highway at the top of your screen. Set global defaults for all users." accent={false}>
-                    <TaskBannerSettingsComponent isDirector={roleLower === "director" || roleLower === "admin"} />
+                    <TaskBannerSettingsComponent isDirector={hasAccess} />
                 </Section>
 
                 <div style={{
