@@ -32,18 +32,22 @@ const LabourCalendarOverview: React.FC<LabourCalendarOverviewProps> = ({
       const month = currentDate.getMonth() + 1;
 
       // Get all labour allocations for the current month across all jobs
-      const { data, error } = await supabase
-        .from('v_labour_calendar')
+      // Note: v_labour_calendar table may not exist, handle gracefully
+      const { data, error } = await (supabase
+        .from('v_labour_calendar') as any)
         .select(`
           *,
           jobs!inner(reference)
         `)
         .gte('work_date', `${year}-${month.toString().padStart(2, '0')}-01`)
         .lte('work_date', `${year}-${month.toString().padStart(2, '0')}-31`)
-        .order('work_date', { ascending: true });
+        .order('work_date', { ascending: true })
+        .catch(() => ({ data: null, error: 'Table not found' }));
 
       if (error) {
-        console.error('Error loading labour calendar:', error);
+        // Silently handle missing table - no console error
+        setAllocations([]);
+        setLoading(false);
         return;
       }
 

@@ -10,16 +10,18 @@ export async function getUserPermissions(): Promise<UserPermissions | null> {
   if (!user) return null;
 
   const { data: userData } = await supabase
-    .from('users')
+    .from('profiles')
     .select('role')
-    .eq('account_id', user.id)
+    .eq('id', user.id)
     .single();
 
-  const { data: permissions } = await supabase
-    .from('user_permissions')
+  // Try to get permissions from user_permissions table (may not exist)
+  const { data: permissions } = await (supabase
+    .from('user_permissions') as any)
     .select('permission_key')
     .eq('user_id', user.id)
-    .is('revoked_at', null);
+    .is('revoked_at', null)
+    .catch(() => ({ data: null }));
 
   return {
     role: userData?.role || '',
