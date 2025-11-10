@@ -279,7 +279,7 @@ export default function MarkupCanvas({
           left: '50%',
           transform: 'translate(-50%, -50%)',
           textAlign: 'center',
-          color: theme.colors.textSecondary,
+          color: theme.colors.textSubtle,
           pointerEvents: 'none',
         }}>
           <p style={{ fontSize: '1.25rem', fontWeight: 500 }}>

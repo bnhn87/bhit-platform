@@ -131,7 +131,7 @@ export function TaskBannerSettingsComponent({ isDirector }: TaskBannerSettingsPr
       }
     } catch (error) {
       console.error('Error saving settings:', error);
-      setSaveMessage(`Error: ${error.message || 'Unknown error'}`);
+      setSaveMessage(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
       setTimeout(() => setSaveMessage(null), 5000);
     }
   }
