@@ -11,6 +11,8 @@ import type {
   SearchPODsRequest,
   PODListResponse
 } from './types';
+  PODListResponse
+} from './types';
 import crypto from 'crypto';
 
 export class PODService {
