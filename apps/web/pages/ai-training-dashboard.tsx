@@ -71,7 +71,7 @@ export default function AITrainingDashboard() {
           justifyContent: 'center',
           alignItems: 'center',
           height: '60vh',
-          color: theme.colors.textSecondary,
+          color: theme.colors.textSubtle,
         }}>
           <Brain size={48} style={{ animation: 'pulse 2s infinite' }} />
           <span style={{ marginLeft: '1rem', fontSize: '1.25rem' }}>Loading AI insights...</span>

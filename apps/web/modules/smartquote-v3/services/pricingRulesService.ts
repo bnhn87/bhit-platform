@@ -25,8 +25,8 @@ class PricingRulesService {
         try {
             const rules = await this.getApplicableRules(quote);
             const appliedRules: PricingRuleApplication[] = [];
-            let currentAmount = quote.total_amount;
-            const originalAmount = quote.total_amount;
+            let currentAmount = quote.totalAmount;
+            const originalAmount = quote.totalAmount;
 
             // Sort by priority (lower = higher priority)
             rules.sort((a, b) => a.priority - b.priority);
@@ -67,7 +67,7 @@ class PricingRulesService {
                     } else {
                         // Non-stackable: take the best discount
                         const totalDiscount = appliedRules.reduce(
-                            (sum, ar) => sum + ar.discountAmount,
+                            (sum, ar) => sum + (ar.discountAmount || 0),
                             0
                         );
                         if (discount > totalDiscount) {
@@ -118,8 +118,8 @@ class PricingRulesService {
         } catch (error) {
             console.error('Failed to apply pricing rules:', error);
             return {
-                originalAmount: quote.total_amount,
-                finalAmount: quote.total_amount,
+                originalAmount: quote.totalAmount,
+                finalAmount: quote.totalAmount,
                 appliedRules: [],
                 discountAmount: 0,
                 discountPercent: 0,
@@ -163,10 +163,10 @@ class PricingRulesService {
         const conditions = rule.conditions;
 
         // Check amount thresholds
-        if (conditions.minTotal && quote.total_amount < conditions.minTotal) {
+        if (conditions.minTotal && quote.totalAmount < conditions.minTotal) {
             return false;
         }
-        if (conditions.maxTotal && quote.total_amount > conditions.maxTotal) {
+        if (conditions.maxTotal && quote.totalAmount > conditions.maxTotal) {
             return false;
         }
 

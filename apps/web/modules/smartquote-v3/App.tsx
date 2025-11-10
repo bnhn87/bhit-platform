@@ -9,6 +9,8 @@ import {
     Quote,
     QuoteStatus,
     AppView,
+    QuoteDetails as QuoteDetailsV3,
+    CalculationResults as CalculationResultsV3,
 } from './types';
 
 // Import calculation types from v1 (since we're using v1's calculateAll service)
@@ -130,7 +132,7 @@ export default function SmartQuoteV3App() {
             }
 
             setProducts(allProducts);
-            setQuoteDetails((prev) => ({ ...prev, ...parseResult.details }));
+            setQuoteDetails((prev) => ({ ...prev, ...parseResult.details } as QuoteDetails));
 
             // Create quote in database
             const { data: user } = await supabase.auth.getUser();
@@ -202,9 +204,9 @@ export default function SmartQuoteV3App() {
                 } else if (data) {
                     setCurrentQuote({
                         ...currentQuote,
-                        quoteDetails: details,
+                        quoteDetails: details as QuoteDetailsV3,
                         products: productsList,
-                        results: calculatedResults,
+                        results: calculatedResults as unknown as CalculationResultsV3,
                         totalAmount: calculatedResults.pricing.totalCost,
                     });
                     showSuccess('Quote recalculated successfully!');
@@ -457,7 +459,7 @@ export default function SmartQuoteV3App() {
 
             {/* Main Content */}
             <main className="max-w-7xl mx-auto px-6 py-8">
-                {view === ('home' as any) && <HomePage onSelectView={setView} />}
+                {view === ('home' as any) && <HomePage onSelectView={(v) => setView(v as AppView)} />}
 
                 {view === ('parsing' as any) && (
                     <div className="space-y-6">

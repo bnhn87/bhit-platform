@@ -6,8 +6,6 @@
 // ENUMS
 // ============================================================================
 
-export type AppView = 'home' | 'parsing' | 'results' | 'history' | 'templates';
-
 export enum QuoteStatus {
     DRAFT = 'draft',
     PENDING_INTERNAL = 'pending_internal',

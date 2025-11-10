@@ -143,12 +143,14 @@ export async function createTemplate(
       throw new Error('User not authenticated');
     }
 
+    const insertData: any = {
+      ...template,
+      created_by: user.user.id,
+    };
+
     const { data, error } = await supabaseAdmin
       .from('document_templates')
-      .insert({
-        ...template,
-        created_by: user.user.id,
-      })
+      .insert(insertData)
       .select()
       .single();
 
@@ -172,12 +174,14 @@ export async function updateTemplate(
   updates: Partial<DocumentTemplate>
 ): Promise<DocumentTemplate> {
   try {
-    const { data, error } = await supabaseAdmin
-      .from('document_templates')
-      .update({
-        ...updates,
-        updated_at: new Date().toISOString(),
-      })
+    const updateData = {
+      ...updates,
+      updated_at: new Date().toISOString(),
+    };
+
+    const query: any = supabaseAdmin.from('document_templates');
+    const { data, error } = await query
+      .update(updateData)
       .eq('id', templateId)
       .select()
       .single();
@@ -209,14 +213,14 @@ export async function saveTemplateFields(
       .eq('template_id', templateId);
 
     // Insert new fields
+    const insertFields: any = fields.map(field => ({
+      ...field,
+      template_id: templateId,
+    }));
+
     const { data, error } = await supabaseAdmin
       .from('template_fields')
-      .insert(
-        fields.map(field => ({
-          ...field,
-          template_id: templateId,
-        }))
-      )
+      .insert(insertFields)
       .select();
 
     if (error) {
@@ -236,8 +240,8 @@ export async function saveTemplateFields(
  */
 export async function deleteTemplate(templateId: string): Promise<void> {
   try {
-    const { error } = await supabaseAdmin
-      .from('document_templates')
+    const query: any = supabaseAdmin.from('document_templates');
+    const { error } = await query
       .update({ is_active: false })
       .eq('id', templateId);
 
@@ -291,9 +295,10 @@ export async function recordTemplateUsage(
   usage: Omit<TemplateUsage, 'id' | 'used_at'>
 ): Promise<void> {
   try {
+    const insertData: any = usage;
     const { error } = await supabaseAdmin
       .from('template_usage')
-      .insert(usage);
+      .insert(insertData);
 
     if (error) {
       console.error('Error recording template usage:', error);
@@ -317,14 +322,16 @@ export async function getTemplatePerformance(templateId: string): Promise<{
   recent_uses: TemplateUsage[];
 }> {
   try {
-    const { data: usages, error } = await supabaseAdmin
-      .from('template_usage')
+    const query: any = supabaseAdmin.from('template_usage');
+    const { data, error } = await query
       .select('*')
       .eq('template_id', templateId)
       .order('used_at', { ascending: false })
       .limit(100);
 
     if (error) throw error;
+
+    const usages = (data || []) as TemplateUsage[];
 
     const stats = {
       usage_count: usages?.length || 0,
