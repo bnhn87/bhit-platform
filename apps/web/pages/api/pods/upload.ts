@@ -122,7 +122,7 @@ export default async function handler(
 
     // Create POD record
     const pod = await PODService.create({
-      file: uploadedFile,
+      file: uploadedFile as any,
       filePath,
       fileHash,
       uploadedBy: session.user.id,
