@@ -16,12 +16,18 @@ export async function getUserPermissions(): Promise<UserPermissions | null> {
     .single();
 
   // Try to get permissions from user_permissions table (may not exist)
-  const { data: permissions } = await (supabase
-    .from('user_permissions') as any)
-    .select('permission_key')
-    .eq('user_id', user.id)
-    .is('revoked_at', null)
-    .catch(() => ({ data: null }));
+  let permissions = null;
+  try {
+    const response = await (supabase
+      .from('user_permissions') as any)
+      .select('permission_key')
+      .eq('user_id', user.id)
+      .is('revoked_at', null);
+    permissions = response.data;
+  } catch (error) {
+    // Table doesn't exist or other error - that's ok
+    permissions = null;
+  }
 
   return {
     role: userData?.role || '',

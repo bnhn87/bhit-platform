@@ -103,6 +103,13 @@ export const ROLE_BASED_NAV: Record<UserRole, NavItem[]> = {
       description: "AI-powered quote generation"
     },
     {
+      id: 202.1,
+      label: "202a. SmartQuote v3",
+      href: "/smartquote-v3",
+      enabled: true,
+      description: "Next-gen AI quote system"
+    },
+    {
       id: 203,
       label: "203. SmartInvoice",
       href: "/smart-invoice",
@@ -167,6 +174,13 @@ export const ROLE_BASED_NAV: Record<UserRole, NavItem[]> = {
       href: "/smart-quote",
       enabled: true,
       description: "AI-powered quote generation"
+    },
+    {
+      id: 302.1,
+      label: "302a. SmartQuote v3",
+      href: "/smartquote-v3",
+      enabled: true,
+      description: "Next-gen AI quote system"
     },
     {
       id: 303,
@@ -275,6 +289,13 @@ export const ROLE_BASED_NAV: Record<UserRole, NavItem[]> = {
       href: "/smart-quote",
       enabled: true,
       description: "AI-powered quote generation"
+    },
+    {
+      id: 402.1,
+      label: "402a. SmartQuote v3",
+      href: "/smartquote-v3",
+      enabled: true,
+      description: "Next-gen AI quote system"
     },
     {
       id: 403,
