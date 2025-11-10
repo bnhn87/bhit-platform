@@ -33,16 +33,26 @@ const LabourCalendarOverview: React.FC<LabourCalendarOverviewProps> = ({
 
       // Get all labour allocations for the current month across all jobs
       // Note: v_labour_calendar table may not exist, handle gracefully
-      const { data, error } = await (supabase
-        .from('v_labour_calendar') as any)
-        .select(`
-          *,
-          jobs!inner(reference)
-        `)
-        .gte('work_date', `${year}-${month.toString().padStart(2, '0')}-01`)
-        .lte('work_date', `${year}-${month.toString().padStart(2, '0')}-31`)
-        .order('work_date', { ascending: true })
-        .catch(() => ({ data: null, error: 'Table not found' }));
+      let data = null;
+      let error = null;
+
+      try {
+        const response = await (supabase
+          .from('v_labour_calendar') as any)
+          .select(`
+            *,
+            jobs!inner(reference)
+          `)
+          .gte('work_date', `${year}-${month.toString().padStart(2, '0')}-01`)
+          .lte('work_date', `${year}-${month.toString().padStart(2, '0')}-31`)
+          .order('work_date', { ascending: true });
+
+        data = response.data;
+        error = response.error;
+      } catch (err) {
+        // Silently handle missing table
+        error = err;
+      }
 
       if (error) {
         // Silently handle missing table - no console error
