@@ -163,6 +163,19 @@ export interface PODNeedingReview extends DeliveryPOD {
   supplier_name: string | null;
   overall_confidence: number;
 }
+export interface CreatePODRequest {
+  sales_order_ref?: string;
+  delivery_date?: string;
+  delivery_time?: string;
+  recipient_name?: string;
+  delivery_address?: string;
+  vehicle_type?: VehicleType;
+  vehicle_count?: number;
+  vehicle_registrations?: string[];
+  driver_names?: string[];
+  items_delivered?: PODItem[];
+}
+
 
 export interface UpdatePODRequest {
   sales_order_ref?: string;
