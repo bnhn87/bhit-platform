@@ -18,7 +18,6 @@ export class AIParsingService {
 
     try {
       // Update status to parsing
-      // @ts-expect-error - delivery_pods table exists in DB but not in generated types
       await supabase
         .from('delivery_pods')
         .update({ status: 'parsing' })
@@ -68,7 +67,6 @@ export class AIParsingService {
       parsedData.validation_flags = this.calculateValidationFlags(parsedData);
 
       // Update POD with parsing status
-      // @ts-expect-error - delivery_pods table exists in DB but not in generated types
       await supabase
         .from('delivery_pods')
         .update({
@@ -79,11 +77,11 @@ export class AIParsingService {
         .eq('id', podId);
 
       return parsedData;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('AI Parsing error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 
       // Update status to needs_review on error
-      // @ts-expect-error - delivery_pods table exists in DB but not in generated types
       await supabase
         .from('delivery_pods')
         .update({
@@ -96,7 +94,7 @@ export class AIParsingService {
       return {
         confidence_scores: { overall: 0 },
         validation_flags: ['ai_parsing_failed'],
-        raw_extracted_text: error.message
+        raw_extracted_text: errorMessage
       };
     }
   }

@@ -21,11 +21,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       success: true,
       statistics: stats
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Stats API error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return res.status(500).json({
       success: false,
-      error: error.message || 'Failed to fetch statistics'
+      error: errorMessage || 'Failed to fetch statistics'
     });
   }
 }

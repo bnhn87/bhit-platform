@@ -61,7 +61,8 @@ export function useHasCostAccess() {
         }
       } catch (err: unknown) {
         if (!cancel) {
-          setError((err as Error).message || 'Failed to check cost access');
+          const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+          setError(errorMessage || 'Failed to check cost access');
           setAllowed(false);
           setLoading(false);
         }

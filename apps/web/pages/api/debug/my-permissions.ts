@@ -77,10 +77,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       raw_user_meta_data: authUser?.user?.user_metadata
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Debug permissions error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return res.status(500).json({
-      error: error?.message || 'Internal server error'
+      error: errorMessage || 'Internal server error'
     });
   }
 }

@@ -170,8 +170,9 @@ export function withErrorBoundary<T extends Record<string, unknown>>(
       console.error('Component error:', error);
       
       if (fallback) {
+        const errorObj = error instanceof Error ? error : new Error('Unknown error occurred');
         return React.createElement(fallback, {
-          error: error as Error,
+          error: errorObj,
           retry: () => window.location.reload(),
         });
       }

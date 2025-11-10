@@ -55,7 +55,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setReady(true);
       } catch (err: unknown) {
         // Auth initialization error
-        setError((err as Error).message || 'Failed to initialize authentication');
+        const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+        setError(errorMessage || 'Failed to initialize authentication');
       } finally {
         setLoading(false);
       }
@@ -84,7 +85,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Sign out error
       }
     } catch (err: unknown) {
-      const message = (err as Error).message || 'Failed to sign out';
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      const message = errorMessage || 'Failed to sign out';
       setError(message);
       // Sign out exception
     } finally {
@@ -106,7 +108,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       return { success: true };
     } catch (err: unknown) {
-      const message = (err as Error).message || 'Failed to sign in';
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      const message = errorMessage || 'Failed to sign in';
       setError(message);
       return { success: false, error: message };
     } finally {
@@ -128,7 +131,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       return { success: true };
     } catch (err: unknown) {
-      const message = (err as Error).message || 'Failed to sign up';
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      const message = errorMessage || 'Failed to sign up';
       setError(message);
       return { success: false, error: message };
     } finally {

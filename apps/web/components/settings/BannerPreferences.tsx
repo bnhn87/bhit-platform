@@ -82,7 +82,8 @@ export function BannerPreferencesComponent() {
       }
     } catch (error) {
       console.error('Error saving preferences:', error);
-      setSaveMessage(`Error: ${error.message || 'Unknown error'}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      setSaveMessage(`Error: ${errorMessage}`);
       setTimeout(() => setSaveMessage(null), 5000);
     }
   }

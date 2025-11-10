@@ -74,9 +74,8 @@ export default async function handler(
     const fileHash = crypto.createHash('sha256').update(fileBuffer).digest('hex');
 
     // Check for duplicate
-    // @ts-expect-error - delivery_pods table exists in DB but not in generated types
-    const { data: existingPOD } = await supabase
-      .from('delivery_pods')
+    const query: any = supabase.from('delivery_pods');
+    const { data: existingPOD } = await query
       .select('id')
       .eq('file_hash', fileHash)
       .is('deleted_at', null)
@@ -122,13 +121,13 @@ export default async function handler(
 
     // Create POD record
     const pod = await PODService.create({
-      file: uploadedFile,
+      file: uploadedFile as any, // formidable File type differs from browser File
       filePath,
       fileHash,
       uploadedBy: session.user.id,
       uploadSource: uploadSource as any,
-      supplierId: supplierId || null,
-      originalSender: session.user.email || null,
+      supplierId: supplierId || undefined,
+      originalSender: session.user.email || undefined,
     });
 
     // Trigger AI parsing asynchronously (don't wait for it)
@@ -152,11 +151,12 @@ export default async function handler(
       data: { pod }
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Upload error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return res.status(500).json({
       success: false,
-      error: error.message || 'Upload failed'
+      error: errorMessage || 'Upload failed'
     });
   }
 }

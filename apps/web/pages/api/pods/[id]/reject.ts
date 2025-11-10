@@ -27,11 +27,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       pod: updated,
       message: 'POD rejected'
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Reject POD error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return res.status(500).json({
       success: false,
-      error: error.message || 'Failed to reject POD'
+      error: errorMessage || 'Failed to reject POD'
     });
   }
 }

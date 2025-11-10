@@ -71,7 +71,7 @@ export async function processInvoiceWithLearning(
       validationResult = await validateExtractedData(extractedData, supplierId);
 
       if (!validationResult.is_valid) {
-        console.log(`⚠️ Validation found ${validationResult.issues_count} issues`);
+        console.log(`⚠️ Validation found ${validationResult.warnings.length + validationResult.issues.length} issues`);
       }
     } catch (error) {
       console.error('Validation failed (non-critical):', error);

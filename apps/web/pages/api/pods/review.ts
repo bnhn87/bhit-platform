@@ -22,11 +22,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       pods,
       count: pods.length
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Review queue API error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return res.status(500).json({
       success: false,
-      error: error.message || 'Failed to fetch review queue'
+      error: errorMessage || 'Failed to fetch review queue'
     });
   }
 }

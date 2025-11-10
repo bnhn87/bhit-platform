@@ -34,11 +34,12 @@ export default async function handler(
       data: { suppliers: suppliers || [] }
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Suppliers fetch error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return res.status(500).json({
       success: false,
-      error: error.message || 'Failed to fetch suppliers'
+      error: errorMessage || 'Failed to fetch suppliers'
     });
   }
 }
