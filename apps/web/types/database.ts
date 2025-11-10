@@ -512,7 +512,6 @@ export interface Database {
       pods_needing_review: { Row: Record<string, any> }
       pod_statistics: { Row: Record<string, any> }
       recent_pod_activity: { Row: Record<string, any> }
-      [_ in never]: never
     }
     Functions: {
       [_ in never]: never

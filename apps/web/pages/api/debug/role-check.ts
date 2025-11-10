@@ -18,15 +18,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Check users table
-    const { data: usersData, error: usersError } = await supabaseAdmin
-      .from('users')
+    const { data: usersData, error: usersError } = await (supabaseAdmin
+      .from('users') as any)
       .select('role')
       .eq('account_id', user.id)
       .maybeSingle();
 
     // Check profiles table
-    const { data: profilesData, error: profilesError } = await supabaseAdmin
-      .from('profiles')
+    const { data: profilesData, error: profilesError } = await (supabaseAdmin
+      .from('profiles') as any)
       .select('role')
       .eq('id', user.id)
       .maybeSingle();

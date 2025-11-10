@@ -30,8 +30,8 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
     }
 
     // Get user permission
-    const { data: permission } = await supabaseAdmin
-      .from('user_banner_permissions')
+    const { data: permission } = await (supabaseAdmin
+      .from('user_banner_permissions') as any)
       .select('*')
       .eq('user_id', user.id)
       .single();
@@ -61,8 +61,8 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     }
 
     // Check if user is admin/director
-    const { data: profile } = await supabaseAdmin
-      .from('profiles')
+    const { data: profile } = await (supabaseAdmin
+      .from('profiles') as any)
       .select('role')
       .eq('id', user.id)
       .single();
@@ -78,8 +78,8 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     }
 
     // Upsert permission
-    const { data: permission, error } = await supabaseAdmin
-      .from('user_banner_permissions')
+    const { data: permission, error } = await (supabaseAdmin
+      .from('user_banner_permissions') as any)
       .upsert({
         user_id,
         banner_enabled

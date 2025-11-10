@@ -91,7 +91,7 @@ class HybridParsingService {
                 details: result.details,
                 confidenceScore: 75,
                 warnings: ['Parsed with v1 (fast mode) - confidence scores estimated'],
-                parseMethod: 'v1_fast',
+                parseMethod: 'single_pass',
                 attempts: 1,
                 durationMs: Date.now() - startTime,
                 method: 'v1_fast',
@@ -123,6 +123,8 @@ class HybridParsingService {
 
             const enhancedResult: HybridParseResult = {
                 ...result,
+                parseMethod: 'multi_pass',
+                attempts: options.maxRetries || 3,
                 durationMs: Date.now() - startTime,
                 method: 'v2_accurate',
             };
@@ -222,7 +224,9 @@ class HybridParsingService {
         // Limit cache size to 100 entries (LRU)
         if (this.parseCache.size >= 100) {
             const firstKey = this.parseCache.keys().next().value;
-            this.parseCache.delete(firstKey);
+            if (firstKey) {
+                this.parseCache.delete(firstKey);
+            }
         }
 
         this.parseCache.set(hash, {

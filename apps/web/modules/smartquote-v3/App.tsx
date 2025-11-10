@@ -130,7 +130,11 @@ export default function SmartQuoteV3App() {
             }
 
             setProducts(allProducts);
-            setQuoteDetails((prev) => ({ ...prev, ...parseResult.details }));
+            setQuoteDetails((prev) => ({
+                ...prev,
+                ...parseResult.details,
+                overrideVanType: parseResult.details.overrideVanType as "oneMan" | "twoMan" | null | undefined
+            }));
 
             // Create quote in database
             const { data: user } = await supabase.auth.getUser();
@@ -202,9 +206,9 @@ export default function SmartQuoteV3App() {
                 } else if (data) {
                     setCurrentQuote({
                         ...currentQuote,
-                        quoteDetails: details,
+                        quoteDetails: details as any,
                         products: productsList,
-                        results: calculatedResults,
+                        results: calculatedResults as any,
                         totalAmount: calculatedResults.pricing.totalCost,
                     });
                     showSuccess('Quote recalculated successfully!');
@@ -457,7 +461,7 @@ export default function SmartQuoteV3App() {
 
             {/* Main Content */}
             <main className="max-w-7xl mx-auto px-6 py-8">
-                {view === ('home' as any) && <HomePage onSelectView={setView} />}
+                {view === ('home' as any) && <HomePage onSelectView={setView as any} />}
 
                 {view === ('parsing' as any) && (
                     <div className="space-y-6">

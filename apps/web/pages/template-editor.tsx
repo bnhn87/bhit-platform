@@ -184,7 +184,7 @@ export default function TemplateEditor() {
   };
 
   // Field type options
-  const fieldTypes = {
+  const fieldTypes: Record<string, Array<{ value: string; label: string }>> = {
     invoice: [
       { value: 'invoice_number', label: 'Invoice Number' },
       { value: 'invoice_date', label: 'Invoice Date' },
@@ -244,7 +244,7 @@ export default function TemplateEditor() {
             <h1 style={{ fontSize: '2rem', fontWeight: 'bold', color: theme.colors.text }}>
               Visual Document Markup Tool
             </h1>
-            <p style={{ color: theme.colors.textSecondary, marginTop: '0.5rem' }}>
+            <p style={{ color: theme.colors.textSubtle, marginTop: '0.5rem' }}>
               Train AI by marking fields on sample documents (invoices, PODs, quotes, etc.)
             </p>
           </div>
@@ -320,7 +320,7 @@ export default function TemplateEditor() {
                   flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: theme.colors.textSecondary,
+                  color: theme.colors.textSubtle,
                 }}>
                   <FileText size={48} style={{ marginBottom: '1rem', opacity: 0.5 }} />
                   <p style={{ fontSize: '1.125rem', fontWeight: 500 }}>
@@ -344,7 +344,7 @@ export default function TemplateEditor() {
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', color: theme.colors.textSecondary }}>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', color: theme.colors.textSubtle }}>
                     Template Name *
                   </label>
                   <input
@@ -364,7 +364,7 @@ export default function TemplateEditor() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', color: theme.colors.textSecondary }}>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', color: theme.colors.textSubtle }}>
                     Document Type *
                   </label>
                   <select
@@ -389,7 +389,7 @@ export default function TemplateEditor() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', color: theme.colors.textSecondary }}>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', color: theme.colors.textSubtle }}>
                     Supplier (Optional)
                   </label>
                   <select
@@ -425,7 +425,7 @@ export default function TemplateEditor() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', color: theme.colors.textSecondary }}>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', color: theme.colors.textSubtle }}>
                     Description
                   </label>
                   <textarea
@@ -456,7 +456,7 @@ export default function TemplateEditor() {
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   <div>
-                    <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', color: theme.colors.textSecondary }}>
+                    <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', color: theme.colors.textSubtle }}>
                       Field Type
                     </label>
                     <select
@@ -485,7 +485,7 @@ export default function TemplateEditor() {
                   </div>
 
                   <div>
-                    <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', color: theme.colors.textSecondary }}>
+                    <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', color: theme.colors.textSubtle }}>
                       Confidence Level
                     </label>
                     <select
@@ -508,7 +508,7 @@ export default function TemplateEditor() {
                   </div>
 
                   <div>
-                    <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', color: theme.colors.textSecondary }}>
+                    <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', color: theme.colors.textSubtle }}>
                       Notes
                     </label>
                     <textarea
@@ -531,7 +531,10 @@ export default function TemplateEditor() {
                   <button
                     onClick={handleDeleteBox}
                     style={{
-                      ...getDashboardButtonStyle('danger'),
+                      ...getDashboardButtonStyle('secondary', {
+                        backgroundColor: theme.colors.danger,
+                        color: '#ffffff'
+                      }),
                       display: 'flex',
                       alignItems: 'center',
                       gap: '0.5rem',

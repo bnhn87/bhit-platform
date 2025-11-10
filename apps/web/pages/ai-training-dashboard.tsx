@@ -71,7 +71,7 @@ export default function AITrainingDashboard() {
           justifyContent: 'center',
           alignItems: 'center',
           height: '60vh',
-          color: theme.colors.textSecondary,
+          color: theme.colors.textSubtle,
         }}>
           <Brain size={48} style={{ animation: 'pulse 2s infinite' }} />
           <span style={{ marginLeft: '1rem', fontSize: '1.25rem' }}>Loading AI insights...</span>
@@ -96,7 +96,7 @@ export default function AITrainingDashboard() {
             <Brain size={32} />
             AI Training Dashboard
           </h1>
-          <p style={{ color: theme.colors.textSecondary, marginTop: '0.5rem' }}>
+          <p style={{ color: theme.colors.textSubtle, marginTop: '0.5rem' }}>
             Watch the AI learn from every correction and improve automatically
           </p>
         </div>
@@ -115,14 +115,14 @@ export default function AITrainingDashboard() {
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <p style={{ fontSize: '0.875rem', color: theme.colors.textSecondary }}>Total Corrections</p>
+                <p style={{ fontSize: '0.875rem', color: theme.colors.textSubtle }}>Total Corrections</p>
                 <p style={{ fontSize: '2rem', fontWeight: 'bold', color: theme.colors.text }}>
                   {insights?.total_corrections || 0}
                 </p>
               </div>
               <Brain size={32} color={theme.colors.accent} />
             </div>
-            <p style={{ fontSize: '0.75rem', color: theme.colors.textSecondary, marginTop: '0.5rem' }}>
+            <p style={{ fontSize: '0.75rem', color: theme.colors.textSubtle, marginTop: '0.5rem' }}>
               AI learns from each one
             </p>
           </div>
@@ -134,14 +134,14 @@ export default function AITrainingDashboard() {
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <p style={{ fontSize: '0.875rem', color: theme.colors.textSecondary }}>Patterns Detected</p>
+                <p style={{ fontSize: '0.875rem', color: theme.colors.textSubtle }}>Patterns Detected</p>
                 <p style={{ fontSize: '2rem', fontWeight: 'bold', color: theme.colors.text }}>
                   {insights?.patterns_detected || 0}
                 </p>
               </div>
               <Target size={32} color="#10b981" />
             </div>
-            <p style={{ fontSize: '0.75rem', color: theme.colors.textSecondary, marginTop: '0.5rem' }}>
+            <p style={{ fontSize: '0.75rem', color: theme.colors.textSubtle, marginTop: '0.5rem' }}>
               Auto-fixes available
             </p>
           </div>
@@ -153,14 +153,14 @@ export default function AITrainingDashboard() {
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <p style={{ fontSize: '0.875rem', color: theme.colors.textSecondary }}>Pending Help</p>
+                <p style={{ fontSize: '0.875rem', color: theme.colors.textSubtle }}>Pending Help</p>
                 <p style={{ fontSize: '2rem', fontWeight: 'bold', color: theme.colors.text }}>
                   {insights?.active_learning_pending || 0}
                 </p>
               </div>
               <AlertTriangle size={32} color="#f59e0b" />
             </div>
-            <p style={{ fontSize: '0.75rem', color: theme.colors.textSecondary, marginTop: '0.5rem' }}>
+            <p style={{ fontSize: '0.75rem', color: theme.colors.textSubtle, marginTop: '0.5rem' }}>
               AI needs human help
             </p>
           </div>
@@ -176,7 +176,7 @@ export default function AITrainingDashboard() {
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <p style={{ fontSize: '0.875rem', color: theme.colors.textSecondary }}>Accuracy Trend</p>
+                <p style={{ fontSize: '0.875rem', color: theme.colors.textSubtle }}>Accuracy Trend</p>
                 <p style={{ fontSize: '1.5rem', fontWeight: 'bold', color: theme.colors.text, textTransform: 'capitalize' }}>
                   {insights?.accuracy_trend || 'stable'}
                 </p>
@@ -189,7 +189,7 @@ export default function AITrainingDashboard() {
                 <CheckCircle size={32} color={theme.colors.accentAlt} />
               )}
             </div>
-            <p style={{ fontSize: '0.75rem', color: theme.colors.textSecondary, marginTop: '0.5rem' }}>
+            <p style={{ fontSize: '0.75rem', color: theme.colors.textSubtle, marginTop: '0.5rem' }}>
               {insights?.accuracy_trend === 'improving' && '✅ Getting better!'}
               {insights?.accuracy_trend === 'declining' && '⚠️ Needs attention'}
               {insights?.accuracy_trend === 'stable' && 'Maintaining performance'}
@@ -253,7 +253,7 @@ export default function AITrainingDashboard() {
               <div style={{
                 textAlign: 'center',
                 padding: '2rem',
-                color: theme.colors.textSecondary,
+                color: theme.colors.textSubtle,
               }}>
                 <CheckCircle size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
                 <p>No pending requests - AI is confident!</p>
@@ -278,7 +278,7 @@ export default function AITrainingDashboard() {
                         <p style={{ fontWeight: 600, color: theme.colors.text, fontSize: '0.875rem' }}>
                           {req.field_name}
                         </p>
-                        <p style={{ fontSize: '0.75rem', color: theme.colors.textSecondary }}>
+                        <p style={{ fontSize: '0.75rem', color: theme.colors.textSubtle }}>
                           {new Date(req.created_at).toLocaleDateString()}
                         </p>
                       </div>
@@ -296,7 +296,7 @@ export default function AITrainingDashboard() {
                       Extracted: <strong>{req.extracted_value}</strong>
                     </p>
                     {req.context && (
-                      <p style={{ fontSize: '0.75rem', color: theme.colors.textSecondary }}>
+                      <p style={{ fontSize: '0.75rem', color: theme.colors.textSubtle }}>
                         {req.context}
                       </p>
                     )}
@@ -377,7 +377,7 @@ export default function AITrainingDashboard() {
               <div style={{
                 textAlign: 'center',
                 padding: '2rem',
-                color: theme.colors.textSecondary,
+                color: theme.colors.textSubtle,
               }}>
                 <Brain size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
                 <p>AI is still learning - make corrections to detect patterns</p>
@@ -399,7 +399,7 @@ export default function AITrainingDashboard() {
                         <p style={{ fontWeight: 600, color: theme.colors.text, fontSize: '0.875rem' }}>
                           {pattern.field_name}
                         </p>
-                        <p style={{ fontSize: '0.75rem', color: theme.colors.textSecondary, textTransform: 'capitalize' }}>
+                        <p style={{ fontSize: '0.75rem', color: theme.colors.textSubtle, textTransform: 'capitalize' }}>
                           {pattern.pattern_type.replace(/_/g, ' ')}
                         </p>
                       </div>
@@ -414,7 +414,7 @@ export default function AITrainingDashboard() {
                         }}>
                           {pattern.confidence}% confident
                         </p>
-                        <p style={{ fontSize: '0.75rem', color: theme.colors.textSecondary, marginTop: '0.25rem' }}>
+                        <p style={{ fontSize: '0.75rem', color: theme.colors.textSubtle, marginTop: '0.25rem' }}>
                           {pattern.occurrences} times
                         </p>
                       </div>
@@ -480,7 +480,7 @@ export default function AITrainingDashboard() {
                   <p style={{ fontSize: '1.5rem', fontWeight: 'bold', color: theme.colors.accent }}>
                     {corrections}
                   </p>
-                  <p style={{ fontSize: '0.75rem', color: theme.colors.textSecondary }}>
+                  <p style={{ fontSize: '0.75rem', color: theme.colors.textSubtle }}>
                     corrections made
                   </p>
                 </div>

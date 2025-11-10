@@ -1,6 +1,0 @@
-{
-  "name": "BHI Place & Plan",
-  "description": "An intelligent tool to help you plan furniture layouts. Upload a floor plan, import a list of furniture products (even from a PDF), and drag-and-drop items to visualize your space. The AI assistant provides real-time feedback and collision detection.",
-  "requestFramePermissions": [],
-  "prompt": ""
-}

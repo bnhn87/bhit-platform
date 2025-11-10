@@ -208,8 +208,8 @@ export async function createActiveLearningRequest(
   alternatives?: string[]
 ): Promise<ActiveLearningRequest> {
   try {
-    const { data, error } = await supabaseAdmin
-      .from('active_learning_requests')
+    const { data, error } = await (supabaseAdmin
+      .from('active_learning_requests') as any)
       .insert({
         invoice_id: invoiceId,
         field_name: fieldName,
@@ -261,8 +261,8 @@ export async function resolveActiveLearningRequest(
   userCorrection: string
 ): Promise<void> {
   try {
-    const { error } = await supabaseAdmin
-      .from('active_learning_requests')
+    const { error } = await (supabaseAdmin
+      .from('active_learning_requests') as any)
       .update({
         resolved: true,
         user_correction: userCorrection,
@@ -321,8 +321,8 @@ export async function generateTemplateFromCorrections(
     }
 
     // Get supplier name
-    const { data: supplier } = await supabaseAdmin
-      .from('suppliers')
+    const { data: supplier } = await (supabaseAdmin
+      .from('suppliers') as any)
       .select('name')
       .eq('id', supplierId)
       .single();
@@ -506,8 +506,8 @@ export async function validateExtractedData(
   // 6. Validate supplier-specific patterns (if we have historical data)
   if (supplierId) {
     // Get historical invoices from this supplier
-    const { data: historicalInvoices } = await supabaseAdmin
-      .from('invoices')
+    const { data: historicalInvoices } = await (supabaseAdmin
+      .from('invoices') as any)
       .select('invoice_number, net_amount, gross_amount')
       .eq('supplier_id', supplierId)
       .order('created_at', { ascending: false })
@@ -516,9 +516,9 @@ export async function validateExtractedData(
     if (historicalInvoices && historicalInvoices.length > 0) {
       // Check invoice number pattern
       const numberPatterns = historicalInvoices
-        .map(inv => inv.invoice_number)
+        .map((inv: any) => inv.invoice_number)
         .filter(Boolean)
-        .map(num => num.replace(/\d/g, '#')); // Extract pattern
+        .map((num: any) => num.replace(/\d/g, '#')); // Extract pattern
 
       const currentPattern = data.invoiceNumber?.replace(/\d/g, '#');
       if (currentPattern && !numberPatterns.includes(currentPattern)) {
@@ -531,9 +531,9 @@ export async function validateExtractedData(
       }
 
       // Check amount range
-      const amounts = historicalInvoices.map(inv => inv.gross_amount || 0).filter(a => a > 0);
+      const amounts = historicalInvoices.map((inv: any) => inv.gross_amount || 0).filter((a: number) => a > 0);
       if (amounts.length > 5 && data.grossAmount) {
-        const avg = amounts.reduce((sum, a) => sum + a, 0) / amounts.length;
+        const avg = amounts.reduce((sum: number, a: number) => sum + a, 0) / amounts.length;
         const max = Math.max(...amounts);
 
         if (data.grossAmount > max * 3) {
@@ -636,8 +636,8 @@ export async function detectAnomalies(
 
   // 5. Supplier-specific anomalies
   if (supplierId) {
-    const { data: recentInvoices } = await supabaseAdmin
-      .from('invoices')
+    const { data: recentInvoices } = await (supabaseAdmin
+      .from('invoices') as any)
       .select('gross_amount, invoice_date, invoice_number')
       .eq('supplier_id', supplierId)
       .order('created_at', { ascending: false })
@@ -646,7 +646,7 @@ export async function detectAnomalies(
     if (recentInvoices && recentInvoices.length > 0) {
       // Check for duplicate invoice number
       const duplicate = recentInvoices.find(
-        inv => inv.invoice_number === data.invoiceNumber
+        (inv: any) => inv.invoice_number === data.invoiceNumber
       );
 
       if (duplicate) {
@@ -660,11 +660,11 @@ export async function detectAnomalies(
       }
 
       // Check for unusual amount spike
-      const amounts = recentInvoices.map(inv => inv.gross_amount || 0).filter(a => a > 0);
+      const amounts = recentInvoices.map((inv: any) => inv.gross_amount || 0).filter((a: number) => a > 0);
       if (amounts.length >= 5 && data.grossAmount) {
-        const avg = amounts.reduce((sum, a) => sum + a, 0) / amounts.length;
+        const avg = amounts.reduce((sum: number, a: number) => sum + a, 0) / amounts.length;
         const stdDev = Math.sqrt(
-          amounts.reduce((sum, a) => sum + Math.pow(a - avg, 2), 0) / amounts.length
+          amounts.reduce((sum: number, a: number) => sum + Math.pow(a - avg, 2), 0) / amounts.length
         );
 
         if (data.grossAmount > avg + (3 * stdDev)) {
@@ -821,8 +821,8 @@ export async function getLearningInsights(): Promise<LearningInsights> {
 
     // Get top problem fields
     const correctionsByField = await getCorrectionsByField();
-    const topProblemFields = Object.entries(correctionsByField)
-      .map(([field, count]) => ({ field, corrections: count }))
+    const topProblemFields = Object.entries(correctionsByField as any)
+      .map(([field, count]: [string, any]) => ({ field, corrections: Number(count) }))
       .sort((a, b) => b.corrections - a.corrections)
       .slice(0, 5);
 

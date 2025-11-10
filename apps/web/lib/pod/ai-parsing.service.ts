@@ -18,7 +18,7 @@ export class AIParsingService {
 
     try {
       // Update status to parsing
-      // @ts-expect-error - delivery_pods table exists in DB but not in generated types
+      // Note: delivery_pods table exists in DB but not in generated types
       await supabase
         .from('delivery_pods')
         .update({ status: 'parsing' })
@@ -68,7 +68,7 @@ export class AIParsingService {
       parsedData.validation_flags = this.calculateValidationFlags(parsedData);
 
       // Update POD with parsing status
-      // @ts-expect-error - delivery_pods table exists in DB but not in generated types
+      // Note: delivery_pods table exists in DB but not in generated types
       await supabase
         .from('delivery_pods')
         .update({
@@ -83,7 +83,7 @@ export class AIParsingService {
       console.error('AI Parsing error:', error);
 
       // Update status to needs_review on error
-      // @ts-expect-error - delivery_pods table exists in DB but not in generated types
+      // Note: delivery_pods table exists in DB but not in generated types
       await supabase
         .from('delivery_pods')
         .update({

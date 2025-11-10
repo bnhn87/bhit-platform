@@ -36,8 +36,8 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
     }
 
     // Check if user has banner enabled
-    const { data: permission } = await supabaseAdmin
-      .from('user_banner_permissions')
+    const { data: permission } = await (supabaseAdmin
+      .from('user_banner_permissions') as any)
       .select('banner_enabled')
       .eq('user_id', user.id)
       .single();
@@ -47,8 +47,8 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
     }
 
     // Get user role
-    const { data: profile } = await supabaseAdmin
-      .from('profiles')
+    const { data: profile } = await (supabaseAdmin
+      .from('profiles') as any)
       .select('role')
       .eq('id', user.id)
       .single();
@@ -56,8 +56,8 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
     const userRole = (profile?.role || 'user').toLowerCase();
 
     // Build query based on role
-    let query = supabaseAdmin
-      .from('task_banner_items')
+    let query = (supabaseAdmin
+      .from('task_banner_items') as any)
       .select('*')
       .neq('status', 'completed')
       .order('due_date', { ascending: true });
@@ -82,7 +82,7 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
     }
 
     // Calculate brightness and format due time
-    const enhancedTasks: TaskBannerItemWithBrightness[] = (tasks || []).map(task => ({
+    const enhancedTasks: TaskBannerItemWithBrightness[] = (tasks || []).map((task: any) => ({
       ...task,
       brightness: calculateTaskBrightness(new Date(task.due_date)),
       dueIn: formatDueTime(new Date(task.due_date)),
@@ -112,8 +112,8 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
     }
 
     // Check if user is admin/director
-    const { data: profile } = await supabaseAdmin
-      .from('profiles')
+    const { data: profile } = await (supabaseAdmin
+      .from('profiles') as any)
       .select('role')
       .eq('id', user.id)
       .single();
@@ -131,8 +131,8 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
     }
 
     // Create task
-    const { data: newTask, error } = await supabaseAdmin
-      .from('task_banner_items')
+    const { data: newTask, error } = await (supabaseAdmin
+      .from('task_banner_items') as any)
       .insert({
         title: taskData.title.toUpperCase(),
         type: taskData.type,
@@ -190,8 +190,8 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     if (updateData.assigned_to !== undefined) updates.assigned_to = updateData.assigned_to;
 
     // Update task
-    const { data: updatedTask, error } = await supabaseAdmin
-      .from('task_banner_items')
+    const { data: updatedTask, error } = await (supabaseAdmin
+      .from('task_banner_items') as any)
       .update(updates)
       .eq('id', updateData.id)
       .select()
@@ -225,8 +225,8 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponse) {
     }
 
     // Check if user is admin/director
-    const { data: profile } = await supabaseAdmin
-      .from('profiles')
+    const { data: profile } = await (supabaseAdmin
+      .from('profiles') as any)
       .select('role')
       .eq('id', user.id)
       .single();

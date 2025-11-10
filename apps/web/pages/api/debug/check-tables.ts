@@ -9,7 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     // Check if tables exist using information_schema
-    const { data, error } = await supabaseAdmin.rpc('check_invoice_tables', {});
+    const { data, error } = await supabaseAdmin.rpc('check_invoice_tables');
 
     if (error) {
       // If function doesn't exist, try direct query

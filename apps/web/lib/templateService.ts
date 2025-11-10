@@ -143,8 +143,8 @@ export async function createTemplate(
       throw new Error('User not authenticated');
     }
 
-    const { data, error } = await supabaseAdmin
-      .from('document_templates')
+    const { data, error } = await (supabaseAdmin
+      .from('document_templates') as any)
       .insert({
         ...template,
         created_by: user.user.id,
@@ -172,8 +172,8 @@ export async function updateTemplate(
   updates: Partial<DocumentTemplate>
 ): Promise<DocumentTemplate> {
   try {
-    const { data, error } = await supabaseAdmin
-      .from('document_templates')
+    const { data, error } = await (supabaseAdmin
+      .from('document_templates') as any)
       .update({
         ...updates,
         updated_at: new Date().toISOString(),
@@ -209,8 +209,8 @@ export async function saveTemplateFields(
       .eq('template_id', templateId);
 
     // Insert new fields
-    const { data, error } = await supabaseAdmin
-      .from('template_fields')
+    const { data, error } = await (supabaseAdmin
+      .from('template_fields') as any)
       .insert(
         fields.map(field => ({
           ...field,
@@ -236,8 +236,8 @@ export async function saveTemplateFields(
  */
 export async function deleteTemplate(templateId: string): Promise<void> {
   try {
-    const { error } = await supabaseAdmin
-      .from('document_templates')
+    const { error } = await (supabaseAdmin
+      .from('document_templates') as any)
       .update({ is_active: false })
       .eq('id', templateId);
 
@@ -291,8 +291,8 @@ export async function recordTemplateUsage(
   usage: Omit<TemplateUsage, 'id' | 'used_at'>
 ): Promise<void> {
   try {
-    const { error } = await supabaseAdmin
-      .from('template_usage')
+    const { error } = await (supabaseAdmin
+      .from('template_usage') as any)
       .insert(usage);
 
     if (error) {
@@ -317,8 +317,8 @@ export async function getTemplatePerformance(templateId: string): Promise<{
   recent_uses: TemplateUsage[];
 }> {
   try {
-    const { data: usages, error } = await supabaseAdmin
-      .from('template_usage')
+    const { data: usages, error } = await (supabaseAdmin
+      .from('template_usage') as any)
       .select('*')
       .eq('template_id', templateId)
       .order('used_at', { ascending: false })
@@ -336,21 +336,21 @@ export async function getTemplatePerformance(templateId: string): Promise<{
     };
 
     if (usages && usages.length > 0) {
-      const validMatchRates = usages.filter(u => u.match_rate !== null);
-      const validConfidences = usages.filter(u => u.avg_confidence !== null);
-      const validTimes = usages.filter(u => u.extraction_time_ms !== null);
-      const errors = usages.filter(u => u.had_errors);
+      const validMatchRates = usages.filter((u: any) => u.match_rate !== null);
+      const validConfidences = usages.filter((u: any) => u.avg_confidence !== null);
+      const validTimes = usages.filter((u: any) => u.extraction_time_ms !== null);
+      const errors = usages.filter((u: any) => u.had_errors);
 
       stats.avg_match_rate = validMatchRates.length > 0
-        ? validMatchRates.reduce((sum, u) => sum + (u.match_rate || 0), 0) / validMatchRates.length
+        ? validMatchRates.reduce((sum: number, u: any) => sum + (u.match_rate || 0), 0) / validMatchRates.length
         : 0;
 
       stats.avg_confidence = validConfidences.length > 0
-        ? validConfidences.reduce((sum, u) => sum + (u.avg_confidence || 0), 0) / validConfidences.length
+        ? validConfidences.reduce((sum: number, u: any) => sum + (u.avg_confidence || 0), 0) / validConfidences.length
         : 0;
 
       stats.avg_extraction_time_ms = validTimes.length > 0
-        ? validTimes.reduce((sum, u) => sum + (u.extraction_time_ms || 0), 0) / validTimes.length
+        ? validTimes.reduce((sum: number, u: any) => sum + (u.extraction_time_ms || 0), 0) / validTimes.length
         : 0;
 
       stats.error_rate = (errors.length / usages.length) * 100;
