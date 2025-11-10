@@ -367,6 +367,14 @@ export const ROLE_BASED_NAV: Record<UserRole, NavItem[]> = {
  * Helper function to get enabled nav items for a role
  */
 export function getNavItemsForRole(role: UserRole): NavItem[] {
+  // Directors get everything - their own items plus admin items
+  if (role === 'director') {
+    const directorItems = ROLE_BASED_NAV.director || [];
+    const adminItems = ROLE_BASED_NAV.admin || [];
+    const allItems = [...directorItems, ...adminItems];
+    return allItems.filter(item => item.enabled);
+  }
+
   const items = ROLE_BASED_NAV[role] || [];
   return items.filter(item => item.enabled);
 }
