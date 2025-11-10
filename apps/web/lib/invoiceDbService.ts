@@ -3,6 +3,7 @@
 
 import type { ExtractedInvoiceData } from './invoiceAiService';
 import { supabase } from './supabaseClient';
+import { supabaseAdmin } from './supabaseAdmin';
 
 export interface Invoice {
   id: string;
@@ -506,6 +507,48 @@ export async function getInvoiceFileUrl(filePath: string): Promise<string> {
     console.error('getInvoiceFileUrl error:', error);
     throw error;
   }
+}
+
+/**
+ * Get corrections grouped by field name
+ */
+export async function getCorrectionsByField(): Promise<Record<string, InvoiceCorrection[]>> {
+  const { data, error } = await supabaseAdmin
+    .from('invoice_corrections')
+    .select('*')
+    .order('corrected_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching corrections by field:', error);
+    return {};
+  }
+
+  const grouped: Record<string, InvoiceCorrection[]> = {};
+  data?.forEach((correction: any) => {
+    const field = correction.field_name || 'unknown';
+    if (!grouped[field]) grouped[field] = [];
+    grouped[field].push(correction);
+  });
+
+  return grouped;
+}
+
+/**
+ * Get corrections for a specific supplier
+ */
+export async function getCorrectionsBySupplier(supplierId: string): Promise<InvoiceCorrection[]> {
+  const { data, error } = await supabaseAdmin
+    .from('invoice_corrections')
+    .select('*')
+    .eq('supplier_id', supplierId)
+    .order('corrected_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching corrections for supplier:', error);
+    return [];
+  }
+
+  return data || [];
 }
 
 /**

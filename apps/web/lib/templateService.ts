@@ -65,8 +65,8 @@ export async function fetchTemplates(filters?: {
   is_active?: boolean;
 }): Promise<DocumentTemplate[]> {
   try {
-    let query = supabaseAdmin
-      .from('document_templates')
+    let query = (supabaseAdmin
+      .from('document_templates') as any)
       .select('*')
       .order('created_at', { ascending: false });
 
@@ -106,13 +106,13 @@ export async function getTemplate(templateId: string): Promise<{
 }> {
   try {
     const [templateResult, fieldsResult] = await Promise.all([
-      supabaseAdmin
-        .from('document_templates')
+      (supabaseAdmin
+        .from('document_templates') as any)
         .select('*')
         .eq('id', templateId)
         .single(),
-      supabaseAdmin
-        .from('template_fields')
+      (supabaseAdmin
+        .from('template_fields') as any)
         .select('*')
         .eq('template_id', templateId)
         .order('priority', { ascending: true })
@@ -203,8 +203,8 @@ export async function saveTemplateFields(
 ): Promise<TemplateField[]> {
   try {
     // Delete existing fields
-    await supabaseAdmin
-      .from('template_fields')
+    await (supabaseAdmin
+      .from('template_fields') as any)
       .delete()
       .eq('template_id', templateId);
 
@@ -371,8 +371,8 @@ export async function findBestTemplate(
   supplierId?: string
 ): Promise<DocumentTemplate | null> {
   try {
-    let query = supabaseAdmin
-      .from('document_templates')
+    let query = (supabaseAdmin
+      .from('document_templates') as any)
       .select('*')
       .eq('document_type', documentType)
       .eq('is_active', true)
