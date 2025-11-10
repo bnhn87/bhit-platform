@@ -30,22 +30,51 @@ export function useUserRole(): UseUserRoleResult {
         return;
       }
 
+      // First, let's debug what tables exist and what's in them
+      console.log('[useUserRole] Starting role check for user:', uid);
+
       const { data, error } = await supabase
         .from("user_profiles")
         .select("role")
         .eq("id", uid)
         .maybeSingle();
 
-      console.log('[useUserRole] Query result:', { data, error });
+      console.log('[useUserRole] user_profiles query result:', {
+        data,
+        error,
+        hasData: !!data,
+        roleValue: data?.role,
+        typeOfRole: typeof data?.role
+      });
 
       if (error) {
-        console.error('[useUserRole] Error fetching role:', error);
+        console.error('[useUserRole] Error fetching from user_profiles:', error);
+
+        // Try the old users table as fallback for debugging
+        const { data: oldData, error: oldError } = await supabase
+          .from("users")
+          .select("role")
+          .eq("account_id", uid)
+          .maybeSingle();
+
+        console.log('[useUserRole] Fallback to users table:', {
+          oldData,
+          oldError,
+          hasOldData: !!oldData,
+          oldRole: oldData?.role
+        });
+
         setRole("guest");
         return;
       }
 
       const r = (data?.role as UserRole) || "guest";
-      console.log('[useUserRole] Final role:', r);
+      console.log('[useUserRole] Final role decision:', {
+        rawData: data,
+        extractedRole: data?.role,
+        finalRole: r,
+        defaultingToGuest: !data?.role
+      });
       setRole(r);
     } finally {
       setLoading(false);
