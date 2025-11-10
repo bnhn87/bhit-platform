@@ -68,10 +68,15 @@ export function useUserRole(): UseUserRoleResult {
         return;
       }
 
-      const r = (data?.role as UserRole) || "guest";
+      // Convert role to lowercase to handle case inconsistencies
+      const rawRole = data?.role;
+      const normalizedRole = rawRole ? rawRole.toLowerCase() : null;
+      const r = (normalizedRole as UserRole) || "guest";
+
       console.log('[useUserRole] Final role decision:', {
         rawData: data,
-        extractedRole: data?.role,
+        extractedRole: rawRole,
+        normalizedRole: normalizedRole,
         finalRole: r,
         defaultingToGuest: !data?.role
       });
