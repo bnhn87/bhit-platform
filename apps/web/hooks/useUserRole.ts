@@ -34,12 +34,12 @@ export function useUserRole(): UseUserRoleResult {
       console.log('[useUserRole] Starting role check for user:', uid);
 
       const { data, error } = await supabase
-        .from("user_profiles")
+        .from("profiles")
         .select("role")
         .eq("id", uid)
         .maybeSingle();
 
-      console.log('[useUserRole] user_profiles query result:', {
+      console.log('[useUserRole] profiles query result:', {
         data,
         error,
         hasData: !!data,
@@ -48,7 +48,7 @@ export function useUserRole(): UseUserRoleResult {
       });
 
       if (error) {
-        console.error('[useUserRole] Error fetching from user_profiles:', error);
+        console.error('[useUserRole] Error fetching from profiles:', error);
 
         // Try the old users table as fallback for debugging
         const { data: oldData, error: oldError } = await supabase
