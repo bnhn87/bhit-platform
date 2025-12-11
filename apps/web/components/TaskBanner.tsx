@@ -236,33 +236,31 @@ export default function TaskBanner() {
       <div
         className="task-banner"
         style={{
-          style={{
           position: 'relative', // Changed from fixed to relative to stack in _app.tsx
-      // top: 0, // No longer needed
-      // left: 0,
-      // right: 0,
-      zIndex: 9999,
-      overflow: 'hidden',
-      height: bannerHeight,
-      paddingTop: verticalPadding,
-      paddingBottom: verticalPadding,
-      backgroundColor: displaySettings.show_background ? getBackgroundColor(displaySettings.background_color) : 'transparent',
-      borderBottom: displaySettings.show_background ? '2px solid rgba(255, 255, 255, 0.1)' : 'none',
-      boxShadow: displaySettings.show_background ? 'inset 0 0 30px rgba(0, 0, 0, 0.9)' : 'none',
-      display: 'flex',
-      alignItems: 'center',
-      width: '100%'
-        }}
+          // top: 0, // No longer needed
+          // left: 0,
+          // right: 0,
+          zIndex: 9999,
+          overflow: 'hidden',
+          height: bannerHeight,
+          paddingTop: verticalPadding,
+          paddingBottom: verticalPadding,
+          backgroundColor: displaySettings.show_background ? getBackgroundColor(displaySettings.background_color) : 'transparent',
+          borderBottom: displaySettings.show_background ? '2px solid rgba(255, 255, 255, 0.1)' : 'none',
+          boxShadow: displaySettings.show_background ? 'inset 0 0 30px rgba(0, 0, 0, 0.9)' : 'none',
+          display: 'flex',
+          alignItems: 'center',
+          width: '100%'
         }}
       >
-      {/* LED matrix pixel grid */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          pointerEvents: 'none',
-          opacity: 0.15,
-          background: `
+        {/* LED matrix pixel grid */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            pointerEvents: 'none',
+            opacity: 0.15,
+            background: `
               repeating-linear-gradient(
                 0deg,
                 transparent,
@@ -271,23 +269,23 @@ export default function TaskBanner() {
                 rgba(0,0,0,0.5) 3px
               )
             `
-        }}
-      />
+          }}
+        />
 
-      {/* Scrolling tasks */}
-      <div style={{ display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
-        {[...displayTasks, ...displayTasks].map((task, index) => (
-          <TaskCard
-            key={`${task.id}-${index}`}
-            task={task}
-            index={index}
-            settings={displaySettings}
-            onClick={() => handleTaskClick(task)}
-            messageSpacing={displaySettings.message_spacing || 96}
-          />
-        ))}
-      </div>
-    </div >
+        {/* Scrolling tasks */}
+        <div style={{ display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
+          {[...displayTasks, ...displayTasks].map((task, index) => (
+            <TaskCard
+              key={`${task.id}-${index}`}
+              task={task}
+              index={index}
+              settings={displaySettings}
+              onClick={() => handleTaskClick(task)}
+              messageSpacing={displaySettings.message_spacing || 96}
+            />
+          ))}
+        </div>
+      </div >
     </>
   );
 }

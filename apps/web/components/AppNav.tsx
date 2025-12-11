@@ -100,7 +100,7 @@ export default function AppNav() {
   const { role, loading } = useUserRole();
   const { hasAccess: hasInvoiceAccess, loading: invoiceLoading } = useHasInvoiceAccess();
   const r = useRouter();
-  const [bannerHeight, setBannerHeight] = React.useState(0);
+  // const [bannerHeight, setBannerHeight] = React.useState(0); // Removed
 
   // Detect banner height on mount and resize - REMOVED: Now handled by CSS flex/sticky
   // React.useEffect(() => { ... }, []);

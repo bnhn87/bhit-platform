@@ -22,43 +22,12 @@ const PerformanceMonitor = dynamic(() => import("@/components/PerformanceMonitor
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  const [topOffset, setTopOffset] = React.useState(0);
+  // const [topOffset, setTopOffset] = React.useState(0); // Removed
 
   // Define routes that should have a clean layout (no nav/banners)
   const isPublicRoute = ['/login', '/reset-password'].includes(router.pathname);
 
-  React.useEffect(() => {
-    if (isPublicRoute) {
-      setTopOffset(0);
-      return;
-    }
-
-    const updateTopOffset = () => {
-      const banner = document.querySelector('.task-banner') as HTMLElement;
-      const nav = document.querySelector('nav') as HTMLElement;
-      const bannerHeight = banner ? banner.offsetHeight : 0;
-      const navHeight = nav ? nav.offsetHeight : 0;
-      setTopOffset(bannerHeight + navHeight);
-    };
-
-    // Update on mount
-    updateTopOffset();
-
-    // Update on window resize
-    window.addEventListener('resize', updateTopOffset);
-
-    // Update when banner changes
-    const observer = new MutationObserver(updateTopOffset);
-    const banner = document.querySelector('.task-banner');
-    if (banner) {
-      observer.observe(banner, { attributes: true, childList: true, subtree: true });
-    }
-
-    return () => {
-      window.removeEventListener('resize', updateTopOffset);
-      observer.disconnect();
-    };
-  }, [isPublicRoute]);
+  // Layout handled via CSS sticky positioning - no JS calculation needed
 
   return (
     <ErrorBoundary>
@@ -93,14 +62,18 @@ export default function MyApp({ Component, pageProps }: AppProps) {
             width: '100%',
             overflowX: 'hidden'
           }}>
-            {!isPublicRoute && <TaskBanner />} {/* Task Banner ABOVE navbar */}
-            {!isPublicRoute && <AppNav />}
+            {!isPublicRoute && (
+              <div style={{ position: 'sticky', top: 0, zIndex: 9999 }}>
+                <TaskBanner />
+                <AppNav />
+              </div>
+            )}
             <main
               id="main-content"
               style={{
                 flex: 1,
-                padding: isPublicRoute ? 0 : '16px', // No padding on login
-                paddingTop: isPublicRoute ? 0 : Math.max(16, topOffset + 16), // Add top padding for banner + navbar
+                padding: isPublicRoute ? 0 : '16px', // Standard padding
+                // paddingTop is no longer needed as sticky header sits in flow
                 width: '100%',
                 // maxWidth: '100vw', // Removed to avoid horizontal scroll on mobile
                 overflowX: 'hidden',
