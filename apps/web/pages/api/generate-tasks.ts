@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextApiRequest, NextApiResponse } from 'next';
+
 import { requireAuth } from '../../lib/apiAuth';
 
 // import { generateTasksFromSelectedDocuments } from '../../lib/pdfTaskGeneration';
@@ -28,7 +29,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: 'jobId is required' });
     }
 
-    // console.log(`API: Generating tasks for job ${jobId} with ${documentIds.length} documents`);
 
     // Get job data to access SmartQuote products
     const { data: jobData, error: jobError } = await supabaseAdmin
@@ -42,7 +42,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(500).json({ error: `Failed to fetch job data: ${jobError.message}` });
     }
 
-    // console.log(`Job has ${jobData?.products?.length || 0} products from SmartQuote`);
 
     // Clear existing tasks if requested
     if (clearExisting) {
@@ -55,7 +54,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         console.error('Failed to delete existing tasks:', deleteError);
         return res.status(500).json({ error: `Failed to clear existing tasks: ${deleteError.message}` });
       }
-      // console.log('Cleared existing tasks');
     }
 
     let tasksToInsert: Array<{
@@ -76,11 +74,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Check if we have selected documents
     if (documentIds.length > 0) {
-      // console.log(`Generating tasks from ${documentIds.length} selected documents...`);
       
       try {
         // Fetch the selected PDF documents using admin client
-        // console.log(`Fetching documents with IDs:`, documentIds);
         const { data: documents, error: docError } = await supabaseAdmin
           .from('job_documents')
           .select('*')
@@ -93,7 +89,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           throw new Error(`Failed to fetch documents: ${docError.message}`);
         }
 
-        // console.log(`Found ${documents?.length || 0} documents for processing`);
 
         if (!documents || documents.length === 0) {
           throw new Error('No valid PDF documents found from selection.');
@@ -135,7 +130,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         ]);
 
         tasksToInsert = sampleTasksFromDocs;
-        // console.log(`Generated ${tasksToInsert.length} tasks from ${documents.length} documents`);
       } catch (pdfError: unknown) {
         console.error('PDF generation error:', pdfError);
         return res.status(500).json({ error: `Failed to generate tasks from documents: ${pdfError instanceof Error ? pdfError.message : String(pdfError)}` });
@@ -143,7 +137,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     } else {
       // Generate tasks from SmartQuote product data if available
       if (jobData?.products && Array.isArray(jobData.products) && jobData.products.length > 0) {
-        // console.log('Generating tasks from SmartQuote product data...');
         
         tasksToInsert = jobData.products.map((product: {
           isHeavy?: boolean;
@@ -184,10 +177,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           };
         });
         
-        // console.log(`Generated ${tasksToInsert.length} tasks from SmartQuote products`);
       } else {
         // Final fallback to sample tasks if no SmartQuote data available
-        // console.log('No SmartQuote products found, generating sample tasks...');
         tasksToInsert = [
           {
             job_id: jobId,
@@ -245,7 +236,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(500).json({ error: `Failed to insert tasks: ${insertError.message}` });
     }
 
-    // console.log(`Successfully inserted ${insertedTasks?.length || 0} tasks`);
 
     return res.status(200).json({
       success: true,

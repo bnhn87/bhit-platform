@@ -1,6 +1,4 @@
 // Test FLX product matching fix
-console.log("🔧 TESTING FLX-4P PRODUCT MATCHING FIX");
-console.log("=".repeat(50));
 
 // Simulate the catalogue
 const catalogue = {
@@ -63,7 +61,6 @@ const findBestCatalogueMatch = (productCode) => {
     return null;
 };
 
-console.log("Testing problematic FLX product codes:\n");
 
 const testCases = [
     { code: "FLX-4P-2816-A", expected: "FLX 4P", description: "The exact case from user" },
@@ -87,29 +84,14 @@ testCases.forEach(test => {
     if (result === test.expected) passed++;
     else failed++;
 
-    console.log(`${status}: "${test.code}"`);
-    console.log(`         ${test.description}`);
-    console.log(`         Expected: ${test.expected}`);
-    console.log(`         Got: ${result || "NO MATCH"}`);
 
     if (result && catalogue[result]) {
-        console.log(`         → Will use: ${catalogue[result].installTimeHours}h from catalogue`);
     } else {
-        console.log(`         → Would ask user for time ❌`);
     }
-    console.log();
 });
 
-console.log("=".repeat(50));
-console.log(`RESULTS: ${passed} passed, ${failed} failed`);
 
 if (failed === 0) {
-    console.log("\n✅ SUCCESS! All FLX products now match correctly!");
-    console.log("The system will no longer ask for times for these products.");
 } else {
-    console.log("\n⚠️ Some tests failed - further improvements needed");
 }
 
-console.log("\n💡 KEY FIX:");
-console.log("Added specific handling for 'FLX-#P-####-X' format");
-console.log("This matches products like 'FLX-4P-2816-A' to 'FLX 4P' in catalogue");

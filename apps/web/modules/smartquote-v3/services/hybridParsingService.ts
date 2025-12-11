@@ -3,13 +3,13 @@
 // ============================================================================
 // Combines v1 (fast single-pass) + v2 (accurate multi-pass) approaches
 
-import { ParseContent, ParsedProduct, QuoteDetails, EnhancedParseResult } from '../types';
 
 // Import v1 parser
 import { parseQuoteContent as parseV1 } from '../../smartquote/services/geminiService';
 
 // Import v2 parser
 import { parseQuoteContentEnhanced as parseV2 } from '../../smartquote-v2/services/enhancedGeminiService';
+import { ParseContent, ParsedProduct, QuoteDetails, EnhancedParseResult } from '../types';
 
 interface HybridParseOptions {
     // Performance mode

@@ -9,7 +9,6 @@ try {
   const apiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY || process.env.API_KEY;
   if (apiKey) {
     ai = new GoogleGenAI({ apiKey });
-    // console.log('Gemini AI initialized successfully');
   } else {
     console.warn('No Gemini API key found - PDF parsing will not work');
   }
@@ -118,7 +117,6 @@ const extractTextFromPdf = async (file: File): Promise<string> => {
   // Wait for PDF.js to be available if it's still loading
   let retries = 0;
   while (typeof window.pdfjsLib === 'undefined' && retries < 10) {
-    // console.log('Waiting for PDF.js to load...');
     await new Promise(resolve => setTimeout(resolve, 500));
     retries++;
   }
@@ -172,11 +170,9 @@ export const parseFurnitureFromPdf = async (file: File) => {
       throw new Error("Could not extract any text from the PDF. Please ensure the PDF contains readable text content.");
     }
 
-    // console.log('Extracted text from PDF:', fileText.substring(0, 500) + '...');
 
     const prompt = `From the following text, extract a list of furniture items. For each item, find its name, width, depth, quantity, product code, and line number if available. IMPORTANT: Dimensions in architectural drawings are often in millimeters (mm). You MUST convert all dimensions you find to centimeters (cm) for the output JSON. Provide the output as a JSON array. If a value isn't found, use a reasonable default (e.g., 50 for dimensions, 1 for quantity) or omit optional fields. Text: \n\n${fileText}`;
 
-    // console.log('Sending request to AI service...');
 
     const response = await ai.models.generateContent({
       model: "gemini-2.0-flash-exp",
@@ -192,7 +188,6 @@ export const parseFurnitureFromPdf = async (file: File) => {
       throw new Error("Empty response from AI service");
     }
     
-    // console.log('AI response received:', jsonText);
     
     const parsedData = JSON.parse(jsonText);
     
@@ -207,7 +202,6 @@ export const parseFurnitureFromPdf = async (file: File) => {
         lineNumber: item.line_number,
     }));
 
-    // console.log('Successfully parsed', processedData.length, 'furniture items');
     return processedData;
 
   } catch (error: unknown) {

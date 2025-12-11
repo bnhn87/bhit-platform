@@ -67,7 +67,6 @@ const generateEdgeCaseQuoteDetails = (): QuoteDetails => ({
 export const stressTests = {
     // 1. Empty/Invalid Input Tests
     async testEmptyInputs() {
-        console.log('Testing empty inputs...');
         const results: any[] = [];
 
         // Empty product array
@@ -101,7 +100,6 @@ export const stressTests = {
 
     // 2. Malformed Data Tests
     async testMalformedData() {
-        console.log('Testing malformed data...');
         const results: any[] = [];
 
         // Malformed product
@@ -136,7 +134,6 @@ export const stressTests = {
 
     // 3. Large Dataset Tests
     async testLargeDatasets() {
-        console.log('Testing large datasets...');
         const results: any[] = [];
 
         // 1000 products
@@ -179,7 +176,6 @@ export const stressTests = {
 
     // 4. Database Operation Tests
     async testDatabaseOperations() {
-        console.log('Testing database operations...');
         const results: any[] = [];
 
         // Save with retry
@@ -239,7 +235,6 @@ export const stressTests = {
 
     // 5. Concurrent Operations Test
     async testConcurrentOperations() {
-        console.log('Testing concurrent operations...');
         const results: any[] = [];
 
         // Concurrent saves
@@ -295,7 +290,6 @@ export const stressTests = {
 
     // 6. Calculation Edge Cases
     async testCalculationEdgeCases() {
-        console.log('Testing calculation edge cases...');
         const results: any[] = [];
         const config = await getDefaultConfig();
 
@@ -416,7 +410,6 @@ export const stressTests = {
 
     // 7. Error Handling Tests
     async testErrorHandling() {
-        console.log('Testing error handling...');
         const results: any[] = [];
 
         // Network error handling
@@ -463,7 +456,6 @@ export const stressTests = {
 
     // Run all tests
     async runAll() {
-        console.log('Starting SmartQuote Stress Tests...');
         const allResults: Record<string, any> = {};
 
         try {
@@ -479,7 +471,6 @@ export const stressTests = {
             allResults.error = error.message;
         }
 
-        console.log('Stress Test Results:', JSON.stringify(allResults, null, 2));
         return allResults;
     }
 };

@@ -1,9 +1,9 @@
 // apps/web/pages/api/save-quote.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 
-import { supabase } from '../../lib/supabaseClient';
 import { requireAuth } from '../../lib/apiAuth';
 import { validateRequestBody, QuoteSchema } from '../../lib/apiValidation';
+import { supabase } from '../../lib/supabaseClient';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {

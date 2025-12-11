@@ -12,7 +12,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    // console.log('🚀 Setting up database tables for task generation...');
 
     // Create the tables using SQL
     const createTablesSQL = `
@@ -56,7 +55,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       CREATE INDEX IF NOT EXISTS idx_generated_tasks_install_order ON generated_tasks(job_id, install_order);
     `;
 
-    // console.log('📋 Executing database setup SQL...');
 
     // Execute the SQL using rpc (raw SQL execution)
     const { data: _data, error } = await supabaseServiceRole.rpc('exec_sql', { 
@@ -67,7 +65,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.error('❌ Database setup failed with RPC:', error);
       
       // Try alternative approach - using manual queries
-      // console.log('🔄 Trying alternative approach...');
       
       // Create job_floorplans table
       const { error: floorplansError } = await supabaseServiceRole
@@ -98,7 +95,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     }
 
-    // console.log('✅ Database setup completed successfully');
 
     // Test that tables are working
     const { data: _testFloorplans, error: floorplansTestError } = await supabaseServiceRole

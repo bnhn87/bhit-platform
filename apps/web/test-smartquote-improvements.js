@@ -1,6 +1,4 @@
 // Test demonstrating SmartQuote improvements
-console.log("🎯 SMARTQUOTE IMPROVEMENTS TEST");
-console.log("=".repeat(60));
 
 // Import the waste calculation logic
 const calculateWasteVolume = (productCode, installTimeHours, isHeavy) => {
@@ -55,8 +53,6 @@ const findBestMatch = (productCode, description) => {
     return null;
 };
 
-console.log("\n📋 IMPROVEMENT 1: ENHANCED PRODUCT MATCHING");
-console.log("-".repeat(50));
 
 const testProducts = [
     { input: "FLX_4_PERSON_WORKSTATION", expected: "FLX 4P" },
@@ -70,15 +66,10 @@ const testProducts = [
 testProducts.forEach(test => {
     const match = findBestMatch(test.input, "");
     const status = match === test.expected ? "✅" : "❌";
-    console.log(`${status} "${test.input}"`);
-    console.log(`   Expected: ${test.expected}, Got: ${match || "NO MATCH"}`);
     if (match) {
-        console.log(`   → Will use catalogue times instead of asking user`);
     }
 });
 
-console.log("\n📋 IMPROVEMENT 2: REALISTIC WASTE CALCULATION");
-console.log("-".repeat(50));
 
 const wasteTests = [
     { product: "FLX-8P", time: 2.0, heavy: true, name: "8-Person Workstation" },
@@ -88,9 +79,6 @@ const wasteTests = [
     { product: "POWER-MODULE", time: 0.1, heavy: false, name: "Power Module" },
 ];
 
-console.log("Product Waste Volumes (Old vs New):");
-console.log("OLD: All products = 0.035 m³ (35 liters) ❌");
-console.log("\nNEW: Based on product characteristics ✅");
 
 wasteTests.forEach(test => {
     const oldWaste = 0.035; // Fixed for all
@@ -98,13 +86,8 @@ wasteTests.forEach(test => {
     const liters = (newWaste * 1000).toFixed(0);
     const change = ((newWaste - oldWaste) / oldWaste * 100).toFixed(0);
 
-    console.log(`\n${test.name}:`);
-    console.log(`  Old: ${(oldWaste * 1000).toFixed(0)}L (fixed)`);
-    console.log(`  New: ${liters}L (${change > 0 ? '+' : ''}${change}%)`);
 });
 
-console.log("\n📋 IMPROVEMENT 3: ADDRESS SELECTION UI");
-console.log("-".repeat(50));
 
 const mockQuote = `
 Client: Tech Solutions Ltd
@@ -116,24 +99,9 @@ Products:
 20x Just A Chair
 `;
 
-console.log("Quote has multiple addresses detected:");
-console.log("1. Birmingham Office, B1 1RS (Site)");
-console.log("2. Rawside Warehouse, SE1 3ER (Collection)");
-console.log("3. Tech Solutions Ltd (Client)");
 
-console.log("\n✅ NEW BEHAVIOR:");
-console.log("• Shows address selection dialog");
-console.log("• User can choose which addresses to use");
-console.log("• Supports collection points for logistics");
-console.log("• Saves addresses to client database for reuse");
 
-console.log("\n❌ OLD BEHAVIOR:");
-console.log("• Auto-filled first address found");
-console.log("• No option to select");
-console.log("• Lost collection address info");
 
-console.log("\n📋 IMPROVEMENT 4: JOB WASTE CALCULATION");
-console.log("-".repeat(50));
 
 const jobProducts = [
     { code: "FLX-4P", quantity: 10, wastePerUnit: 0.075 },
@@ -145,54 +113,21 @@ const jobProducts = [
 const oldTotalWaste = jobProducts.reduce((sum, p) => sum + (0.035 * p.quantity), 0);
 const newTotalWaste = jobProducts.reduce((sum, p) => sum + (p.wastePerUnit * p.quantity), 0);
 
-console.log("Example Job Waste Calculation:");
-console.log("\nProducts:");
 jobProducts.forEach(p => {
-    console.log(`  ${p.quantity}x ${p.code}`);
 });
 
-console.log("\nOLD System (all products 0.035 m³):");
-console.log(`  Total: ${oldTotalWaste.toFixed(2)} m³ (${(oldTotalWaste * 1000).toFixed(0)} liters)`);
 
-console.log("\nNEW System (realistic volumes):");
 jobProducts.forEach(p => {
     const total = p.wastePerUnit * p.quantity;
-    console.log(`  ${p.code}: ${(total * 1000).toFixed(0)}L`);
 });
-console.log(`  Total: ${newTotalWaste.toFixed(2)} m³ (${(newTotalWaste * 1000).toFixed(0)} liters)`);
 
 const skipSize = 6.1; // Standard 8-yard skip in m³
 const oldSkips = Math.ceil(oldTotalWaste / skipSize);
 const newSkips = Math.ceil(newTotalWaste / skipSize);
 
-console.log(`\nSkip Requirements:`);
-console.log(`  OLD: ${oldSkips} skip(s) needed`);
-console.log(`  NEW: ${newSkips} skip(s) needed`);
 
-console.log("\n" + "=".repeat(60));
-console.log("🎯 SUMMARY OF IMPROVEMENTS:");
-console.log("-".repeat(50));
 
-console.log("\n1. BETTER PRODUCT MATCHING:");
-console.log("   • Fuzzy matching finds similar products");
-console.log("   • Uses catalogue instead of asking for times");
-console.log("   • Handles variations like 'FLX_4P' vs '4P FLX'");
 
-console.log("\n2. REALISTIC WASTE CALCULATION:");
-console.log("   • Different waste volumes per product type");
-console.log("   • Based on size, weight, and complexity");
-console.log("   • More accurate skip/disposal planning");
 
-console.log("\n3. ADDRESS SELECTION:");
-console.log("   • Shows all detected addresses");
-console.log("   • User selects correct ones");
-console.log("   • Supports collection points");
-console.log("   • Saves to database for reuse");
 
-console.log("\n4. CLIENT DATABASE:");
-console.log("   • Stores client addresses");
-console.log("   • Reuse for future quotes");
-console.log("   • Track access restrictions");
-console.log("   • Calculate logistics accurately");
 
-console.log("\n✨ RESULT: More accurate quotes with less manual input!");

@@ -1,13 +1,10 @@
 // Complete Multi-Address System Test with Database Integration
 // This demonstrates the full workflow from quote parsing to logistics calculation
 
-console.log("🏢 COMPLETE MULTI-ADDRESS SYSTEM WITH DATABASE INTEGRATION");
-console.log("=".repeat(60));
 
 // Mock API helper functions
 const mockAPI = {
     createClient: async (clientData) => {
-        console.log("📝 Creating/fetching client:", clientData.name);
         return {
             id: 'client-' + Date.now(),
             name: clientData.name,
@@ -18,7 +15,6 @@ const mockAPI = {
     },
 
     addClientAddress: async (clientId, address) => {
-        console.log(`📍 Adding address for client ${clientId}:`, address.label);
         return {
             id: 'addr-' + Date.now(),
             client_id: clientId,
@@ -111,8 +107,6 @@ const mockAPI = {
 
 // Test Scenario 1: Complex quote with multiple addresses
 async function testComplexQuoteWorkflow() {
-    console.log("\n📋 SCENARIO 1: COMPLEX QUOTE WITH THIRD-PARTY WAREHOUSE");
-    console.log("-".repeat(50));
 
     const quoteText = `
 QUOTATION REF: Q-2025-001
@@ -148,7 +142,6 @@ Products:
 `;
 
     // Step 1: Extract addresses from quote
-    console.log("\n1️⃣ Extracting addresses from quote...");
     const extractedAddresses = [
         {
             type: 'client',
@@ -173,17 +166,14 @@ Products:
     ];
 
     extractedAddresses.forEach(addr => {
-        console.log(`   ✅ Found ${addr.type}: ${addr.label} (${addr.postcode})`);
     });
 
     // Step 2: Create/fetch client and save addresses
-    console.log("\n2️⃣ Saving to database...");
     const client = await mockAPI.createClient({
         name: 'John Smith',
         company_name: 'Global Tech Solutions Ltd',
         email: 'john@globaltech.com'
     });
-    console.log(`   ✅ Client created: ${client.id}`);
 
     // Save each address to the database
     const savedAddresses = [];
@@ -198,14 +188,11 @@ Products:
             access_restrictions: addr.accessRestrictions
         });
         savedAddresses.push(dbAddress);
-        console.log(`   ✅ Saved: ${addr.label}`);
         if (dbAddress.in_ulez_zone) {
-            console.log(`      ⚠️ In ULEZ zone`);
         }
     }
 
     // Step 3: Calculate logistics
-    console.log("\n3️⃣ Calculating logistics...");
     const siteAddress = extractedAddresses.find(a => a.type === 'site');
     const collectionAddress = extractedAddresses.find(a => a.type === 'collection');
 
@@ -214,15 +201,8 @@ Products:
         collectionAddress.postcode
     );
 
-    console.log("\n📊 LOGISTICS SUMMARY:");
-    console.log(`   Total Distance: ${logistics.totalDistance} miles`);
-    console.log(`   Travel Time: ${(logistics.totalTravelTime / 60).toFixed(1)} hours`);
-    console.log(`   Estimated Fuel: £${logistics.estimatedFuelCost.toFixed(2)}`);
 
-    console.log("\n🚛 ROUTE PLAN:");
     logistics.route.forEach((leg, i) => {
-        console.log(`   ${i + 1}. ${leg.from} → ${leg.to}`);
-        console.log(`      Distance: ${leg.miles} miles (${leg.minutes} mins)`);
     });
 
     return { client, savedAddresses, logistics };
@@ -230,8 +210,6 @@ Products:
 
 // Test Scenario 2: Client with multiple saved addresses
 async function testClientWithMultipleAddresses() {
-    console.log("\n📋 SCENARIO 2: RETURNING CLIENT WITH MULTIPLE ADDRESSES");
-    console.log("-".repeat(50));
 
     // Simulate a returning client with saved addresses
     const existingClient = {
@@ -265,31 +243,20 @@ async function testClientWithMultipleAddresses() {
         }
     ];
 
-    console.log(`\n🔍 Found existing client: ${existingClient.company_name}`);
-    console.log("📍 Saved addresses available for selection:");
     savedAddresses.forEach(addr => {
-        console.log(`   • ${addr.label} (${addr.postcode}) - ${addr.type}${addr.is_default ? ' [DEFAULT]' : ''}`);
     });
 
     // User selects addresses for new quote
-    console.log("\n✅ User selections:");
-    console.log("   Site: Bristol Development (BS1 4DJ)");
-    console.log("   Collection: External Storage Facility (BS2 0YQ)");
 
     // Calculate logistics with selected addresses
     const logistics = await mockAPI.calculateLogistics('BS1 4DJ', 'BS2 0YQ');
 
-    console.log("\n📊 LOGISTICS FOR SELECTED ADDRESSES:");
-    console.log(`   Total Distance: ${logistics.totalDistance} miles`);
-    console.log(`   Route: Base → Storage → Site → Base`);
 
     return { client: existingClient, savedAddresses, logistics };
 }
 
 // Test Scenario 3: Manual address entry with validation
 async function testManualAddressEntry() {
-    console.log("\n📋 SCENARIO 3: MANUAL ADDRESS ENTRY WITH VALIDATION");
-    console.log("-".repeat(50));
 
     const testCases = [
         {
@@ -316,7 +283,6 @@ W1A 1AA`,
         }
     ];
 
-    console.log("\n🔍 Testing address validation:");
     testCases.forEach(test => {
         const lines = test.input.split('\n');
         const postcodeRegex = /\b([A-Z]{1,2}\d{1,2}[A-Z]?\s?\d[A-Z]{2})\b/i;
@@ -324,11 +290,7 @@ W1A 1AA`,
         const postcodeMatch = lastLine.match(postcodeRegex);
         const isValid = postcodeMatch && lines.length >= 3;
 
-        console.log(`\n   ${test.name}:`);
-        console.log(`   Expected: ${test.expected.valid ? '✅ Valid' : '❌ Invalid'}`);
-        console.log(`   Result: ${isValid ? '✅ Valid' : '❌ Invalid'}`);
         if (postcodeMatch) {
-            console.log(`   Postcode: ${postcodeMatch[0]}`);
         }
     });
 
@@ -344,32 +306,8 @@ async function runTests() {
         const scenario3 = await testManualAddressEntry();
 
         // Summary
-        console.log("\n" + "=".repeat(60));
-        console.log("🎯 SYSTEM CAPABILITIES DEMONSTRATED:");
-        console.log("-".repeat(50));
-        console.log("✅ Extract multiple addresses from quotes");
-        console.log("✅ Differentiate site vs collection vs client addresses");
-        console.log("✅ Save client addresses to database for reuse");
-        console.log("✅ Support third-party warehouse addresses");
-        console.log("✅ Calculate complex multi-stop logistics");
-        console.log("✅ Detect ULEZ and congestion zones");
-        console.log("✅ Validate UK address formats");
-        console.log("✅ Store access restrictions and loading bay info");
-        console.log("✅ Allow manual address entry with validation");
-        console.log("✅ Support multiple addresses per client");
 
-        console.log("\n💡 BENEFITS FOR BHIT:");
-        console.log("-".repeat(50));
-        console.log("• Accurate logistics planning with collection points");
-        console.log("• Reusable client address database");
-        console.log("• Proper distance and time calculations");
-        console.log("• ULEZ/congestion charge awareness");
-        console.log("• Access restriction tracking for site planning");
-        console.log("• Support for complex multi-location jobs");
 
-        console.log("\n✨ INTEGRATION COMPLETE!");
-        console.log("The system now fully supports multiple addresses per quote");
-        console.log("with database persistence and logistics calculation.");
 
     } catch (error) {
         console.error("Test failed:", error);

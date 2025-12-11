@@ -1,10 +1,11 @@
 // POD Manager Dashboard
 import Head from 'next/head';
-import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+
 import { useRequireAuth } from '../../hooks/useRequireAuth';
-import { theme } from '../../lib/theme';
 import type { PODStatistics } from '../../lib/pod/types';
+import { theme } from '../../lib/theme';
 
 export default function PODDashboard() {
   const router = useRouter();

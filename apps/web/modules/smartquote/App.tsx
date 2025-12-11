@@ -511,7 +511,6 @@ const App: React.FC = () => {
                     maxRetries: 3,
                     delayMs: 1000,
                     onRetry: (attempt, error) => {
-                        console.log(`Retry attempt ${attempt} for saving learned product:`, error.message);
                     }
                 }
             );
@@ -602,7 +601,6 @@ const App: React.FC = () => {
                     maxRetries: 3,
                     delayMs: 1000,
                     onRetry: (attempt, error) => {
-                        console.log(`Retry attempt ${attempt} for saving quote:`, error.message);
                     }
                 }
             );

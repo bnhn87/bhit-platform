@@ -18,7 +18,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .select('*')
       .limit(1);
 
-    // console.log('Existing table structure:', existingFlags);
 
     // Insert minimal feature flags with only guaranteed columns
     const { data, error } = await supabaseServiceRole

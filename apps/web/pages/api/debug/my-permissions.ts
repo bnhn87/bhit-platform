@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextApiRequest, NextApiResponse } from 'next';
+
 import { safeParseUrlEncodedJson } from '../../../lib/safeParsing';
 
 const supabaseAdmin = createClient(

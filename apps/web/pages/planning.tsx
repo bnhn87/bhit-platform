@@ -8,14 +8,12 @@ export default function PlanningPage() {
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
 
   const handleCreateProject = (project: PlanningProject) => {
-    // console.log('New project created:', project);
     // Auto-select the new project
     setSelectedProject(project.id);
   };
 
   const handleSelectProject = (projectId: string) => {
     setSelectedProject(projectId);
-    // console.log('Selected project:', projectId);
   };
 
   return (

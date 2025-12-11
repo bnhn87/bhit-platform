@@ -1,12 +1,14 @@
 // POD Upload API - Production Quality
-import type { NextApiRequest, NextApiResponse } from 'next';
-import formidable, { File } from 'formidable';
-import fs from 'fs';
 import crypto from 'crypto';
-import { PODService } from '../../../lib/pod/pod.service';
+import fs from 'fs';
+
+import formidable, { File } from 'formidable';
+import type { NextApiRequest, NextApiResponse } from 'next';
+
 import { AIParsingService } from '../../../lib/pod/ai-parsing.service';
-import { supabase } from '../../../lib/supabaseClient';
+import { PODService } from '../../../lib/pod/pod.service';
 import type { APIResponse, DeliveryPOD } from '../../../lib/pod/types';
+import { supabase } from '../../../lib/supabaseClient';
 
 export const config = {
   api: {

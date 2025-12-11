@@ -1135,7 +1135,6 @@ const UltimateConstructionPlatform: React.FC = () => {
               style={{ display: 'none' }}
               onChange={(e) => {
                 if (e.target.files) {
-                  // console.log('Uploading documents:', e.target.files.length);
                 }
               }}
             />
@@ -1278,7 +1277,6 @@ const UltimateConstructionPlatform: React.FC = () => {
               style={{ display: 'none' }}
               onChange={(e) => {
                 if (e.target.files) {
-                  // console.log('Uploading drawings:', e.target.files.length);
                 }
               }}
             />
@@ -1441,7 +1439,6 @@ const UltimateConstructionPlatform: React.FC = () => {
               style={{ display: 'none' }}
               onChange={(e) => {
                 if (e.target.files) {
-                  // console.log('Uploading BIM models:', e.target.files.length);
                 }
               }}
             />

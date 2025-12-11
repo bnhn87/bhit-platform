@@ -1,10 +1,12 @@
 // Template Editor - Visual Document Markup Tool
 // Allows users to draw bounding boxes on sample documents to train AI extraction
 
-import React, { useState, useEffect, useRef } from 'react';
 import { Upload, Save, X, Trash2, Plus, Check, Eye, FileText, Tag } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+
 import Layout from '../components/Layout';
 import MarkupCanvas, { BoundingBox } from '../components/MarkupCanvas';
+import { fetchSuppliers, type Supplier } from '../lib/invoiceDbService';
 import {
   createTemplate,
   saveTemplateFields,
@@ -13,7 +15,6 @@ import {
   deleteTemplate,
   type DocumentTemplate,
 } from '../lib/templateService';
-import { fetchSuppliers, type Supplier } from '../lib/invoiceDbService';
 import { theme } from '../lib/theme';
 import { getDashboardButtonStyle, getDashboardCardStyle } from '../modules/smartquote/utils/dashboardStyles';
 

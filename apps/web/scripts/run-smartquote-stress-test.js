@@ -14,10 +14,6 @@ process.env.NODE_ENV = 'test';
 
 // Import the stress test module (after transpiling TypeScript)
 async function runStressTests() {
-    console.log('='.repeat(60));
-    console.log('SMARTQUOTE STRESS TEST RUNNER');
-    console.log('='.repeat(60));
-    console.log('');
 
     // Note: In a real scenario, you'd need to transpile TypeScript first
     // For now, we'll create a simplified JavaScript version of the tests
@@ -25,7 +21,6 @@ async function runStressTests() {
     const tests = {
         // Test 1: Empty/Invalid Inputs
         async testEmptyInputs() {
-            console.log('📝 Testing empty inputs...');
             const results = [];
 
             try {
@@ -60,7 +55,6 @@ async function runStressTests() {
 
         // Test 2: Large Data Sets
         async testLargeDataSets() {
-            console.log('📊 Testing large datasets...');
             const results = [];
 
             try {
@@ -101,7 +95,6 @@ async function runStressTests() {
 
         // Test 3: Edge Cases
         async testEdgeCases() {
-            console.log('⚠️  Testing edge cases...');
             const results = [];
 
             try {
@@ -155,7 +148,6 @@ async function runStressTests() {
 
         // Test 4: Concurrent Operations
         async testConcurrentOperations() {
-            console.log('🔄 Testing concurrent operations...');
             const results = [];
 
             try {
@@ -214,7 +206,6 @@ async function runStressTests() {
 
         // Test 5: Error Recovery
         async testErrorRecovery() {
-            console.log('🛡️  Testing error recovery...');
             const results = [];
 
             try {
@@ -270,7 +261,6 @@ async function runStressTests() {
 
         // Test 6: Memory Leaks
         async testMemoryLeaks() {
-            console.log('💾 Testing for memory leaks...');
             const results = [];
 
             try {
@@ -314,24 +304,17 @@ async function runStressTests() {
     const allResults = {};
 
     try {
-        console.log('');
         allResults.emptyInputs = await tests.testEmptyInputs();
-        console.log('✅ Empty inputs test complete\n');
 
         allResults.largeDataSets = await tests.testLargeDataSets();
-        console.log('✅ Large datasets test complete\n');
 
         allResults.edgeCases = await tests.testEdgeCases();
-        console.log('✅ Edge cases test complete\n');
 
         allResults.concurrentOperations = await tests.testConcurrentOperations();
-        console.log('✅ Concurrent operations test complete\n');
 
         allResults.errorRecovery = await tests.testErrorRecovery();
-        console.log('✅ Error recovery test complete\n');
 
         allResults.memoryLeaks = await tests.testMemoryLeaks();
-        console.log('✅ Memory leak test complete\n');
 
     } catch (error) {
         console.error('❌ Test suite failed:', error);
@@ -339,10 +322,6 @@ async function runStressTests() {
     }
 
     // Generate report
-    console.log('='.repeat(60));
-    console.log('TEST RESULTS SUMMARY');
-    console.log('='.repeat(60));
-    console.log('');
 
     let totalTests = 0;
     let passedTests = 0;
@@ -350,31 +329,20 @@ async function runStressTests() {
 
     for (const [category, results] of Object.entries(allResults)) {
         if (Array.isArray(results)) {
-            console.log(`\n📋 ${category.toUpperCase()}:`);
             results.forEach(result => {
                 totalTests++;
                 if (result.passed === true) {
                     passedTests++;
-                    console.log(`  ✅ ${result.test}: PASSED`);
                 } else if (result.passed === false) {
                     failedTests++;
-                    console.log(`  ❌ ${result.test}: FAILED`);
                 } else if (result.error) {
                     failedTests++;
-                    console.log(`  ❌ ${result.test}: ERROR - ${result.error}`);
                 } else {
-                    console.log(`  ℹ️  ${result.test}:`, JSON.stringify(result));
                 }
             });
         }
     }
 
-    console.log('\n' + '='.repeat(60));
-    console.log('FINAL STATISTICS:');
-    console.log(`  Total Tests: ${totalTests}`);
-    console.log(`  Passed: ${passedTests} (${((passedTests/totalTests)*100).toFixed(1)}%)`);
-    console.log(`  Failed: ${failedTests} (${((failedTests/totalTests)*100).toFixed(1)}%)`);
-    console.log('='.repeat(60));
 
     // Write results to file
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
@@ -396,7 +364,6 @@ async function runStressTests() {
         }
     }, null, 2));
 
-    console.log(`\n📁 Results saved to: ${resultsFile}`);
 
     // Exit with appropriate code
     process.exit(failedTests > 0 ? 1 : 0);

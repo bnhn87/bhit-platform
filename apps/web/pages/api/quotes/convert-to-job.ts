@@ -52,10 +52,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    // console.log('🔧 API: Convert quote to job called');
-    // console.log('📤 Request body keys:', Object.keys(req.body));
-    // console.log('📤 Request body type:', typeof req.body);
-    
+
     const {
       quoteData,
       jobDetails
@@ -72,64 +69,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       };
     } = req.body;
 
-    // console.log('🔍 Validating data:', {
-    //   hasQuoteData: !!quoteData,
-    //   hasJobDetails: !!jobDetails,
-    //   hasResults: !!(quoteData?.results),
-    //   hasProducts: !!(quoteData?.products),
-    //   hasDetails: !!(quoteData?.details),
-    //   jobTitle: jobDetails?.title
-    // });
-
     if (!quoteData || !jobDetails) {
-      // console.error('❌ Missing required data:', { quoteData: !!quoteData, jobDetails: !!jobDetails });
       return res.status(400).json({ error: 'Missing required data' });
     }
 
     const { results, products, details } = quoteData;
 
     // Convert quote to labour estimate
-    // console.log('🔧 Converting quote to labour estimate...');
-    // console.log('🔍 Input data for conversion:', {
-    //   results: {
-    //     hasResults: !!results,
-    //     crew: results?.crew ? Object.keys(results.crew) : 'missing',
-    //     labour: results?.labour ? Object.keys(results.labour) : 'missing',
-    //     pricing: results?.pricing ? Object.keys(results.pricing) : 'missing'
-    //   },
-    //   products: {
-    //     count: products?.length || 0,
-    //     firstProduct: products?.[0] ? Object.keys(products[0]) : 'none'
-    //   },
-    //   details: {
-    //     hasDetails: !!details,
-    //     customExtendedUpliftDays: details?.customExtendedUpliftDays
-    //   }
-    // });
 
     let labourEstimate;
     try {
       labourEstimate = convertQuoteToLabourEstimate(results, products, details);
-      // console.log('📊 Labour estimate result:', {
-      //   totalDays: labourEstimate.totalDays,
-      //   totalHours: labourEstimate.totalHours,
-      //   crewSize: labourEstimate.crewSize,
-      //   productsCount: labourEstimate.products.length
-      // });
     } catch (conversionError) {
       console.error('❌ Error in convertQuoteToLabourEstimate:', conversionError);
-      return res.status(400).json({ 
-        error: 'Failed to convert quote to labour estimate', 
+      return res.status(400).json({
+        error: 'Failed to convert quote to labour estimate',
         details: conversionError instanceof Error ? conversionError.message : 'Unknown conversion error'
       });
     }
 
     // Validate labour estimate
     if (labourEstimate.totalDays <= 0 || labourEstimate.products.length === 0) {
-      // console.error('❌ Invalid labour estimate:', {
-      //   totalDays: labourEstimate.totalDays,
-      //   productsLength: labourEstimate.products.length
-      // });
       return res.status(400).json({ error: 'Invalid labour estimate generated from quote' });
     }
 
@@ -220,7 +180,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Generate tasks from SmartQuote products
-    // console.log('🔧 Generating tasks from SmartQuote products...');
     const tasksToCreate = products.map((product, index) => {
       const installOrder = index + 1;
       const taskTitle = `Install ${product.cleanDescription || product.description}`;
@@ -245,17 +204,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       };
     });
 
-    // console.log(`📊 Creating ${tasksToCreate.length} tasks from products...`);
-    
+
     const { error: tasksError } = await supabase
       .from('generated_tasks')
       .insert(tasksToCreate);
 
     if (tasksError) {
-      // console.error('⚠️ Error creating tasks:', tasksError);
+      console.error('⚠️ Error creating tasks:', tasksError);
       // Continue - task creation is not critical for job creation
-    } else {
-      // console.log('✅ Successfully created tasks from SmartQuote products');
     }
 
     // Log the activities
@@ -279,7 +235,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
 
   } catch (error) {
-    // console.error('Error converting quote to job:', error);
+    console.error('Error converting quote to job:', error);
     return res.status(500).json({
       error: 'Internal server error',
       details: error instanceof Error ? error.message : 'Unknown error'

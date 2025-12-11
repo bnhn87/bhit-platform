@@ -244,7 +244,6 @@ export default function FloorPlanCanvas({
 
   // Debug log
   // eslint-disable-next-line no-console
-  // console.log('FloorPlanCanvas imageUrl:', imageUrl);
 
   // Coordinate transformation
   const screenToWorld = (screenX: number, screenY: number) => {

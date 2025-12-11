@@ -1,7 +1,5 @@
 // Test for SmartQuote Postcode Extraction
 
-console.log("🔍 TESTING POSTCODE EXTRACTION");
-console.log("=" .repeat(50));
 
 // UK Postcode regex pattern
 const postcodeRegex = /\b([A-Z]{1,2}\d{1,2}[A-Z]?\s?\d[A-Z]{2})\b/i;
@@ -85,30 +83,19 @@ let passed = 0;
 let failed = 0;
 
 testCases.forEach((testCase, index) => {
-    console.log(`\nTest ${index + 1}: ${testCase.name}`);
-    console.log("-".repeat(40));
 
     const match = testCase.text.match(postcodeRegex);
     const extractedPostcode = match ? match[0] : null;
 
     if (extractedPostcode === testCase.expectedPostcode ||
         (extractedPostcode && extractedPostcode.replace(/\s/g, '') === testCase.expectedPostcode.replace(/\s/g, ''))) {
-        console.log(`✅ PASSED`);
-        console.log(`   Expected: ${testCase.expectedPostcode}`);
-        console.log(`   Extracted: ${extractedPostcode}`);
         passed++;
     } else {
-        console.log(`❌ FAILED`);
-        console.log(`   Expected: ${testCase.expectedPostcode}`);
-        console.log(`   Extracted: ${extractedPostcode || 'None'}`);
         failed++;
     }
 });
 
 // Additional pattern tests
-console.log("\n" + "=".repeat(50));
-console.log("📋 ADDITIONAL PATTERN TESTS");
-console.log("-".repeat(40));
 
 const validPostcodes = [
     "SW1A 1AA",  // Westminster
@@ -128,32 +115,17 @@ const invalidPostcodes = [
     "1AA 1AA",   // Starts with number
 ];
 
-console.log("\nValid Postcodes Test:");
 validPostcodes.forEach(pc => {
     const isValid = postcodeRegex.test(pc);
-    console.log(`  ${pc}: ${isValid ? '✅' : '❌'}`);
 });
 
-console.log("\nInvalid Postcodes Test:");
 invalidPostcodes.forEach(pc => {
     const isValid = postcodeRegex.test(pc);
-    console.log(`  ${pc}: ${!isValid ? '✅ (correctly rejected)' : '❌ (incorrectly accepted)'}`);
 });
 
 // Summary
-console.log("\n" + "=".repeat(50));
-console.log("📊 TEST SUMMARY");
-console.log(`✅ Passed: ${passed}/${testCases.length} extraction tests`);
-console.log(`❌ Failed: ${failed}/${testCases.length} extraction tests`);
 
 if (failed === 0) {
-    console.log("\n🎉 ALL TESTS PASSED! Postcode extraction is working correctly.");
 } else {
-    console.log("\n⚠️ Some tests failed. Review the extraction logic.");
 }
 
-console.log("\n💡 NOTES:");
-console.log("- The system now extracts delivery addresses and postcodes from quotes");
-console.log("- Both the parse-quote API and Gemini service have been updated");
-console.log("- UK postcode format supported: XX## #XX (with or without space)");
-console.log("- The extracted postcode is automatically populated in the delivery address field");

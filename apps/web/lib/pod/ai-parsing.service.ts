@@ -1,7 +1,9 @@
 // AI Parsing Service - Production Quality Gemini Integration
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import type { ParsedPODData, PODItem, ConfidenceScores, VehicleType } from './types';
+
 import { supabase } from '../supabaseClient';
+
+import type { ParsedPODData, PODItem, ConfidenceScores, VehicleType } from './types';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_MODEL = 'gemini-2.0-flash-exp';

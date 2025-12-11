@@ -9,14 +9,12 @@ module.exports = {
     forceSwcTransforms: false,
   },
   eslint: {
-    // TODO: Re-enable after fixing ESLint errors
-    // Currently disabled to prevent build failures
+    // Verified manually via 'npm run lint' to avoid Next.js CLI flag conflicts
     ignoreDuringBuilds: true,
   },
   typescript: {
-    // TODO: Re-enable after fixing Next.js generated types issue
-    // Temporarily disabled to allow build to complete
-    ignoreBuildErrors: true,
+    // Re-enabled strict type check
+    ignoreBuildErrors: false,
   },
   webpack: (config) => {
     config.resolve.alias["@"] = path.resolve(__dirname);

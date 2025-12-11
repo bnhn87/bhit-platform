@@ -7,8 +7,8 @@ import React from "react";
 
 import AccessibilityProvider from "@/components/AccessibilityProvider";
 import AppNav from "@/components/AppNav";
-import TaskBanner from "@/components/TaskBanner";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import TaskBanner from "@/components/TaskBanner";
 import { AuthProvider } from "@/lib/AuthProvider";
 import "@/styles/globals.css";
 

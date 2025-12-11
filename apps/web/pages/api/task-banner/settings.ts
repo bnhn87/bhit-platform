@@ -1,7 +1,8 @@
 // API Route: Task Banner Settings
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { supabase } from '@/lib/supabaseClient';
+
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { supabase } from '@/lib/supabaseClient';
 import type { UpdateSettingsRequest } from '@/lib/taskBanner/types';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -53,7 +54,6 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
       return res.status(401).json({ error: 'Unauthorized - Invalid token' });
     }
 
-    console.log('[Task Banner Settings] User ID:', user.id, 'Email:', user.email);
 
     // Check if user is admin/director
     const { data: profile, error: profileError } = await (supabaseAdmin
@@ -61,14 +61,6 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
       .select('role')
       .eq('id', user.id)
       .single();
-
-    console.log('[Task Banner Settings] Profile lookup:', {
-      userId: user.id,
-      profile,
-      profileError,
-      hasProfile: !!profile,
-      role: profile?.role
-    });
 
     if (profileError) {
       console.error('[Task Banner Settings] Profile error:', profileError);
@@ -92,7 +84,6 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
-    console.log('[Task Banner Settings] ✅ Permission check passed for user:', user.email);
 
     const updateData: UpdateSettingsRequest = req.body;
 
@@ -115,15 +106,10 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
       .limit(1)
       .single();
 
-    console.log('[Task Banner Settings] Current settings lookup:', {
-      currentSettings,
-      selectError,
-      hasSettings: !!currentSettings
-    });
+
 
     // If no settings exist, create them with defaults first
     if (!currentSettings || selectError?.code === 'PGRST116') {
-      console.log('[Task Banner Settings] No settings found, creating default record...');
 
       // Note: table exists in DB but not yet in generated types
       const { data: newSettings, error: insertError } = await (supabaseAdmin
@@ -148,7 +134,6 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
         });
       }
 
-      console.log('[Task Banner Settings] Created default settings, now updating...');
 
       // Now update the newly created settings
       // Note: table exists in DB but not yet in generated types

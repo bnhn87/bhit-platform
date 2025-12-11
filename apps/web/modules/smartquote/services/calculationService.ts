@@ -674,8 +674,6 @@ const generateNotes = (pricing: PricingResults, details: QuoteDetails): Calculat
  * @example
  * ```typescript
  * const results = calculateAll(products, quoteDetails, appConfig);
- * console.log(results.pricing.totalCost); // Final quote price
- * console.log(results.crew.crewSize); // Required crew size
  * ```
  */
 export const calculateAll = (

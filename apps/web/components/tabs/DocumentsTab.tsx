@@ -119,7 +119,6 @@ export default function DocumentsTab({ jobId, canManage }: { jobId: string; canM
     const sanitizedName = sanitizeFilename(file.name);
     const path = `jobs/${jobId}/docs/${Date.now()}-${sanitizedName}`;
     
-    // console.log(`Uploading file: ${file.name} -> ${path}`);
     
     // upload
     const up = await supabase.storage.from(bucket).upload(path, file, { upsert: true, contentType: file.type });
@@ -147,7 +146,6 @@ export default function DocumentsTab({ jobId, canManage }: { jobId: string; canM
   }
 
   async function download(row: Row) {
-    // console.log('Attempting to download:', row.storage_path);
     try {
       const signed = await supabase.storage.from(bucket).createSignedUrl(row.storage_path, 60 * 60);
       if (signed.error) {

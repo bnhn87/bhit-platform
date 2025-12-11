@@ -4,25 +4,17 @@
 // Enterprise quote management combining v1 + v2 + new features
 
 import React, { useState, useEffect } from 'react';
+
 import { supabase } from '../../lib/supabaseClient';
-import {
-    Quote,
-    QuoteStatus,
-    AppView,
-} from './types';
+
 
 // Import calculation types from v1 (since we're using v1's calculateAll service)
-import type {
-    QuoteDetails,
-    CalculatedProduct,
-    CalculationResults,
-} from '../smartquote/types';
 
 // Import v1 components (reuse what works)
+import { ExportControls } from '../smartquote/components/ExportControls';
 import { InitialInput } from '../smartquote/components/InitialInput';
 import { QuoteDetailsForm } from '../smartquote/components/QuoteDetailsForm';
 import { ResultsDisplay } from '../smartquote/components/ResultsDisplay';
-import { ExportControls } from '../smartquote/components/ExportControls';
 import { HomePage } from '../smartquote/HomePage';
 
 // Import v1 services
@@ -30,16 +22,26 @@ import { calculateAll } from '../smartquote/services/calculationService';
 import { resolveProductDetails } from '../smartquote/services/calculationService';
 import { loadConfigSync } from '../smartquote/services/enhancedConfigService';
 import { generatePdf, generateXlsx } from '../smartquote/services/exportService';
+import type {
+    QuoteDetails,
+    CalculatedProduct,
+    CalculationResults,
+} from '../smartquote/types';
 
 // Import v3 components
 import { ApprovalPanel } from './components/ApprovalPanel';
 import { NotificationCenter } from './components/NotificationCenter';
 
 // Import v3 services
-import { hybridParsingService } from './services/hybridParsingService';
 import { approvalWorkflowService } from './services/approvalWorkflowService';
-import { statusTrackingService } from './services/statusTrackingService';
+import { hybridParsingService } from './services/hybridParsingService';
 import { jobIntegrationService } from './services/jobIntegrationService';
+import { statusTrackingService } from './services/statusTrackingService';
+import {
+    Quote,
+    QuoteStatus,
+    AppView,
+} from './types';
 
 export default function SmartQuoteV3App() {
     const [view, setView] = useState<AppView>('home' as any);

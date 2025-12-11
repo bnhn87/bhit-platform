@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextApiRequest, NextApiResponse } from 'next';
+
 import { requireAuth } from '../../lib/apiAuth';
 
 const supabaseServiceRole = createClient(
@@ -19,7 +20,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    // console.log('🔍 Debug: Checking jobs table...');
     
     // First, test if we can select deleted_at column
     const { data: _testData, error: testError } = await supabaseServiceRole
@@ -66,7 +66,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.error('❌ Error fetching deleted jobs:', deletedError);
     }
 
-    // console.log('📊 Jobs summary:', {
     //   total: allJobs?.length || 0,
     //   active: activeJobs?.length || 0,
     //   deleted: deletedJobs?.length || 0

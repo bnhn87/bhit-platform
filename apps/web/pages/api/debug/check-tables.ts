@@ -1,5 +1,6 @@
 // Check if invoice tables exist in database using raw SQL
 import type { NextApiRequest, NextApiResponse } from 'next';
+
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

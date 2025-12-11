@@ -2,11 +2,11 @@
 
 import { NextApiRequest, NextApiResponse } from 'next';
 import OpenAI from 'openai';
+
 import { safeJsonParse } from '../../lib/safeParsing';
 
 // Fallback mock parsing when API keys are not available
 const mockParseQuote = (text: string) => {
-  // console.log('Using fallback mock parser for text:', text.substring(0, 100) + '...');
 
   // Simple regex-based parsing for demonstration
   const lines = text.split('\n').filter(line => line.trim());
@@ -106,7 +106,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   // Check if API key is available
   if (!process.env.OPENAI_API_KEY || !openai) {
-    // console.log('OpenAI API key not available, using fallback mock parser');
     try {
       const result = mockParseQuote(text);
       return res.status(200).json(result);
@@ -170,7 +169,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       temperature: 0,
     });
 
-    // console.log('Raw OpenAI Response:', response.choices[0].message.content); // Log the raw response
 
     const content = response.choices[0].message.content;
 

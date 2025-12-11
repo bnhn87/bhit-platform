@@ -1,7 +1,8 @@
 // API Route: User Banner Permissions
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { supabase } from '@/lib/supabaseClient';
+
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { supabase } from '@/lib/supabaseClient';
 import type { UpdateUserPermissionRequest } from '@/lib/taskBanner/types';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

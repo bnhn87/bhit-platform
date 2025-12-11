@@ -34,12 +34,10 @@ const SYNC_TAGS = {
 
 // Install event - cache static resources
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing service worker');
   
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('[SW] Caching static resources');
         return cache.addAll(STATIC_CACHE_URLS);
       })
       .then(() => {
@@ -51,7 +49,6 @@ self.addEventListener('install', (event) => {
 
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating service worker');
   
   event.waitUntil(
     Promise.all([
@@ -60,7 +57,6 @@ self.addEventListener('activate', (event) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
             if (cacheName !== CACHE_NAME && cacheName !== API_CACHE_NAME) {
-              console.log('[SW] Deleting old cache:', cacheName);
               return caches.delete(cacheName);
             }
           })
@@ -119,7 +115,6 @@ async function handleApiRequest(request) {
           return networkResponse;
         }
       } catch (error) {
-        console.log('[SW] Network failed for API request, trying cache');
       }
 
       // Fall back to cache
@@ -228,7 +223,6 @@ async function handleStaticAssets(request) {
     }
     return networkResponse;
   } catch (error) {
-    console.log('[SW] Failed to fetch static asset:', request.url);
     throw error;
   }
 }
@@ -245,7 +239,6 @@ async function handlePageRequest(request) {
       return networkResponse;
     }
   } catch (error) {
-    console.log('[SW] Network failed for page request, trying cache');
   }
   
   // Try cache
@@ -274,7 +267,6 @@ async function handlePageRequest(request) {
 
 // Background sync event
 self.addEventListener('sync', (event) => {
-  console.log('[SW] Background sync triggered:', event.tag);
   
   if (Object.values(SYNC_TAGS).includes(event.tag)) {
     event.waitUntil(processOfflineQueue());
@@ -285,7 +277,6 @@ self.addEventListener('sync', (event) => {
 async function processOfflineQueue() {
   try {
     const queuedItems = await getQueuedItems();
-    console.log('[SW] Processing', queuedItems.length, 'queued items');
     
     for (const item of queuedItems) {
       try {
@@ -297,12 +288,9 @@ async function processOfflineQueue() {
         
         if (response.ok) {
           await removeFromQueue(item.id);
-          console.log('[SW] Successfully synced item:', item.id);
         } else {
-          console.log('[SW] Sync failed for item:', item.id, response.status);
         }
       } catch (error) {
-        console.log('[SW] Sync error for item:', item.id, error);
       }
     }
   } catch (error) {

@@ -1,7 +1,8 @@
 // Diagnostic API to check role in both tables
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { supabase } from '@/lib/supabaseClient';
+
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { supabase } from '@/lib/supabaseClient';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {

@@ -40,7 +40,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
 
         if (migrationError) {
-          // console.log('RPC execution failed, trying manual table creation:', migrationError);
 
           // Drop and recreate feature_flags table with complete schema
           const coreTablesSQL = `
@@ -102,9 +101,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                   .limit(0); // This will execute but we don't actually need the result
 
                 // Since we can't execute raw SQL, let's use the REST API directly
-                // console.log('Would execute:', statement.substring(0, 50) + '...');
               } catch {
-                // console.log('Statement execution simulation:', statement.substring(0, 50) + '...');
               }
             }
           }

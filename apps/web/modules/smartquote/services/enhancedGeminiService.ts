@@ -1,6 +1,7 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
 import { ParseResult, ParseContent, ParsedProduct } from '../types';
+
 import { loadConfig } from './configService';
 
 let ai: GoogleGenAI | null = null;
@@ -575,13 +576,11 @@ export const parseQuoteContent = async (content: ParseContent): Promise<ParseRes
 
             // If we got products, return success
             if (result.products.length > 0) {
-                console.log(`✅ Found ${result.products.length} products with enhanced matching`);
                 return result;
             }
 
             // If no products found, retry
             if (attempt < MAX_RETRIES) {
-                console.log(`Attempt ${attempt} found no products, retrying with more flexibility...`);
                 continue;
             }
 
@@ -591,7 +590,6 @@ export const parseQuoteContent = async (content: ParseContent): Promise<ParseRes
             lastError = error instanceof Error ? error : new Error(String(error));
 
             if (attempt < MAX_RETRIES) {
-                console.log(`Parse attempt ${attempt} failed, retrying...`);
                 await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
                 continue;
             }

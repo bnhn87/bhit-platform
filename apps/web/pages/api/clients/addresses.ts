@@ -1,5 +1,6 @@
-import { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
+import { NextApiRequest, NextApiResponse } from 'next';
+
 import { requireAuth } from '../../../lib/apiAuth';
 import { validateRequestBody, ClientAddressSchema } from '../../../lib/apiValidation';
 import { safeParseIntWithDefault } from '../../../lib/safeParsing';

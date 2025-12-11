@@ -1,11 +1,13 @@
 // Task Banner Component - Production Version
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { Phone, FileText, DollarSign, Settings } from 'lucide-react';
 import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+
 import { supabase } from '@/lib/supabaseClient';
 import type { TaskBannerItemWithBrightness, TaskBannerSettings } from '@/lib/taskBanner/types';
-import { Phone, FileText, DollarSign, Settings } from 'lucide-react';
+
 
 export default function TaskBanner() {
   const [tasks, setTasks] = useState<TaskBannerItemWithBrightness[]>([]);

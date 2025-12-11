@@ -1,6 +1,4 @@
 // Final test of the FLX matching fix
-console.log("🔧 FINAL TEST: FLX-4P-2816-A MATCHING FIX");
-console.log("=".repeat(50));
 
 // Mock the catalogue reference keys (from actual configService.ts)
 const referenceKeys = [
@@ -69,28 +67,15 @@ const findBestMatchKey = (productCodeOrDesc, referenceKeys) => {
     return undefined;
 };
 
-console.log("🎯 THE CRITICAL TEST CASE:\n");
 
 const criticalTest = "FLX-4P-2816-A";
 const result = findBestMatchKey(criticalTest, referenceKeys);
 
-console.log(`Input: "${criticalTest}"`);
-console.log(`Result: ${result ? `✅ "${result}"` : "❌ undefined"}`);
 
 if (result === "FLX 4P") {
-    console.log("\n✅ SUCCESS! The fix is working!");
-    console.log("\nWhat happens now:");
-    console.log("1. Product code 'FLX-4P-2816-A' is recognized");
-    console.log("2. Matches to 'FLX 4P' in the catalogue");
-    console.log("3. Uses 1.45 hours automatically");
-    console.log("4. NO MORE 'Missing Product Times' dialog!");
 } else {
-    console.log("\n❌ FAIL: Still not matching correctly");
-    console.log("The product would still ask for manual time entry");
 }
 
-console.log("\n" + "-".repeat(50));
-console.log("Testing other variants:\n");
 
 const additionalTests = [
     { code: "FLX_4P_2816_A", expected: "FLX 4P" },
@@ -107,16 +92,8 @@ additionalTests.forEach(test => {
     const testResult = findBestMatchKey(test.code, referenceKeys);
     const status = testResult === test.expected ? "✅" : "❌";
     if (testResult !== test.expected) allPassed = false;
-    console.log(`${status} "${test.code}" → ${testResult || "undefined"}`);
 });
 
-console.log("\n" + "=".repeat(50));
 if (allPassed) {
-    console.log("🎉 ALL TESTS PASSED! The system is fixed!");
-    console.log("\n📝 TO APPLY THIS FIX:");
-    console.log("The fix has been applied to:");
-    console.log("  modules/smartquote/services/calculationService.ts");
-    console.log("\nRestart the dev server to see the changes!");
 } else {
-    console.log("⚠️ Some tests still failing - check the implementation");
 }

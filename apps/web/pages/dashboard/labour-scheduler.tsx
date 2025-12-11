@@ -190,7 +190,6 @@ export default function DashboardLabourScheduler() {
   // Auto-allocate for all jobs
   const autoAllocateAll = () => {
     // eslint-disable-next-line no-console
-    console.log('Auto-allocating all jobs...');
     // This would implement batch auto-allocation
   };
 

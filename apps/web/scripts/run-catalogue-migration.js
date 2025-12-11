@@ -12,7 +12,6 @@ if (!supabaseUrl || !supabaseServiceKey) {
 }
 
 async function runMigration() {
-    console.log('🚀 Running Product Catalogue Migration...');
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey, {
         auth: {
@@ -32,7 +31,6 @@ async function runMigration() {
             .filter(stmt => stmt.trim().length > 0 && !stmt.trim().startsWith('--'))
             .map(stmt => stmt.trim() + ';');
 
-        console.log(`📝 Found ${statements.length} SQL statements to execute`);
 
         let successCount = 0;
         let errorCount = 0;
@@ -64,7 +62,6 @@ async function runMigration() {
                 }
 
                 successCount++;
-                console.log(`✅ [${i+1}/${statements.length}] ${shortStatement}...`);
             } catch (error) {
                 errorCount++;
                 console.error(`❌ [${i+1}/${statements.length}] Failed: ${shortStatement}...`);
@@ -73,24 +70,17 @@ async function runMigration() {
                 // Continue on certain errors
                 if (error.message.includes('already exists') ||
                     error.message.includes('duplicate key')) {
-                    console.log('   ↳ Continuing (already exists)...');
                     continue;
                 }
             }
         }
 
-        console.log('\n📊 Migration Summary:');
-        console.log(`   ✅ Success: ${successCount} statements`);
-        console.log(`   ❌ Errors: ${errorCount} statements`);
 
         if (errorCount === 0) {
-            console.log('\n🎉 Migration completed successfully!');
         } else {
-            console.log('\n⚠️ Migration completed with some errors. Check the logs above.');
         }
 
         // Test the new tables
-        console.log('\n🧪 Testing new tables...');
 
         const { data: products, error: testError } = await supabase
             .from('product_catalogue_items')
@@ -100,12 +90,9 @@ async function runMigration() {
         if (testError) {
             console.error('❌ Failed to query product_catalogue_items:', testError.message);
         } else {
-            console.log(`✅ product_catalogue_items table is accessible (${products?.length || 0} products found)`);
 
             if (products && products.length > 0) {
-                console.log('\n📦 Sample products:');
                 products.forEach(p => {
-                    console.log(`   - ${p.canonical_name} (${p.canonical_code}): ${p.install_time_hours}h`);
                 });
             }
         }
@@ -118,7 +105,6 @@ async function runMigration() {
 
 // Alternative approach using direct SQL execution
 async function runMigrationDirect() {
-    console.log('🔄 Attempting direct SQL execution approach...');
 
     try {
         // Use pg library for direct connection
@@ -137,33 +123,24 @@ async function runMigrationDirect() {
         });
 
         await client.connect();
-        console.log('✅ Connected to database');
 
         // Read and execute migration
         const migrationPath = path.join(__dirname, '../migrations/042_product_catalogue_aliases.sql');
         const migrationSQL = fs.readFileSync(migrationPath, 'utf8');
 
         await client.query(migrationSQL);
-        console.log('✅ Migration executed successfully');
 
         // Test query
         const result = await client.query('SELECT COUNT(*) FROM product_catalogue_items');
-        console.log(`✅ Found ${result.rows[0].count} products in catalogue`);
 
         await client.end();
 
     } catch (error) {
         console.error('❌ Direct SQL execution failed:', error.message);
-        console.log('\n💡 Please run the migration manually in your Supabase dashboard:');
-        console.log('   1. Go to your Supabase project');
-        console.log('   2. Navigate to SQL Editor');
-        console.log('   3. Copy the contents of migrations/042_product_catalogue_aliases.sql');
-        console.log('   4. Paste and run the SQL');
     }
 }
 
 // Try Supabase approach first, then fallback to direct SQL
 runMigration().catch(err => {
-    console.log('\n🔄 Trying alternative approach...\n');
     runMigrationDirect();
 });

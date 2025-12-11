@@ -277,7 +277,6 @@ export default function UserManagement() {
         return;
       }
 
-      console.log('Saving permissions for user:', selectedUser.id, editingPermissions);
 
       const response = await fetch('/api/admin/users/update-permissions', {
         method: 'POST',
@@ -305,9 +304,7 @@ export default function UserManagement() {
         })
       });
 
-      console.log('Response status:', response.status);
       const data = await response.json();
-      console.log('Response data:', data);
 
       if (data.success) {
         setSuccess('Permissions updated successfully!');

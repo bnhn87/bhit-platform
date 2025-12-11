@@ -366,7 +366,6 @@ const attemptParse = async (content: ParseContent, attempt: number): Promise<Par
  * const result = await parseQuoteContent([
  *   "Quote for ABC Corp\nFLX-4P-2816 x5\nCHAIR x10"
  * ]);
- * console.log(result.products); // Array of parsed products
  * ```
  */
 export const parseQuoteContent = async (content: ParseContent): Promise<ParseResult> => {
@@ -385,7 +384,6 @@ export const parseQuoteContent = async (content: ParseContent): Promise<ParseRes
             // If no products found, retry (unless it's the last attempt)
             if (attempt < MAX_RETRIES) {
                 if (process.env.NODE_ENV === 'development') {
-                    console.log(`[SmartQuote] Attempt ${attempt} found no products, retrying...`);
                 }
                 continue;
             }

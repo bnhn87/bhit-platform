@@ -3,9 +3,10 @@
 // ============================================================================
 
 import React, { useState, useEffect } from 'react';
+
 import { supabase } from '../../../lib/supabaseClient';
-import { Notification } from '../types';
 import { notificationService } from '../services/notificationService';
+import { Notification } from '../types';
 
 export const NotificationCenter: React.FC = () => {
     const [notifications, setNotifications] = useState<Notification[]>([]);

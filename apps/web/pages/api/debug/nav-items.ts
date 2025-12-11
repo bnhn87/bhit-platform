@@ -1,6 +1,7 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { getNavItemsForRole, getCoreNavItems } from '../../../config/navigation';
 import { createClient } from '@supabase/supabase-js';
+import type { NextApiRequest, NextApiResponse } from 'next';
+
+import { getNavItemsForRole, getCoreNavItems } from '../../../config/navigation';
 
 export default async function handler(
   req: NextApiRequest,

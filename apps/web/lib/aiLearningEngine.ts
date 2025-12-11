@@ -1,10 +1,10 @@
 // AI Learning Engine - Continuous improvement system
 // Learns from every correction, detects patterns, suggests fixes, and improves autonomously
 
-import { supabaseAdmin } from './supabaseAdmin';
-import { recordCorrection, getCorrectionsByField, getCorrectionsBySupplier, type InvoiceCorrection } from './invoiceDbService';
-import { findBestTemplate, getTemplate, createTemplate, saveTemplateFields, type DocumentTemplate, type TemplateField } from './templateService';
 import type { ExtractedInvoiceData } from './invoiceAiService';
+import { recordCorrection, getCorrectionsByField, getCorrectionsBySupplier, type InvoiceCorrection } from './invoiceDbService';
+import { supabaseAdmin } from './supabaseAdmin';
+import { findBestTemplate, getTemplate, createTemplate, saveTemplateFields, type DocumentTemplate, type TemplateField } from './templateService';
 
 // ============================================================================
 // PATTERN DETECTION - Learn common correction patterns
@@ -173,7 +173,6 @@ export function applyLearnedPatterns(
   });
 
   if (appliedCorrections.length > 0) {
-    console.log('Applied learned patterns:', appliedCorrections);
   }
 
   return corrected;
@@ -293,7 +292,6 @@ export async function generateTemplateFromCorrections(
     const corrections = await getCorrectionsBySupplier(supplierId);
 
     if (corrections.length < minSamples) {
-      console.log(`Not enough corrections (${corrections.length} < ${minSamples}) to generate template`);
       return null;
     }
 
@@ -316,7 +314,6 @@ export async function generateTemplateFromCorrections(
       }));
 
     if (frequentFields.length === 0) {
-      console.log('No frequently corrected fields found');
       return null;
     }
 
@@ -330,7 +327,6 @@ export async function generateTemplateFromCorrections(
     // Create template
     const templateName = `${supplier?.name || 'Unknown'} ${documentType} (Auto-generated)`;
 
-    console.log(`Generating template "${templateName}" with ${frequentFields.length} fields`);
 
     const template = await createTemplate({
       name: templateName,

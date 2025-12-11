@@ -1,8 +1,8 @@
 // Document Template Service
 // Handles template creation, storage, and application for AI training
 
-import { supabase } from './supabaseClient';
 import { supabaseAdmin } from './supabaseAdmin';
+import { supabase } from './supabaseClient';
 
 export interface DocumentTemplate {
   id: string;

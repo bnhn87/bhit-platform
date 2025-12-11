@@ -2,13 +2,13 @@
 'use client';
 
 
-import React, { useEffect, useState } from 'react';
 import {
   Check, ArrowLeft, Save, Download, RefreshCw, Loader2, Upload,
   ClipboardList, Sparkles, AlertTriangle, ArrowDownUp, ArrowLeftRight,
   CheckCircle, Layers, Layers2, Ratio, RefreshCcw, Ruler, Scan, ShieldAlert, X,
   Undo2, Redo2, Trash2
 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 
 import { useAiPlanner } from '../hooks/useAiPlanner';
 import { Project, RichFurniture, ViewTransform, BaseFurniture as _BaseFurniture } from '../types';

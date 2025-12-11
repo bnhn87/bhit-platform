@@ -31,20 +31,20 @@ export async function getUserPermissions(): Promise<UserPermissions | null> {
 
   return {
     role: userData?.role || '',
-    permissions: permissions?.map(p => p.permission_key) || []
+    permissions: permissions?.map((p: { permission_key: string }) => p.permission_key) || []
   };
 }
 
 export function canAccessInvoicing(permissions: UserPermissions | null): boolean {
   if (!permissions) return false;
   return permissions.role === 'director' ||
-         permissions.permissions.includes('invoice_schedule');
+    permissions.permissions.includes('invoice_schedule');
 }
 
 export function canEditInvoices(permissions: UserPermissions | null): boolean {
   if (!permissions) return false;
   return permissions.role === 'director' ||
-         permissions.permissions.includes('invoice_edit');
+    permissions.permissions.includes('invoice_edit');
 }
 
 export async function checkInvoiceAccess(): Promise<boolean> {

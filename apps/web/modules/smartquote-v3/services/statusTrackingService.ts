@@ -4,6 +4,7 @@
 
 import { supabase } from '../../../lib/supabaseClient';
 import { QuoteStatus, Quote } from '../types';
+
 import { notificationService } from './notificationService';
 
 class StatusTrackingService {

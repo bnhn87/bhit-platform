@@ -294,7 +294,6 @@ export const parseQuoteContentEnhanced = async (
             if (attempt < maxRetries) {
                 // Log retry attempt for debugging (only in development)
                 if (process.env.NODE_ENV === 'development') {
-                    console.log(`[SmartQuote v2] Attempt ${attempt}: Confidence ${result.confidenceScore.toFixed(2)}, retrying...`);
                 }
                 await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
                 continue;

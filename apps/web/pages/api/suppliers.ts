@@ -1,7 +1,8 @@
 // Suppliers API
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { supabase } from '../../lib/supabaseClient';
+
 import type { APIResponse, Supplier } from '../../lib/pod/types';
+import { supabase } from '../../lib/supabaseClient';
 
 export default async function handler(
   req: NextApiRequest,

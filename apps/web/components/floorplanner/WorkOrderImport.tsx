@@ -118,7 +118,6 @@ SHF001`;
     try {
       if (file.type === 'application/pdf') {
         // Process PDF with client-side extraction + AI
-        // console.log('Processing PDF with AI:', file.name, file.size, 'bytes');
         
         // Extract content from PDF using client-side processing (like SmartQuote)
         const pdfContent = await extractPdfContent(file);
@@ -484,7 +483,6 @@ SHF001`;
                 onChange={(e) => {
                   const file = e.target.files?.[0];
                   if (file) {
-                    // console.log('File selected:', file.name, file.type, file.size, 'bytes');
                     handleFileUpload(file);
                   }
                   e.currentTarget.value = ''; // Reset for re-upload

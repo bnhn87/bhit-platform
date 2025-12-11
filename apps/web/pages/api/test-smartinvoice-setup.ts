@@ -4,6 +4,7 @@
 
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Pool } from 'pg';
+
 import { supabaseAdmin } from '../../lib/supabaseAdmin';
 
 // Create connection pool for direct PostgreSQL access (bypasses PostgREST cache)

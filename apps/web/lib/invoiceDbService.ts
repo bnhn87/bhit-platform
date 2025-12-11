@@ -2,8 +2,8 @@
 // Handles all database operations for SmartInvoice feature
 
 import type { ExtractedInvoiceData } from './invoiceAiService';
-import { supabase } from './supabaseClient';
 import { supabaseAdmin } from './supabaseAdmin';
+import { supabase } from './supabaseClient';
 
 export interface Invoice {
   id: string;
@@ -575,31 +575,4 @@ export function subscribeToInvoices(
   };
 }
 
-export async function getCorrectionsByField(): Promise<InvoiceCorrection[]> {
-  try {
-    const { data, error } = await supabase
-      .from('invoice_corrections')
-      .select('*')
-      .order('corrected_at', { ascending: false });
-    if (error) throw error;
-    return data || [];
-  } catch (error: unknown) {
-    console.error('getCorrectionsByField error:', error);
-    throw error;
-  }
-}
 
-export async function getCorrectionsBySupplier(supplierId: string): Promise<InvoiceCorrection[]> {
-  try {
-    const { data, error } = await supabase
-      .from('invoice_corrections')
-      .select('*')
-      .eq('supplier_id', supplierId)
-      .order('corrected_at', { ascending: false });
-    if (error) throw error;
-    return data || [];
-  } catch (error: unknown) {
-    console.error('getCorrectionsBySupplier error:', error);
-    throw error;
-  }
-}

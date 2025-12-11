@@ -99,7 +99,6 @@ export default function JobDetailPage() {
   const canUpload = canUploadDocuments(role);
   const canViewHistory = canViewEditHistory(role);
 
-  // console.log(`🔧 JobDetailPage render: id=${id}, userId=${userId}, role=${role}, router.isReady=${router.isReady}`);
 
   const [row, setRow] = React.useState<HeaderRow | null>(null);
   const [loading, setLoading] = React.useState(true);
@@ -144,9 +143,7 @@ export default function JobDetailPage() {
   });
 
   async function load() {
-    // console.log(`🔧 Job page load() called with id: ${id}, userId: ${userId}`);
     if (!id) {
-      // console.log(`🔧 No id parameter, skipping load`);
       return;
     }
     setLoading(true);
@@ -169,7 +166,6 @@ export default function JobDetailPage() {
     } else {
       // Fallback: query jobs table directly
       // eslint-disable-next-line no-console
-      // console.log('View v_jobs_list failed, trying direct table query:', viewResult.error?.message);
       const tableResult = await supabase
         .from("jobs")
         .select("id, reference, title, client_name, status")
@@ -205,7 +201,6 @@ export default function JobDetailPage() {
   React.useEffect(() => {
     // Only load when router is ready and we have an id
     if (router.isReady && id) {
-      // console.log(`🔧 useEffect triggered: router.isReady=${router.isReady}, id=${id}`);
       load();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -337,7 +332,6 @@ export default function JobDetailPage() {
     if (!row || !userId) return;
 
     // eslint-disable-next-line no-console
-    // console.log(`Updating job ${row.id} from ${row.status} to ${next}`);
 
     // Log the status change
     await logJobEdit(row.id, userId, "status", row.status, next);
@@ -357,7 +351,6 @@ export default function JobDetailPage() {
     // Update local state
     setRow({ ...row, status: next });
     // eslint-disable-next-line no-console
-    // console.log(`Job ${row.reference || row.id} status updated to ${next}`);
   }
 
   async function _updateLeadInstaller(userId: string | null) {
@@ -629,7 +622,6 @@ export default function JobDetailPage() {
                     onClick={async () => {
                       if (confirm(`Are you sure you want to delete job "${row.title || row.reference}"? This action cannot be undone.`)) {
                         try {
-                          // console.log('🗑️ Deleting job...', row.id);
                           
                           const response = await fetch(`/api/jobs/${row.id}/delete`, {
                             method: 'DELETE',
@@ -639,13 +631,11 @@ export default function JobDetailPage() {
                           });
                           
                           const result = await response.json();
-                          // console.log('Delete response:', response.status, result);
                           
                           if (!response.ok) {
                             throw new Error(result.error || 'Failed to delete job');
                           }
                           
-                          // console.log('✅ Job deleted successfully, redirecting...');
                           alert('Job deleted successfully');
                           
                           // Force navigation to jobs page
@@ -1580,7 +1570,6 @@ export default function JobDetailPage() {
                         // Make setActiveTab function available to inline handlers
                         window.setActiveTabFromOverview = function(tab) {
                           // This would need to be connected to the parent React component
-                          console.log('Navigate to tab:', tab);
                         };
                       </script>
                     `

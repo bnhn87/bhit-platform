@@ -1,8 +1,9 @@
 // User Banner Preferences Component for Settings Page
 import React, { useState, useEffect } from 'react';
+
 import { supabase } from '@/lib/supabaseClient';
-import { theme } from '@/lib/theme';
 import type { UserBannerPreferences, BackgroundColor, TextStyle, TextColor } from '@/lib/taskBanner/types';
+import { theme } from '@/lib/theme';
 
 export function BannerPreferencesComponent() {
   const [preferences, setPreferences] = useState<UserBannerPreferences | null>(null);
@@ -45,7 +46,6 @@ export function BannerPreferencesComponent() {
         return;
       }
 
-      console.log('Saving preferences:', preferences);
 
       const res = await fetch('/api/task-banner/user-preferences', {
         method: 'PUT',
@@ -65,7 +65,6 @@ export function BannerPreferencesComponent() {
       });
 
       const data = await res.json();
-      console.log('Save response:', { status: res.status, data });
 
       if (res.ok) {
         setIsSaved(true);

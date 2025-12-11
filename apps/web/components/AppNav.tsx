@@ -1,12 +1,12 @@
 // apps/web/components/AppNav.tsx
-import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import React from "react";
 
+import { getCoreNavItems, getNavItemsForRole } from "@/config/navigation";
 import { useHasInvoiceAccess } from "@/hooks/useHasInvoiceAccess";
 import { useUserRole } from "@/hooks/useUserRole";
 import { supabase } from "@/lib/supabaseClient";
-import { getCoreNavItems, getNavItemsForRole } from "@/config/navigation";
 
 /**
  * Dynamic Navigation Bar
@@ -108,10 +108,8 @@ export default function AppNav() {
       const banner = document.querySelector('.task-banner') as HTMLElement;
       if (banner) {
         const height = banner.offsetHeight;
-        console.log('[AppNav] Banner height detected:', height);
         setBannerHeight(height);
       } else {
-        console.log('[AppNav] No banner found, setting height to 0');
         setBannerHeight(0);
       }
     };

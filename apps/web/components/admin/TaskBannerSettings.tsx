@@ -1,8 +1,9 @@
 // Task Banner Settings Component for Admin Panel
 import React, { useState, useEffect } from 'react';
+
 import { supabase } from '@/lib/supabaseClient';
-import { theme } from '@/lib/theme';
 import type { TaskBannerSettings, TaskBannerItemWithBrightness, BackgroundColor, TextStyle, TextColor, TaskType, TaskFrequency, TaskAssignment } from '@/lib/taskBanner/types';
+import { theme } from '@/lib/theme';
 
 interface TaskBannerSettingsProps {
   isDirector: boolean;
@@ -39,16 +40,13 @@ export function TaskBannerSettingsComponent({ isDirector }: TaskBannerSettingsPr
         return;
       }
 
-      console.log('[TaskBannerSettings] Loading settings...');
       const res = await fetch('/api/task-banner/settings', {
         headers: {
           'Authorization': `Bearer ${session.access_token}`
         }
       });
 
-      console.log('[TaskBannerSettings] Settings response status:', res.status);
       const data = await res.json();
-      console.log('[TaskBannerSettings] Settings data:', data);
 
       if (!res.ok) {
         console.error('[TaskBannerSettings] Failed to load settings:', data.error);
@@ -102,7 +100,6 @@ export function TaskBannerSettingsComponent({ isDirector }: TaskBannerSettingsPr
         empty_message: settings.empty_message
       };
 
-      console.log('Saving settings:', updatePayload);
 
       const res = await fetch('/api/task-banner/settings', {
         method: 'PUT',
@@ -114,7 +111,6 @@ export function TaskBannerSettingsComponent({ isDirector }: TaskBannerSettingsPr
       });
 
       const data = await res.json();
-      console.log('Save response:', { status: res.status, data });
 
       if (res.ok) {
         setIsSaved(true);

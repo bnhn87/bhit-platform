@@ -1,5 +1,6 @@
 // Diagnostic endpoint for SmartInvoice system status
 import type { NextApiRequest, NextApiResponse } from 'next';
+
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

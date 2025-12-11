@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextApiRequest, NextApiResponse } from 'next';
+
 import { requireAuth } from '../../lib/apiAuth';
 
 // Create a Supabase client with service role key
@@ -26,7 +27,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: 'jobId is required' });
     }
 
-    // console.log(`Debug: Checking documents for job ${jobId} with document IDs:`, documentIds);
 
     // 1. Check all documents for this job
     const { data: allDocuments, error: allDocsError } = await supabaseAdmin
@@ -34,7 +34,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .select('*')
       .eq('job_id', jobId);
 
-    // console.log(`Found ${allDocuments?.length || 0} total documents for job ${jobId}`);
     
     if (allDocsError) {
       console.error('Error fetching all documents:', allDocsError);
@@ -54,7 +53,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       selectedDocuments = data;
       selectedDocsError = error;
       
-      // console.log(`Found ${selectedDocuments?.length || 0} selected documents`);
       if (selectedDocsError) {
         console.error('Error fetching selected documents:', selectedDocsError);
       }
@@ -67,7 +65,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .eq('job_id', jobId)
       .or('file_ext.eq.pdf,file_ext.eq.PDF');
 
-    // console.log(`Found ${pdfDocuments?.length || 0} PDF documents`);
     if (pdfDocsError) {
       console.error('Error fetching PDF documents:', pdfDocsError);
     }

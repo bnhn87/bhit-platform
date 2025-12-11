@@ -3,8 +3,9 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Stage, Layer, Rect, Text, Transformer, Image as KonvaImage } from 'react-konva';
-import { theme } from '../lib/theme';
+
 import type { TemplateField } from '../lib/templateService';
+import { theme } from '../lib/theme';
 
 export interface BoundingBox {
   id: string;

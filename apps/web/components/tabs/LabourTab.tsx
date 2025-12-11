@@ -419,7 +419,6 @@ const LabourTab: React.FC<LabourTabProps> = ({ jobId }) => {
 
       if (error) {
         // eslint-disable-next-line no-console
-        console.log('No SmartQuote found for job:', error.message);
         return null;
       }
 

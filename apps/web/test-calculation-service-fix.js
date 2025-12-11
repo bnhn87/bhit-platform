@@ -1,6 +1,4 @@
 // Test the calculation service FLX matching fix
-console.log("🔧 TESTING CALCULATION SERVICE FLX MATCHING FIX");
-console.log("=".repeat(50));
 
 // Mock the catalogue reference keys
 const referenceKeys = [
@@ -58,7 +56,6 @@ const findBestMatchKey = (productCodeOrDesc, referenceKeys) => {
     return undefined;
 };
 
-console.log("Testing problematic product codes:\n");
 
 const testCases = [
     { code: "FLX-4P-2816-A", expected: "FLX 4P", description: "The exact problematic code from user" },
@@ -81,26 +78,10 @@ testCases.forEach(test => {
     if (result === test.expected) passed++;
     else failed++;
 
-    console.log(`${status}: "${test.code}"`);
-    console.log(`         ${test.description}`);
-    console.log(`         Expected: ${test.expected}`);
-    console.log(`         Got: ${result || "undefined (would ask for time)"}`);
-    console.log();
 });
 
-console.log("=".repeat(50));
-console.log(`RESULTS: ${passed} passed, ${failed} failed`);
 
 if (failed === 0) {
-    console.log("\n✅ SUCCESS! The calculation service fix is working!");
-    console.log("\n🎯 WHAT THIS MEANS:");
-    console.log("• FLX-4P-2816-A will now match to 'FLX 4P' in the catalogue");
-    console.log("• It will use 1.45 hours automatically");
-    console.log("• No more 'Missing Product Times' dialog for these products!");
 } else {
-    console.log("\n⚠️ Some tests failed - check the implementation");
 }
 
-console.log("\n💡 THE FIX:");
-console.log("Added pattern matching for FLX-#P-####-X format in calculationService.ts");
-console.log("This runs BEFORE other matching strategies to catch these codes early");

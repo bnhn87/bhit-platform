@@ -3,8 +3,9 @@
 // ============================================================================
 
 import React, { useState } from 'react';
-import { Quote, ApprovalHistory, ChangeRequest } from '../types';
+
 import { approvalWorkflowService } from '../services/approvalWorkflowService';
+import { Quote, ApprovalHistory, ChangeRequest } from '../types';
 
 interface ApprovalPanelProps {
     quote: Quote;

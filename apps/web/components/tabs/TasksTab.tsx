@@ -227,7 +227,6 @@ const TasksTab: React.FC<{ jobId: string }> = ({ jobId }) => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        // console.log(`🚀 TaskGenerationTab loading data for job: ${jobId}`);
         setLoading(true);
         setError(null);
         setSchemaError(false);
@@ -246,14 +245,11 @@ const TasksTab: React.FC<{ jobId: string }> = ({ jobId }) => {
             
           if (!error) {
             floorPlansData = (data as FloorPlan[]) || [];
-            // console.log(`✅ Loaded ${floorPlansData.length} floor plans`);
           } else {
-            // console.log("Floor plans not available:", error.message);
             // Floor plans are optional, so don't treat this as an error
             _floorPlansError = false; // Don't fail for floor plans
           }
         } catch {
-          // console.log("Floor plans table not available - this is optional");
           // Floor plans are optional, so don't treat this as an error
           _floorPlansError = false; // Don't fail for floor plans
         }
@@ -263,14 +259,11 @@ const TasksTab: React.FC<{ jobId: string }> = ({ jobId }) => {
         let tasksError = false;
         
         try {
-          // console.log(`🔍 Fetching generated tasks for job: ${jobId}`);
           const response = await fetch(`/api/jobs/${jobId}/generated-tasks`);
-          // console.log(`📡 API response status: ${response.status}`);
           
           if (response.ok) {
             const result = await response.json();
             tasksData = result.data || [];
-            // console.log(`✅ Loaded ${tasksData.length} generated tasks:`, tasksData);
           } else {
             const errorResult = await response.json();
             console.error("❌ Generated tasks API error:", errorResult.error);
@@ -305,7 +298,6 @@ const TasksTab: React.FC<{ jobId: string }> = ({ jobId }) => {
         // Load manual tasks from legacy tasks table
         let manualTasksData: GeneratedTask[] = [];
         try {
-          // console.log(`🔍 Loading manual tasks for job: ${jobId}`);
           const { data: legacyTasks, error: legacyError } = await supabase
             .from("tasks")
             .select("*")
@@ -321,12 +313,9 @@ const TasksTab: React.FC<{ jobId: string }> = ({ jobId }) => {
                 sort_order: taskObj.sort_order || 0
               } as GeneratedTask;
             });
-            // console.log(`✅ Loaded ${manualTasksData.length} manual tasks:`, manualTasksData);
           } else if (legacyError) {
-            // console.log(`🔍 Manual tasks query error:`, legacyError);
           }
         } catch {
-          // console.log("Manual tasks table not available:");
         }
 
         setFloorPlans(floorPlansData);
@@ -410,7 +399,6 @@ const TasksTab: React.FC<{ jobId: string }> = ({ jobId }) => {
       // Prepare document IDs from current selections
       const documentIds = currentSelections.map(sel => sel.documentId);
       
-      // console.log(`Calling task generation API with ${documentIds.length} documents...`);
       
       // Call the API endpoint to generate tasks (bypasses RLS issues)
       const response = await fetch('/api/generate-tasks', {
@@ -431,7 +419,6 @@ const TasksTab: React.FC<{ jobId: string }> = ({ jobId }) => {
       }
 
       const _result = await response.json();
-      // console.log(`Successfully generated ${result.tasksGenerated} tasks`);
 
       // Reload tasks from database using API endpoint to handle RLS
       const reloadResponse = await fetch(`/api/jobs/${jobId}/generated-tasks`);

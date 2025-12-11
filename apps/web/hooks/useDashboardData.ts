@@ -66,15 +66,15 @@ export function useDashboardData() {
         installs,
         feed
       ] = await Promise.all([
-        supabase.from("jobs").select("*", { count: "exact", head: true }).eq("status", "in_progress").is("deleted_at", null).then(r => r).catch(() => ({ count: 0, error: null })),
-        (supabase.from("quotes") as any).select("*", { count: "exact", head: true }).eq("status", "pending").is("deleted_at", null).then(r => r).catch(() => ({ count: 0, error: null, data: [] })),
-        (supabase.from("vehicles") as any).select("*", { count: "exact", head: true }).eq("in_use", true).is("deleted_at", null).then(r => r).catch(() => ({ count: 0, error: null })),
-        (supabase.from("waste_loads") as any).select("*", { count: "exact", head: true }).gte("booked_at", todayISO).is("deleted_at", null).then(r => r).catch(() => ({ count: 0, error: null })),
-        (supabase.from("crew_usage") as any).select("d, utilization").order("d", { ascending: false }).limit(1).then(r => r).catch(() => ({ data: [{ utilization: 85 }], error: null })),
-        (supabase.from("buffer_usage") as any).select("d, percent").order("d", { ascending: false }).limit(1).then(r => r).catch(() => ({ data: [{ percent: 15 }], error: null })),
-        (supabase.from("finance_metrics") as any).select("d, net_margin").order("d", { ascending: false }).limit(1).then(r => r).catch(() => ({ data: [{ net_margin: 24800 }], error: null })),
-        (supabase.from("installs_by_day") as any).select("*").order("d", { ascending: true }).limit(30).then(r => r).catch(() => ({ data: generateMockInstallsData(), error: null })),
-        (supabase.from("activity_log") as any).select("id, text, occurred_at").order("occurred_at", { ascending: false }).limit(12).then(r => r).catch(() => ({ data: [], error: null })),
+        supabase.from("jobs").select("*", { count: "exact", head: true }).eq("status", "in_progress").is("deleted_at", null).then((r: any) => r, () => ({ count: 0, error: null })),
+        (supabase.from("quotes") as any).select("*", { count: "exact", head: true }).eq("status", "pending").is("deleted_at", null).then((r: any) => r, () => ({ count: 0, error: null, data: [] })),
+        (supabase.from("vehicles") as any).select("*", { count: "exact", head: true }).eq("in_use", true).is("deleted_at", null).then((r: any) => r, () => ({ count: 0, error: null })),
+        (supabase.from("waste_loads") as any).select("*", { count: "exact", head: true }).gte("booked_at", todayISO).is("deleted_at", null).then((r: any) => r, () => ({ count: 0, error: null })),
+        (supabase.from("crew_usage") as any).select("d, utilization").order("d", { ascending: false }).limit(1).then((r: any) => r, () => ({ data: [{ utilization: 85 }], error: null })),
+        (supabase.from("buffer_usage") as any).select("d, percent").order("d", { ascending: false }).limit(1).then((r: any) => r, () => ({ data: [{ percent: 15 }], error: null })),
+        (supabase.from("finance_metrics") as any).select("d, net_margin").order("d", { ascending: false }).limit(1).then((r: any) => r, () => ({ data: [{ net_margin: 24800 }], error: null })),
+        (supabase.from("installs_by_day") as any).select("*").order("d", { ascending: true }).limit(30).then((r: any) => r, () => ({ data: generateMockInstallsData(), error: null })),
+        (supabase.from("activity_log") as any).select("id, text, occurred_at").order("occurred_at", { ascending: false }).limit(12).then((r: any) => r, () => ({ data: [], error: null })),
       ]);
 
       if (!active) return;

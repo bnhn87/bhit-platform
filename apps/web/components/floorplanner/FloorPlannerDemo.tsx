@@ -22,7 +22,6 @@ export default function FloorPlannerDemo({ jobId }: Props) {
   const handleGenerateTasks = (tasks: InstallationTask[]) => {
     setGeneratedTasks(tasks);
     // eslint-disable-next-line no-console
-    // console.log('Generated Installation Tasks:', tasks);
   };
 
   const _createDemoFloorPlan = (): JobFloorPlan => {

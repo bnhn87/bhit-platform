@@ -110,7 +110,6 @@ export default function FloorPlanPage() {
             jobId={jobId}
             canManage={canManage}
             onGenerateTasks={(tasks) => {
-              // console.log('Generated tasks:', tasks);
               alert(`Generated ${tasks.length} installation tasks! View them in the Tasks tab.`);
             }}
           />

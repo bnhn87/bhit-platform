@@ -1,4 +1,3 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { format } from 'date-fns';
 import {
   Upload,
@@ -16,6 +15,7 @@ import {
   Brain,
   Sparkles
 } from 'lucide-react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import * as XLSX from 'xlsx';
 
 import Layout from '../components/Layout';
@@ -89,7 +89,6 @@ export default function SmartInvoice() {
   // Subscribe to real-time updates
   useEffect(() => {
     const unsubscribe = subscribeToInvoices((payload) => {
-      console.log('Real-time invoice update:', payload);
       loadInvoices();
     });
 

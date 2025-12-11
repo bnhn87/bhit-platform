@@ -1,8 +1,9 @@
 // AI Training Dashboard - Watch the AI learn in real-time
 // Shows active learning requests, patterns, predictions, and anomalies
 
-import React, { useState, useEffect } from 'react';
 import { Brain, TrendingUp, AlertTriangle, Sparkles, Target, CheckCircle, XCircle, Clock } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+
 import Layout from '../components/Layout';
 import {
   getLearningInsights,

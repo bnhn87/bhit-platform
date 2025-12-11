@@ -2,8 +2,8 @@
 'use client';
 
 
-import React, { useEffect } from 'react';
 import { X, XCircle, CheckCircle, Info, AlertTriangle } from 'lucide-react';
+import React, { useEffect } from 'react';
 
 import { NotificationMessage } from '../types';
 

@@ -41,7 +41,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         if (migrationError) {
           // If RPC doesn't work, try executing key parts manually
-          // console.log('RPC execution failed, trying manual approach:', migrationError);
 
           // Create the main table manually
           const createTableSQL = `

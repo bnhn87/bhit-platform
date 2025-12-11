@@ -1,7 +1,8 @@
 // API Route: Task Banner Tasks
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { supabase } from '@/lib/supabaseClient';
+
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { supabase } from '@/lib/supabaseClient';
 import { calculateTaskBrightness, formatDueTime } from '@/lib/taskBanner/brightness';
 import type { TaskBannerItemWithBrightness, CreateTaskRequest, UpdateTaskRequest } from '@/lib/taskBanner/types';
 

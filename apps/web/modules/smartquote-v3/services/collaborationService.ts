@@ -4,6 +4,7 @@
 
 import { supabase } from '../../../lib/supabaseClient';
 import { Comment, CommentType, CommentAttachment, CommentContext } from '../types';
+
 import { notificationService } from './notificationService';
 
 class CollaborationService {

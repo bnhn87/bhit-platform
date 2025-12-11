@@ -4,8 +4,8 @@
  * Provides centralized authentication and authorization for API routes
  */
 
-import { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
+import { NextApiRequest, NextApiResponse } from 'next';
 
 // Create admin client for auth verification
 const supabaseAdmin = createClient(

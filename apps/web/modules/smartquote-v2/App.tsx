@@ -21,9 +21,9 @@ import RevisionHistory from './components/RevisionHistory';
 import analyticsService from './services/analyticsService';
 import emailAutomationService from './services/emailAutomationService';
 import { parseQuoteContentEnhanced } from './services/enhancedGeminiService';
+import imageExtractionService from './services/imageExtractionService';
 import { productLearningService } from './services/productLearningService';
 import revisionTrackingService from './services/revisionTrackingService';
-import imageExtractionService from './services/imageExtractionService';
 import { EnhancedParseResult, ProductSuggestion } from './types';
 
 // Import components

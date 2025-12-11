@@ -36,12 +36,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: 'Content array is required' });
     }
 
-    // console.log('Processing PDF content with AI for:', filename || 'unknown file');
 
     // Use AI to parse the PDF content
     const parseResult = await parseQuoteContent(content);
     
-    // console.log('AI parsing completed:', {
     //   productsFound: parseResult.products?.length || 0,
     //   detailsFound: Object.keys(parseResult.details || {}).length
     // });
@@ -87,7 +85,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       message: `Successfully parsed ${workOrderItems.length} items from PDF using AI`
     };
 
-    // console.log('AI PDF parsing complete:', {
     //   filename: filename || 'unknown',
     //   itemsFound: workOrderItems.length,
     //   textLength: extractedText.length

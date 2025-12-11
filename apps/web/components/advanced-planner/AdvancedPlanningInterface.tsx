@@ -683,7 +683,6 @@ export default function AdvancedPlanningInterface({
             imageUrl={floorPlanUrl}
             furniture={placedFurniture}
             onMove={(id, newProps) => {
-              // console.log('FloorPlanCanvas - rendering with imageUrl:', floorPlanUrl); // Debug
               updateFurniturePosition(id, newProps.x || 0, newProps.y || 0);
             }}
             onMoveEnd={commitFurnitureUpdate}

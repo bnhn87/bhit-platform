@@ -24,17 +24,12 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
 });
 
 async function createFirstAdmin() {
-  console.log('🚀 Creating first admin user...\n');
 
   // Get user input (you can modify these values)
   const email = 'admin@bhit.com'; // CHANGE THIS
   const password = 'admin123456';  // CHANGE THIS
   const fullName = 'Admin User';   // CHANGE THIS
 
-  console.log('Email:', email);
-  console.log('Password:', '***********');
-  console.log('Full Name:', fullName);
-  console.log('Role: director\n');
 
   try {
     // Step 1: Check if account exists, create if not
@@ -46,7 +41,6 @@ async function createFirstAdmin() {
     let accountId;
 
     if (accountCheckError || !accounts || accounts.length === 0) {
-      console.log('📝 Creating default account...');
       const { data: newAccount, error: accountError } = await supabase
         .from('accounts')
         .insert({
@@ -61,14 +55,11 @@ async function createFirstAdmin() {
       }
 
       accountId = newAccount.id;
-      console.log('✓ Account created:', accountId, '\n');
     } else {
       accountId = accounts[0].id;
-      console.log('✓ Using existing account:', accountId, '\n');
     }
 
     // Step 2: Create auth user
-    console.log('👤 Creating auth user...');
     const { data: authUser, error: authError } = await supabase.auth.admin.createUser({
       email,
       password,
@@ -83,10 +74,8 @@ async function createFirstAdmin() {
       throw new Error('Failed to create auth user: ' + authError.message);
     }
 
-    console.log('✓ Auth user created:', authUser.user.id, '\n');
 
     // Step 3: Create user profile
-    console.log('📋 Creating user profile...');
     const { data: profile, error: profileError } = await supabase
       .from('user_profiles')
       .insert({
@@ -103,10 +92,8 @@ async function createFirstAdmin() {
       throw new Error('Failed to create profile: ' + profileError.message);
     }
 
-    console.log('✓ Profile created\n');
 
     // Step 4: Create permissions
-    console.log('🔐 Creating permissions...');
     const { error: permError } = await supabase
       .from('user_permissions')
       .insert({
@@ -129,10 +116,8 @@ async function createFirstAdmin() {
       throw new Error('Failed to create permissions: ' + permError.message);
     }
 
-    console.log('✓ Permissions created\n');
 
     // Step 5: Create cost access
-    console.log('💰 Creating cost access...');
     const { error: costError } = await supabase
       .from('cost_access')
       .insert({
@@ -145,14 +130,7 @@ async function createFirstAdmin() {
       throw new Error('Failed to create cost access: ' + costError.message);
     }
 
-    console.log('✓ Cost access created\n');
 
-    console.log('✅ SUCCESS! Admin user created:\n');
-    console.log('   Email:', email);
-    console.log('   Password:', password);
-    console.log('   Role: director');
-    console.log('   User ID:', authUser.user.id);
-    console.log('\n🌐 You can now login at: http://localhost:3000/login\n');
 
   } catch (error) {
     console.error('\n❌ ERROR:', error.message);

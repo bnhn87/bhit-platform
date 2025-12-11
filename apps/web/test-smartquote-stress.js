@@ -168,40 +168,20 @@ function simulateCalculation(products) {
 }
 
 // Run tests
-console.log("🧪 SMARTQUOTE STRESS TEST RESULTS\n");
-console.log("=" .repeat(50));
 
 testCases.forEach((test, index) => {
-  console.log(`\nTest ${index + 1}: ${test.name}`);
-  console.log("-".repeat(40));
 
   const products = test.generateProducts ? test.generateProducts() : test.products;
   const result = simulateCalculation(products);
 
-  console.log(`✓ Products: ${products.length}`);
-  console.log(`✓ Processed: ${result.processed}`);
-  console.log(`✓ Time: ${result.duration}ms`);
-  console.log(`✓ Errors: ${result.errors.length || 'None'}`);
 
   if (test.expectedBehavior) {
-    console.log("Expected Behaviors:");
     Object.entries(test.expectedBehavior).forEach(([key, value]) => {
-      console.log(`  - ${key}: ${value}`);
     });
   }
 });
 
-console.log("\n" + "=".repeat(50));
-console.log("🎯 STRESS TEST SUMMARY");
-console.log("-".repeat(40));
 
 // Summary calculations
 const catalogue = require('./modules/smartquote/services/configService.ts');
-console.log(`✓ Total Products in Catalogue: 177`);
-console.log(`✓ FLX Products with Variations: 15`);
-console.log(`✓ Power Grouping: Implemented`);
-console.log(`✓ Edge Rules: 6 Active`);
-console.log(`✓ Exclusion Rules: Active`);
-console.log(`✓ Labour Buffers: 25% default, smart adjustments`);
 
-console.log("\n✅ STRESS TEST COMPLETE");

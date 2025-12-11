@@ -302,7 +302,6 @@ export const useAiPlanner = (
     try {
       const blobUrl = URL.createObjectURL(file);
       // eslint-disable-next-line no-console
-      // console.log('Created blob URL:', blobUrl); // Debug log
       changeProject({ floorPlanUrl: blobUrl });
       showNotification('Floor plan uploaded successfully!', 'success');
     } catch (error: unknown) {

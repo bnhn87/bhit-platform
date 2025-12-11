@@ -1,10 +1,10 @@
 // apps/web/pages/api/jobs/start.ts
+import { createClient } from '@supabase/supabase-js';
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { logJobStatusChanged } from "../../../lib/activityLogger";
-import { supabaseAdmin } from "../../../lib/supabaseAdmin";
 import { safeParseUrlEncodedJson } from "../../../lib/safeParsing";
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from "../../../lib/supabaseAdmin";
 
 type Body = { jobId?: string; pin?: string };
 

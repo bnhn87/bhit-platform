@@ -55,7 +55,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    // console.log(`🗑️ Simple delete for job: ${id}`);
 
     // Simple approach: just run the update and see if it works
     const { data, error } = await supabaseServiceRole
@@ -64,7 +63,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .eq('id', id)
       .select();
 
-    // console.log('Update result:', { data, error });
 
     if (error) {
       console.error('Delete failed:', error);
@@ -81,7 +79,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const jobTitle = (data[0] as any)?.title || 'Unknown Job';
     await logJobDeleted(id, jobTitle, userId || undefined);
 
-    // console.log(`✅ Job ${id} marked as deleted:`, data[0]);
     return res.status(200).json({ success: true, job: data[0] });
 
   } catch (error) {

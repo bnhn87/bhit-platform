@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+
 import { requireAuth } from '../../lib/apiAuth';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -12,11 +13,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return; // requireAuth already sent 401 response
   }
 
-  // console.log('🔍 DEBUG: Full request body:', JSON.stringify(req.body, null, 2));
   
   const { quoteData, jobDetails } = req.body;
   
-  // console.log('🔍 DEBUG: quoteData structure:', {
   //   hasQuoteData: !!quoteData,
   //   quoteDataKeys: quoteData ? Object.keys(quoteData) : 'none',
   //   results: quoteData?.results ? {
@@ -38,7 +37,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   //   } : 'missing'
   // });
   
-  // console.log('🔍 DEBUG: jobDetails structure:', {
   //   hasJobDetails: !!jobDetails,
   //   keys: jobDetails ? Object.keys(jobDetails) : 'none',
   //   title: jobDetails?.title

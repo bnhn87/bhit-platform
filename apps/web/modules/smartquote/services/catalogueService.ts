@@ -95,7 +95,6 @@ export class CatalogueService {
             });
 
             this.lastCacheRefresh = now;
-            console.log(`Catalogue cache refreshed with ${this.cache.size} entries`);
         } catch (error: unknown) {
             console.error('Error refreshing catalogue cache:', error);
         }

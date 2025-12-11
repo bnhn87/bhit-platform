@@ -236,7 +236,6 @@ async function extractWithGemini(
 
       // If confidence is 0, retry (unless it's the last attempt)
       if (attempt < MAX_RETRIES) {
-        console.log(`Attempt ${attempt} had low confidence, retrying...`);
         await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
         continue;
       }
@@ -247,7 +246,6 @@ async function extractWithGemini(
       lastError = error instanceof Error ? error : new Error(String(error));
 
       if (attempt < MAX_RETRIES) {
-        console.log(`Extraction attempt ${attempt} failed, retrying...`);
         await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
         continue;
       }

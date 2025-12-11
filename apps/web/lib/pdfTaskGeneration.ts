@@ -35,11 +35,9 @@ declare global {
 }
 
 const extractTextFromPdf = async (file: File): Promise<string> => {
-  // console.log('Starting PDF text extraction...');
   
   let retries = 0;
   while (typeof window.pdfjsLib === 'undefined' && retries < 10) {
-    // console.log('Waiting for PDF.js to load...');
     await new Promise(resolve => setTimeout(resolve, 500));
     retries++;
   }
@@ -52,7 +50,6 @@ const extractTextFromPdf = async (file: File): Promise<string> => {
     const arrayBuffer = await file.arrayBuffer();
     const pdf = await window.pdfjsLib!.getDocument({ data: arrayBuffer }).promise;
     
-    // console.log(`PDF loaded with ${pdf.numPages} pages`);
     
     let fullText = '';
     
@@ -61,10 +58,8 @@ const extractTextFromPdf = async (file: File): Promise<string> => {
       const textContent = await page.getTextContent();
       const pageText = textContent.items.map((item: { str: string }) => item.str).join(' ');
       fullText += `Page ${pageNum}:\n${pageText}\n\n`;
-      // console.log(`Extracted text from page ${pageNum}: ${pageText.length} characters`);
     }
     
-    // console.log(`Total extracted text: ${fullText.length} characters`);
     return fullText.trim();
   } catch (error: unknown) {
     console.error('Error extracting text from PDF:', error);
@@ -79,7 +74,6 @@ const generateTasksFromText = async (text: string, documentTitle: string): Promi
     throw new Error('Gemini API key not found. Please check your environment configuration.');
   }
 
-  // console.log(`Sending text to Gemini for task generation from ${documentTitle}...`);
   
   const prompt = `
 You are an expert installation project manager. Analyze the following document text and generate a comprehensive list of installation tasks.
@@ -133,7 +127,6 @@ Respond with only a JSON array, no additional text:`;
     }
 
     let responseText = data.candidates[0].content.parts[0].text.trim();
-    // console.log('Raw Gemini response:', responseText);
 
     // Clean up the response - remove markdown code blocks if present
     responseText = responseText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
@@ -156,7 +149,6 @@ Respond with only a JSON array, no additional text:`;
         dependencies: Array.isArray(task.dependencies) ? task.dependencies.filter((dep: unknown): dep is string => typeof dep === 'string') : []
       }));
 
-      // console.log(`Generated ${validatedTasks.length} tasks from ${documentTitle}`);
       return validatedTasks;
     } catch (parseError) {
       console.error('Failed to parse Gemini response as JSON:', parseError);
@@ -170,7 +162,6 @@ Respond with only a JSON array, no additional text:`;
 };
 
 export const generateTasksFromSelectedDocuments = async (jobId: string, documentIds: string[]): Promise<GeneratedTaskData[]> => {
-  // console.log(`Generating tasks from ${documentIds.length} selected documents for job ${jobId}...`);
   
   try {
     if (documentIds.length === 0) {
@@ -193,18 +184,15 @@ export const generateTasksFromSelectedDocuments = async (jobId: string, document
       throw new Error('No valid PDF documents found from selection.');
     }
 
-    // console.log(`Found ${documents.length} PDF document(s) to process`);
 
     let allTasks: GeneratedTaskData[] = [];
     let processedCount = 0;
 
     // Process each selected PDF document
     for (const doc of documents) {
-      // console.log(`Processing document: ${doc.title}`);
       
       try {
         // Get signed URL to download the file
-        // console.log(`Attempting to get signed URL for: ${doc.title} at path: ${doc.storage_path}`);
         const { data: signedUrlData, error: urlError } = await supabase.storage
           .from('job-docs')
           .createSignedUrl(doc.storage_path, 60 * 60); // 1 hour expiry
@@ -245,7 +233,6 @@ export const generateTasksFromSelectedDocuments = async (jobId: string, document
 
         allTasks.push(...adjustedTasks);
         processedCount++;
-        // console.log(`Generated ${documentTasks.length} tasks from ${doc.title}`);
         
       } catch (docError) {
         console.error(`Error processing document ${doc.title}:`, docError);
@@ -260,7 +247,6 @@ export const generateTasksFromSelectedDocuments = async (jobId: string, document
     // Sort tasks by install_order
     allTasks.sort((a, b) => a.install_order - b.install_order);
 
-    // console.log(`Successfully generated ${allTasks.length} total tasks from ${processedCount} document(s)`);
     return allTasks;
 
   } catch (error: unknown) {

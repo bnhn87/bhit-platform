@@ -1,10 +1,6 @@
 // Complete test of the Product Catalogue System with FLX-4P-2816-A
-console.log("🧪 COMPLETE CATALOGUE SYSTEM TEST");
-console.log("=" .repeat(60));
 
 // Test 1: FLX Pattern Matching in calculationService.ts
-console.log("\n📋 TEST 1: FLX Pattern Matching");
-console.log("-".repeat(40));
 
 const testFLXMatching = () => {
     const testCases = [
@@ -51,15 +47,12 @@ const testFLXMatching = () => {
     testCases.forEach(testCase => {
         const result = findBestMatchKey(testCase, catalogueKeys);
         const status = result ? "✅" : "❌";
-        console.log(`${status} "${testCase}" → ${result || "NOT FOUND"}`);
     });
 };
 
 testFLXMatching();
 
 // Test 2: Product Alias System
-console.log("\n📋 TEST 2: Product Alias System");
-console.log("-".repeat(40));
 
 // Mock the catalogue service functionality
 class MockCatalogueService {
@@ -118,15 +111,11 @@ const aliasTests = [
 aliasTests.forEach(test => {
     const result = mockCatalogue.findProduct(test);
     if (result) {
-        console.log(`✅ "${test}" → ${result.name} (${result.time}h, ${result.waste}m³)`);
     } else {
-        console.log(`❌ "${test}" → NOT FOUND`);
     }
 });
 
 // Test 3: Complete Flow
-console.log("\n📋 TEST 3: Complete Integration Flow");
-console.log("-".repeat(40));
 
 const simulateCompleteFlow = async () => {
     const steps = [
@@ -137,32 +126,20 @@ const simulateCompleteFlow = async () => {
     ];
 
     steps.forEach(s => {
-        console.log(`Step ${s.step}: ${s.action}`);
-        console.log(`   → Expected: ${s.expected}`);
     });
 
     // Simulate the actual lookup
     const productCode = "FLX-4P-2816-A";
     const catalogueLookup = mockCatalogue.findProduct(productCode);
 
-    console.log("\n🎯 Final Result:");
     if (catalogueLookup) {
-        console.log(`✅ SUCCESS: "${productCode}" automatically resolved to:`);
-        console.log(`   • Product: ${catalogueLookup.name}`);
-        console.log(`   • Time: ${catalogueLookup.time} hours`);
-        console.log(`   • Waste: ${catalogueLookup.waste} m³`);
-        console.log(`   • NO MANUAL ENTRY REQUIRED! 🎉`);
     } else {
-        console.log(`❌ FAIL: Would still show "Missing Product Times" dialog`);
     }
 };
 
 simulateCompleteFlow();
 
 // Summary
-console.log("\n" + "=".repeat(60));
-console.log("📊 IMPLEMENTATION SUMMARY");
-console.log("=".repeat(60));
 
 const features = [
     { feature: "Database product catalogue", status: "✅ Created", file: "migrations/042_product_catalogue_aliases.sql" },
@@ -173,23 +150,7 @@ const features = [
     { feature: "Persistent storage", status: "✅ Added", file: "API endpoints + DB" }
 ];
 
-console.log("\nCompleted Features:");
 features.forEach(f => {
-    console.log(`${f.status} ${f.feature}`);
-    console.log(`     └─ ${f.file}`);
 });
 
-console.log("\n🚀 NEXT STEPS:");
-console.log("1. Run database migration in Supabase:");
-console.log("   • Go to Supabase SQL Editor");
-console.log("   • Copy contents of migrations/042_product_catalogue_aliases.sql");
-console.log("   • Execute the SQL");
-console.log("\n2. Restart the dev server");
-console.log("\n3. Test with a quote containing 'FLX-4P-2816-A'");
-console.log("   • Should NOT show 'Missing Product Times' dialog");
-console.log("   • Should automatically use 1.45 hours");
-console.log("\n4. When manual time entry is needed:");
-console.log("   • Can save to catalogue permanently");
-console.log("   • Can attach as alias to existing product");
 
-console.log("\n✅ All code changes are complete and ready to test!");

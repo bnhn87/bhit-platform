@@ -1,7 +1,5 @@
 // Multi-Address Detection and Management Test
 
-console.log("🏢 MULTI-ADDRESS MANAGEMENT SYSTEM TEST");
-console.log("=".repeat(50));
 
 // Import the address extraction logic
 const extractAddressesFromQuote = (text) => {
@@ -103,21 +101,13 @@ Products:
 50x Power Modules
 `;
 
-console.log("\n📋 TEST 1: COMPLEX QUOTE WITH MULTIPLE ADDRESSES");
-console.log("-".repeat(40));
 
 const extractedAddresses = extractAddressesFromQuote(complexQuote);
 
-console.log(`Found ${extractedAddresses.length} addresses:\n`);
 
 extractedAddresses.forEach((addr, index) => {
-    console.log(`${index + 1}. ${addr.label} (${addr.type})`);
-    console.log(`   Postcode: ${addr.postcode}`);
-    console.log(`   Full Address:`);
     addr.fullAddress.split('\n').forEach(line => {
-        console.log(`     ${line}`);
     });
-    console.log();
 });
 
 // Test address format validation
@@ -139,8 +129,6 @@ const validateUKAddressFormat = (address) => {
     };
 };
 
-console.log("📝 TEST 2: ADDRESS FORMAT VALIDATION");
-console.log("-".repeat(40));
 
 const testAddresses = [
     {
@@ -175,11 +163,8 @@ ABC 123`
 
 testAddresses.forEach(test => {
     const result = validateUKAddressFormat(test.address);
-    console.log(`${test.name}: ${result.isValid ? '✅ VALID' : '❌ INVALID'}`);
     if (result.isValid) {
-        console.log(`  Postcode: ${result.postcode}`);
     }
-    console.log();
 });
 
 // Calculate distances (mock - would integrate with real API)
@@ -198,13 +183,10 @@ const calculateDistance = (postcode1, postcode2) => {
     return distances[key1] || distances[key2] || Math.floor(Math.random() * 200) + 10;
 };
 
-console.log("🚛 TEST 3: LOGISTICS PLANNING");
-console.log("-".repeat(40));
 
 // BHIT Base location
 const bhitBase = "SE1 4AA"; // Example BHIT warehouse
 
-console.log(`BHIT Base: ${bhitBase}\n`);
 
 // Find collection and site addresses
 const collectionAddr = extractedAddresses.find(a => a.type === 'collection');
@@ -216,43 +198,18 @@ if (collectionAddr && siteAddr) {
     const distSiteToBase = calculateDistance(siteAddr.postcode, bhitBase);
     const totalDistance = distToCollection + distCollectionToSite + distSiteToBase;
 
-    console.log("Route Planning:");
-    console.log(`1. BHIT Base → Collection (${collectionAddr.postcode}): ${distToCollection} miles`);
-    console.log(`2. Collection → Site (${siteAddr.postcode}): ${distCollectionToSite} miles`);
-    console.log(`3. Site → BHIT Base: ${distSiteToBase} miles`);
-    console.log(`\n📊 Total round trip: ${totalDistance} miles`);
 
     // Estimate travel time (average 30mph in city)
     const travelHours = totalDistance / 30;
-    console.log(`⏱️ Estimated travel time: ${travelHours.toFixed(1)} hours`);
 
     // Check for ULEZ/congestion zones
     const ulezPostcodes = ['EC', 'WC', 'E1', 'SE1', 'SW1', 'N1', 'NW1', 'W1'];
     const inULEZ = (postcode) => ulezPostcodes.some(prefix => postcode.startsWith(prefix));
 
     if (inULEZ(collectionAddr.postcode)) {
-        console.log(`⚠️ Collection point in ULEZ zone - £12.50/day charge`);
     }
     if (inULEZ(siteAddr.postcode)) {
-        console.log(`⚠️ Site in ULEZ zone - £12.50/day charge`);
     }
 }
 
-console.log("\n" + "=".repeat(50));
-console.log("🎯 MULTI-ADDRESS SYSTEM BENEFITS:");
-console.log("-".repeat(40));
-console.log("✅ Accurate route planning with collection points");
-console.log("✅ Proper distance calculation for costing");
-console.log("✅ ULEZ/congestion charge detection");
-console.log("✅ Support for third-party warehouses");
-console.log("✅ Address format validation ensures consistency");
-console.log("✅ Multiple collection points can be managed");
 
-console.log("\n💡 IMPLEMENTATION FEATURES:");
-console.log("-".repeat(40));
-console.log("• AddressSelector component for UI selection");
-console.log("• Automatic extraction from quotes");
-console.log("• Manual entry with format validation");
-console.log("• Collection address support in QuoteDetails");
-console.log("• Distance calculation for logistics");
-console.log("• Ready for client database integration");

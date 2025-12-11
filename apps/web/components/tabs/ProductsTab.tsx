@@ -248,7 +248,6 @@ export default function ProductsTab({
                           onClick={() => {
                             // TODO: Implement edit functionality
                             // eslint-disable-next-line no-console
-                            console.log('Edit product:', product);
                           }}
                         >
                           Edit

@@ -163,9 +163,7 @@ export default function Dashboard() {
           index === self.findIndex(j => j.id === job.id)
         ) : [];
         // eslint-disable-next-line no-console
-        console.log('Dashboard: Fetched jobs data:', data);
         // eslint-disable-next-line no-console
-        console.log('Dashboard: Unique jobs:', uniqueJobs);
         setActiveJobs(uniqueJobs);
       }
     } catch (err) {

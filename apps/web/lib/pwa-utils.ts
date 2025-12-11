@@ -71,7 +71,6 @@ export class PWAManager {
     if ('serviceWorker' in navigator) {
       try {
         const registration = await navigator.serviceWorker.register('/sw.js');
-        // console.log('[PWA] Service Worker registered:', registration);
 
         // Listen for service worker updates
         registration.addEventListener('updatefound', () => {
