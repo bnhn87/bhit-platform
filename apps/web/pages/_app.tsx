@@ -74,10 +74,10 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                 {/* Banner sits in flow, pushes content down */}
                 <TaskBanner />
 
-                {/* Trigger sits on top of content, sticky */}
+                {/* Trigger is now Fixed, so it floats over everything */}
                 <HeaderTrigger onOpen={() => setIsSidebarOpen(true)} />
 
-                {/* Drawer */}
+                {/* Fixed Overlay Drawer */}
                 <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
               </>
             )}

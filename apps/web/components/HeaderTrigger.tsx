@@ -8,13 +8,13 @@ interface HeaderTriggerProps {
 export default function HeaderTrigger({ onOpen }: HeaderTriggerProps) {
     return (
         <div style={{
-            position: 'sticky',
-            top: 0,
-            zIndex: 9000,
-            padding: '16px',
+            position: 'fixed',
+            top: 16,
+            left: 16,
+            zIndex: 9990,
             display: 'flex',
             alignItems: 'center',
-            pointerEvents: 'none', // Let clicks pass through empty space
+            pointerEvents: 'none',
         }}>
             <button
                 onClick={onOpen}
