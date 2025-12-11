@@ -2,6 +2,7 @@
 import type { AppProps } from "next/app";
 import dynamic from "next/dynamic";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import Script from "next/script";
 import React from "react";
 
@@ -20,9 +21,18 @@ const PerformanceMonitor = dynamic(() => import("@/components/PerformanceMonitor
 // import "@/lib/securityService";
 
 export default function MyApp({ Component, pageProps }: AppProps) {
+  const router = useRouter();
   const [topOffset, setTopOffset] = React.useState(0);
 
+  // Define routes that should have a clean layout (no nav/banners)
+  const isPublicRoute = ['/login', '/reset-password'].includes(router.pathname);
+
   React.useEffect(() => {
+    if (isPublicRoute) {
+      setTopOffset(0);
+      return;
+    }
+
     const updateTopOffset = () => {
       const banner = document.querySelector('.task-banner') as HTMLElement;
       const nav = document.querySelector('nav') as HTMLElement;
@@ -48,7 +58,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       window.removeEventListener('resize', updateTopOffset);
       observer.disconnect();
     };
-  }, []);
+  }, [isPublicRoute]);
 
   return (
     <ErrorBoundary>
@@ -83,14 +93,14 @@ export default function MyApp({ Component, pageProps }: AppProps) {
             width: '100%',
             overflowX: 'hidden'
           }}>
-            <TaskBanner /> {/* Task Banner ABOVE navbar */}
-            <AppNav />
+            {!isPublicRoute && <TaskBanner />} {/* Task Banner ABOVE navbar */}
+            {!isPublicRoute && <AppNav />}
             <main
               id="main-content"
               style={{
                 flex: 1,
-                padding: '16px',
-                paddingTop: Math.max(16, topOffset + 16), // Add top padding for banner + navbar
+                padding: isPublicRoute ? 0 : '16px', // No padding on login
+                paddingTop: isPublicRoute ? 0 : Math.max(16, topOffset + 16), // Add top padding for banner + navbar
                 width: '100%',
                 // maxWidth: '100vw', // Removed to avoid horizontal scroll on mobile
                 overflowX: 'hidden',
