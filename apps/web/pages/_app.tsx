@@ -7,7 +7,9 @@ import Script from "next/script";
 import React from "react";
 
 import AccessibilityProvider from "@/components/AccessibilityProvider";
-import AppNav from "@/components/AppNav";
+import Sidebar from "@/components/Sidebar"; // Replaces AppNav
+import HeaderTrigger from "@/components/HeaderTrigger";
+// import AppNav from "@/components/AppNav"; // Deprecated
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import TaskBanner from "@/components/TaskBanner";
 import { AuthProvider } from "@/lib/AuthProvider";
@@ -22,12 +24,10 @@ const PerformanceMonitor = dynamic(() => import("@/components/PerformanceMonitor
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  // const [topOffset, setTopOffset] = React.useState(0); // Removed
+  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
 
   // Define routes that should have a clean layout (no nav/banners)
   const isPublicRoute = ['/login', '/reset-password'].includes(router.pathname);
-
-  // Layout handled via CSS sticky positioning - no JS calculation needed
 
   return (
     <ErrorBoundary>
@@ -62,20 +62,37 @@ export default function MyApp({ Component, pageProps }: AppProps) {
             width: '100%',
             overflowX: 'hidden'
           }}>
+            {/* 
+              LAYOUT STRUCTURE:
+              1. TaskBanner: Relative flow, sits at very top. Pushes everything down.
+              2. HeaderTrigger: Sticky top-left.
+              3. Sidebar: Fixed overlay.
+            */}
+
             {!isPublicRoute && (
-              <div style={{ position: 'sticky', top: 0, zIndex: 9999 }}>
+              <>
+                {/* Banner sits in flow, pushes content down */}
                 <TaskBanner />
-                <AppNav />
-              </div>
+
+                {/* Trigger sits on top of content, sticky */}
+                <HeaderTrigger onOpen={() => setIsSidebarOpen(true)} />
+
+                {/* Drawer */}
+                <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+              </>
             )}
+
             <main
               id="main-content"
               style={{
                 flex: 1,
-                padding: isPublicRoute ? 0 : '16px', // Standard padding
-                // paddingTop is no longer needed as sticky header sits in flow
+                padding: isPublicRoute ? 0 : '16px',
                 width: '100%',
-                // maxWidth: '100vw', // Removed to avoid horizontal scroll on mobile
+                // If the trigger is 40px + 16px padding = ~56px height, we might want to ensure content 
+                // doesn't hide behind it IF the content flows there. 
+                // But since HeaderTrigger is sticky and pointer-events:none wrapper, 
+                // it just floats over. We might want a small top margin if it overlaps critical UI.
+                // For now, standard padding is usually sufficient.
                 overflowX: 'hidden',
                 boxSizing: 'border-box'
               }}
