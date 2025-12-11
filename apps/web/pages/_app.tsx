@@ -73,8 +73,8 @@ export default function MyApp({ Component, pageProps }: AppProps) {
             <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
           </Head>
 
-      {/* Scripts that can load lazily - beforeInteractive scripts moved to _document.tsx */}
-      <Script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js" strategy="lazyOnload" />
+          {/* Scripts that can load lazily - beforeInteractive scripts moved to _document.tsx */}
+          <Script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js" strategy="lazyOnload" />
 
           <div style={{
             minHeight: '100vh',
@@ -92,7 +92,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                 padding: '16px',
                 paddingTop: Math.max(16, topOffset + 16), // Add top padding for banner + navbar
                 width: '100%',
-                maxWidth: '100vw',
+                // maxWidth: '100vw', // Removed to avoid horizontal scroll on mobile
                 overflowX: 'hidden',
                 boxSizing: 'border-box'
               }}

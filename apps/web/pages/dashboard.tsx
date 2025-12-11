@@ -319,9 +319,9 @@ export default function Dashboard() {
 
   return (
     <div style={{
-      padding: 24,
+      padding: "clamp(16px, 3vw, 24px)",
       width: '100%',
-      maxWidth: '100vw',
+      // maxWidth: '100vw', // Removed to prevent scrollbar issues
       overflowX: 'hidden',
       boxSizing: 'border-box'
     }}>
@@ -609,7 +609,7 @@ export default function Dashboard() {
       {/* Main Content Grid */}
       <div style={{
         display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(min(400px, 100%), 1fr))",
+        gridTemplateColumns: "repeat(auto-fit, minmax(min(340px, 100%), 1fr))",
         gap: 24,
         width: '100%'
       }}>

@@ -71,8 +71,16 @@ export default function LoginPage() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0e141b", color: "#e8eef6" }}>
-      <div style={{ maxWidth: 360, margin: "80px auto", padding: 24, border: "1px solid #1d2733", borderRadius: 12, background: "#121a23" }}>
+    <div style={{ minHeight: "100vh", background: "#0e141b", color: "#e8eef6", display: "flex", flexDirection: "column", alignItems: "center", padding: "0 16px" }}>
+      <div style={{
+        maxWidth: 360,
+        width: "100%",
+        margin: "clamp(40px, 10vh, 80px) auto",
+        padding: 24,
+        border: "1px solid #1d2733",
+        borderRadius: 12,
+        background: "#121a23"
+      }}>
         <h1 style={{ marginTop: 0, marginBottom: 12 }}>Sign In</h1>
 
         {signedIn ? (
