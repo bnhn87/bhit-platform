@@ -11,7 +11,7 @@ export default function HeaderTrigger({ onOpen }: HeaderTriggerProps) {
             position: 'fixed',
             top: 16,
             left: 16,
-            zIndex: 9990,
+            zIndex: 10001, // Higher than TaskBanner (9999)
             display: 'flex',
             alignItems: 'center',
             pointerEvents: 'none',
