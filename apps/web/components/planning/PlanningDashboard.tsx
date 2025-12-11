@@ -86,30 +86,26 @@ export default function PlanningDashboard({
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-        <span className="ml-3 text-neutral-300">Loading planning projects...</span>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[var(--accent)]"></div>
+        <span className="ml-3 text-[var(--muted)]">Loading planning projects...</span>
       </div>
     );
   }
 
   return (
-    <div style={{
-      background: theme.colors.background,
-      color: theme.colors.text,
-      minHeight: '100%'
-    }}>
+    <div className="w-full">
       {/* Header */}
-      <div className="mb-8">
+      <div className="mb-8 pl-1">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Planning Central</h1>
-            <p className="text-neutral-400">
-              Coordinate all planning activities and workflows
+            <h1 className="text-3xl font-bold mb-2 text-white">Planning Central</h1>
+            <p className="text-[var(--muted)]">
+              Coordinate all planning activities and workflows (BHi v2.0)
             </p>
           </div>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+            className="px-6 py-3 bg-[var(--accent)] hover:bg-[var(--accent)]/80 text-white rounded font-medium transition-all shadow-[0_0_20px_rgba(243,139,0,0.3)] hover:shadow-[0_0_30px_rgba(243,139,0,0.5)] active:scale-95"
           >
             New Planning Project
           </button>
@@ -118,62 +114,62 @@ export default function PlanningDashboard({
         {/* Feature Flag Indicators */}
         <div className="mt-4 flex gap-2">
           {experimentalPlanningEnabled && (
-            <div className="px-3 py-1 bg-purple-600/20 text-purple-400 text-xs rounded-full border border-purple-600/30">
+            <div className="px-3 py-1 bg-[var(--panel)] text-[var(--accent)] text-xs rounded border border-[var(--accent)]/30 backdrop-blur-sm">
               Experimental Planning Engine Active
             </div>
           )}
           {betaFloorPlannerEnabled && (
-            <div className="px-3 py-1 bg-green-600/20 text-green-400 text-xs rounded-full border border-green-600/30">
+            <div className="px-3 py-1 bg-[var(--panel)] text-[var(--ok)] text-xs rounded border border-[var(--ok)]/30 backdrop-blur-sm">
               Beta Floor Planner Available
             </div>
           )}
         </div>
       </div>
 
-      {/* Stats Cards */}
+      {/* Stats Cards - Using .card glass effect */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-6">
-          <div className="text-2xl font-bold text-neutral-100">
+        <div className="card p-6 flex flex-col items-center text-center hover:bg-[var(--panel-2)] transition-colors">
+          <div className="text-3xl font-bold text-white mb-1">
             {projects.filter(p => p.status === 'active').length}
           </div>
-          <div className="text-sm text-neutral-400">Active Projects</div>
+          <div className="text-xs uppercase tracking-wider text-[var(--muted)] font-bold">Active Projects</div>
         </div>
 
-        <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-6">
-          <div className="text-2xl font-bold text-neutral-100">
+        <div className="card p-6 flex flex-col items-center text-center hover:bg-[var(--panel-2)] transition-colors">
+          <div className="text-3xl font-bold text-[var(--warn)] mb-1">
             {projects.filter(p => p.priority === 'urgent').length}
           </div>
-          <div className="text-sm text-neutral-400">Urgent Priority</div>
+          <div className="text-xs uppercase tracking-wider text-[var(--muted)] font-bold">Urgent Priority</div>
         </div>
 
-        <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-6">
-          <div className="text-2xl font-bold text-neutral-100">
+        <div className="card p-6 flex flex-col items-center text-center hover:bg-[var(--panel-2)] transition-colors">
+          <div className="text-3xl font-bold text-[var(--ok)] mb-1">
             {projects.filter(p => p.status === 'completed').length}
           </div>
-          <div className="text-sm text-neutral-400">Completed</div>
+          <div className="text-xs uppercase tracking-wider text-[var(--muted)] font-bold">Completed</div>
         </div>
 
-        <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-6">
-          <div className="text-2xl font-bold text-neutral-100">
+        <div className="card p-6 flex flex-col items-center text-center hover:bg-[var(--panel-2)] transition-colors">
+          <div className="text-3xl font-bold text-[var(--info)] mb-1">
             {Math.round(projects.reduce((acc, p) => acc + (p.metadata.estimatedHours || 0), 0))}h
           </div>
-          <div className="text-sm text-neutral-400">Total Estimated</div>
+          <div className="text-xs uppercase tracking-wider text-[var(--muted)] font-bold">Total Estimated</div>
         </div>
       </div>
 
       {/* Projects List */}
-      <div className="bg-neutral-900 border border-neutral-800 rounded-2xl">
-        <div className="p-6 border-b border-neutral-800">
-          <h2 className="text-xl font-semibold text-neutral-100">Planning Projects</h2>
+      <div className="card overflow-hidden">
+        <div className="p-6 border-b border-[var(--border)] bg-[var(--panel)]">
+          <h2 className="text-xl font-bold text-white">Planning Projects</h2>
         </div>
 
         <div className="p-6">
           {projects.length === 0 ? (
             <div className="text-center py-12">
-              <div className="text-neutral-400 mb-4">No planning projects yet</div>
+              <div className="text-[var(--muted)] mb-4">No planning projects yet</div>
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                className="px-4 py-2 border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-white rounded transition-colors"
               >
                 Create Your First Project
               </button>
@@ -183,7 +179,7 @@ export default function PlanningDashboard({
               {projects.map((project) => (
                 <div
                   key={project.id}
-                  className="p-4 bg-neutral-800 rounded-lg border border-neutral-700 hover:border-neutral-600 transition-colors cursor-pointer"
+                  className="p-4 rounded border border-[var(--border)] hover:bg-[var(--panel-2)] hover:border-[var(--accent)] transition-all cursor-pointer group"
                   onClick={() => {
                     setSelectedProject(project);
                     if (onSelectProject) {
@@ -192,64 +188,65 @@ export default function PlanningDashboard({
                   }}
                 >
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-lg font-semibold text-neutral-100">
+                    <h3 className="text-lg font-bold text-white group-hover:text-[var(--accent)] transition-colors">
                       {project.name}
                     </h3>
                     <div className="flex items-center gap-2">
+                      {/* Custom Badge Logic */}
                       <span
-                        className="px-2 py-1 text-xs rounded-full font-medium"
+                        className="px-2 py-1 text-xs rounded font-bold uppercase tracking-wider"
                         style={{
-                          backgroundColor: getPriorityColor(project.priority) + '20',
-                          color: getPriorityColor(project.priority),
-                          border: `1px solid ${getPriorityColor(project.priority)}30`
+                          background: project.priority === 'urgent' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(255,255,255,0.05)',
+                          color: project.priority === 'urgent' ? 'var(--bad)' : 'var(--muted)',
+                          border: `1px solid ${project.priority === 'urgent' ? 'var(--bad)' : 'var(--border)'}`
                         }}
                       >
-                        {project.priority.toUpperCase()}
+                        {project.priority}
                       </span>
                       <span
-                        className="px-2 py-1 text-xs rounded-full font-medium"
+                        className="px-2 py-1 text-xs rounded font-bold uppercase tracking-wider"
                         style={{
-                          backgroundColor: getStatusColor(project.status) + '20',
-                          color: getStatusColor(project.status),
-                          border: `1px solid ${getStatusColor(project.status)}30`
+                          background: 'rgba(34, 197, 94, 0.1)',
+                          color: 'var(--ok)',
+                          border: '1px solid rgba(34, 197, 94, 0.2)'
                         }}
                       >
-                        {project.status.replace('_', ' ').toUpperCase()}
+                        {project.status.replace('_', ' ')}
                       </span>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-4">
                     <div>
-                      <div className="text-neutral-400">Created</div>
-                      <div className="text-neutral-300">
+                      <div className="text-[var(--muted)] text-xs uppercase font-bold">Created</div>
+                      <div className="text-white mt-1 font-mono text-xs">
                         {new Date(project.createdAt).toLocaleDateString()}
                       </div>
                     </div>
                     <div>
-                      <div className="text-neutral-400">Items</div>
-                      <div className="text-neutral-300">
+                      <div className="text-[var(--muted)] text-xs uppercase font-bold">Items</div>
+                      <div className="text-white mt-1">
                         {project.metadata.totalItems || 0}
                       </div>
                     </div>
                     <div>
-                      <div className="text-neutral-400">Est. Hours</div>
-                      <div className="text-neutral-300">
+                      <div className="text-[var(--muted)] text-xs uppercase font-bold">Est. Hours</div>
+                      <div className="text-white mt-1 font-mono">
                         {project.metadata.estimatedHours || 0}h
                       </div>
                     </div>
                     <div>
-                      <div className="text-neutral-400">Complexity</div>
-                      <div className="text-neutral-300 capitalize">
+                      <div className="text-[var(--muted)] text-xs uppercase font-bold">Complexity</div>
+                      <div className="text-white mt-1 capitalize">
                         {project.metadata.complexity || 'simple'}
                       </div>
                     </div>
                   </div>
 
                   {project.jobId && (
-                    <div className="mt-3 pt-3 border-t border-neutral-700">
-                      <div className="text-xs text-blue-400">
-                        Linked to Job: {project.jobId.substring(0, 8)}...
+                    <div className="mt-3 pt-3 border-t border-[var(--border)]">
+                      <div className="text-xs text-[var(--info)] flex items-center gap-2">
+                        <span>🔗</span> Linked to Job: <span className="font-mono text-white opacity-70">{project.jobId.substring(0, 8)}...</span>
                       </div>
                     </div>
                   )}
@@ -322,15 +319,15 @@ function CreateProjectModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 w-full max-w-md">
-        <h2 className="text-xl font-semibold text-neutral-100 mb-4">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-[99999]">
+      <div className="card p-8 w-full max-w-md relative shadow-[0_0_50px_rgba(0,0,0,0.7)]">
+        <h2 className="text-xl font-bold text-white mb-6 uppercase tracking-wide border-b border-[var(--border)] pb-4">
           Create Planning Project
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-neutral-300 mb-2">
+            <label className="block text-xs font-bold text-[var(--muted)] uppercase mb-2">
               Project Name
             </label>
             <input
@@ -338,13 +335,13 @@ function CreateProjectModal({
               required
               value={formData.name}
               onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-              className="w-full p-3 bg-neutral-800 border border-neutral-700 rounded-lg text-neutral-100 focus:border-blue-500 focus:outline-none"
+              className="w-full p-3 bg-[var(--bg)] border border-[var(--border)] rounded text-white focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)] transition-all"
               placeholder="Enter project name"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-neutral-300 mb-2">
+            <label className="block text-xs font-bold text-[var(--muted)] uppercase mb-2">
               Priority
             </label>
             <select
@@ -353,7 +350,7 @@ function CreateProjectModal({
                 ...prev,
                 priority: e.target.value as PlanningProject['priority']
               }))}
-              className="w-full p-3 bg-neutral-800 border border-neutral-700 rounded-lg text-neutral-100 focus:border-blue-500 focus:outline-none"
+              className="w-full p-3 bg-[var(--bg)] border border-[var(--border)] rounded text-white focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)] transition-all"
             >
               <option value="low">Low</option>
               <option value="medium">Medium</option>
@@ -363,14 +360,14 @@ function CreateProjectModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-neutral-300 mb-2">
+            <label className="block text-xs font-bold text-[var(--muted)] uppercase mb-2">
               Link to Job ID (Optional)
             </label>
             <input
               type="text"
               value={formData.jobId}
               onChange={(e) => setFormData(prev => ({ ...prev, jobId: e.target.value }))}
-              className="w-full p-3 bg-neutral-800 border border-neutral-700 rounded-lg text-neutral-100 focus:border-blue-500 focus:outline-none"
+              className="w-full p-3 bg-[var(--bg)] border border-[var(--border)] rounded text-white focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)] transition-all"
               placeholder="Enter existing job ID"
             />
           </div>
@@ -379,13 +376,13 @@ function CreateProjectModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-2 px-4 bg-neutral-700 hover:bg-neutral-600 text-neutral-300 rounded-lg transition-colors"
+              className="flex-1 py-3 px-4 border border-[var(--border)] hover:bg-[var(--panel-2)] text-[var(--muted)] hover:text-white rounded font-medium transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex-1 py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+              className="flex-1 py-3 px-4 bg-[var(--accent)] hover:bg-[var(--accent)]/80 text-white rounded font-bold uppercase tracking-wider transition-all shadow-[0_0_15px_rgba(243,139,0,0.3)]"
             >
               Create Project
             </button>
@@ -408,24 +405,21 @@ function IntegrationCard({
   enabled: boolean;
 }) {
   return (
-    <div className={`p-4 rounded-lg border transition-colors ${
-      enabled
-        ? 'bg-neutral-900 border-neutral-800 hover:border-neutral-700'
-        : 'bg-neutral-950 border-neutral-800 opacity-50'
-    }`}>
-      <div className="text-2xl mb-2">{icon}</div>
-      <h3 className={`font-medium mb-1 ${
-        enabled ? 'text-neutral-100' : 'text-neutral-500'
+    <div className={`p-6 rounded border transition-all duration-300 card group ${enabled
+        ? 'hover:border-[var(--accent)] hover:-translate-y-1'
+        : 'opacity-50 grayscale'
       }`}>
+      <div className="text-3xl mb-4 p-3 bg-[var(--panel-2)] rounded-full w-fit group-hover:bg-[var(--accent)]/20 transition-colors">{icon}</div>
+      <h3 className={`font-bold mb-2 uppercase tracking-wide text-sm ${enabled ? 'text-white' : 'text-[var(--muted)]'
+        }`}>
         {title}
       </h3>
-      <p className={`text-sm ${
-        enabled ? 'text-neutral-400' : 'text-neutral-600'
-      }`}>
+      <p className={`text-sm ${enabled ? 'text-[var(--muted)]' : 'text-neutral-600'
+        }`}>
         {description}
       </p>
       {!enabled && (
-        <div className="mt-2 text-xs text-amber-500">
+        <div className="mt-3 text-[10px] uppercase font-bold text-[var(--warn)] border border-[var(--warn)]/30 rounded px-2 py-1 w-fit">
           Feature flag disabled
         </div>
       )}
