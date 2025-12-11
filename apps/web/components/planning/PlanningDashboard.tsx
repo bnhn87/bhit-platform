@@ -175,11 +175,11 @@ export default function PlanningDashboard({
               </button>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {projects.map((project) => (
                 <div
                   key={project.id}
-                  className="p-4 rounded border border-[var(--border)] hover:bg-[var(--panel-2)] hover:border-[var(--accent)] transition-all cursor-pointer group"
+                  className="p-6 rounded-xl border border-[var(--border)] bg-[var(--panel)] hover:bg-[var(--panel-2)] hover:border-[var(--accent)] hover:-translate-y-1 transition-all duration-300 cursor-pointer group flex flex-col h-full shadow-lg hover:shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
                   onClick={() => {
                     setSelectedProject(project);
                     if (onSelectProject) {
@@ -187,66 +187,52 @@ export default function PlanningDashboard({
                     }
                   }}
                 >
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-lg font-bold text-white group-hover:text-[var(--accent)] transition-colors">
-                      {project.name}
-                    </h3>
-                    <div className="flex items-center gap-2">
-                      {/* Custom Badge Logic */}
-                      <span
-                        className="px-2 py-1 text-xs rounded font-bold uppercase tracking-wider"
-                        style={{
-                          background: project.priority === 'urgent' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(255,255,255,0.05)',
-                          color: project.priority === 'urgent' ? 'var(--bad)' : 'var(--muted)',
-                          border: `1px solid ${project.priority === 'urgent' ? 'var(--bad)' : 'var(--border)'}`
-                        }}
-                      >
-                        {project.priority}
-                      </span>
-                      <span
-                        className="px-2 py-1 text-xs rounded font-bold uppercase tracking-wider"
-                        style={{
-                          background: 'rgba(34, 197, 94, 0.1)',
-                          color: 'var(--ok)',
-                          border: '1px solid rgba(34, 197, 94, 0.2)'
-                        }}
-                      >
-                        {project.status.replace('_', ' ')}
-                      </span>
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="p-3 rounded-lg bg-[var(--panel-2)] group-hover:bg-[var(--accent)]/10 transition-colors">
+                      <span className="text-2xl">🏗️</span>
                     </div>
+                    <span
+                      className="px-2 py-1 text-[10px] rounded font-bold uppercase tracking-wider"
+                      style={{
+                        background: project.priority === 'urgent' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(255,255,255,0.05)',
+                        color: project.priority === 'urgent' ? 'var(--bad)' : 'var(--muted)',
+                        border: `1px solid ${project.priority === 'urgent' ? 'var(--bad)' : 'var(--border)'}`
+                      }}
+                    >
+                      {project.priority}
+                    </span>
                   </div>
 
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-4">
+                  <h3 className="text-xl font-bold text-white group-hover:text-[var(--accent)] transition-colors mb-2 line-clamp-1">
+                    {project.name}
+                  </h3>
+
+                  <div className="flex items-center gap-2 mb-6">
+                    <span className="w-2 h-2 rounded-full" style={{ background: project.status === 'active' ? 'var(--accent)' : 'var(--muted)' }}></span>
+                    <span className="text-xs text-[var(--muted)] uppercase tracking-wide font-medium">
+                      {project.status.replace('_', ' ')}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 mt-auto pt-4 border-t border-[var(--border)]">
                     <div>
-                      <div className="text-[var(--muted)] text-xs uppercase font-bold">Created</div>
-                      <div className="text-white mt-1 font-mono text-xs">
-                        {new Date(project.createdAt).toLocaleDateString()}
+                      <div className="text-[var(--muted)] text-[10px] uppercase font-bold tracking-wider">Est. Hours</div>
+                      <div className="text-white font-mono font-bold text-lg">
+                        {project.metadata.estimatedHours || 0}<span className="text-sm font-normal text-[var(--muted)] ml-0.5">h</span>
                       </div>
                     </div>
-                    <div>
-                      <div className="text-[var(--muted)] text-xs uppercase font-bold">Items</div>
-                      <div className="text-white mt-1">
-                        {project.metadata.totalItems || 0}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-[var(--muted)] text-xs uppercase font-bold">Est. Hours</div>
-                      <div className="text-white mt-1 font-mono">
-                        {project.metadata.estimatedHours || 0}h
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-[var(--muted)] text-xs uppercase font-bold">Complexity</div>
-                      <div className="text-white mt-1 capitalize">
-                        {project.metadata.complexity || 'simple'}
+                    <div className="text-right">
+                      <div className="text-[var(--muted)] text-[10px] uppercase font-bold tracking-wider">Complexity</div>
+                      <div className="text-white font-bold capitalize text-sm mt-1">
+                        {project.metadata.complexity || 'Simple'}
                       </div>
                     </div>
                   </div>
 
                   {project.jobId && (
-                    <div className="mt-3 pt-3 border-t border-[var(--border)]">
-                      <div className="text-xs text-[var(--info)] flex items-center gap-2">
-                        <span>🔗</span> Linked to Job: <span className="font-mono text-white opacity-70">{project.jobId.substring(0, 8)}...</span>
+                    <div className="mt-4 pt-3 border-t border-[var(--border)] border-dashed">
+                      <div className="text-xs text-[var(--info)] flex items-center gap-2 truncate">
+                        <span>🔗</span> <span className="font-mono opacity-80">{project.jobId}</span>
                       </div>
                     </div>
                   )}
@@ -406,8 +392,8 @@ function IntegrationCard({
 }) {
   return (
     <div className={`p-6 rounded border transition-all duration-300 card group ${enabled
-        ? 'hover:border-[var(--accent)] hover:-translate-y-1'
-        : 'opacity-50 grayscale'
+      ? 'hover:border-[var(--accent)] hover:-translate-y-1'
+      : 'opacity-50 grayscale'
       }`}>
       <div className="text-3xl mb-4 p-3 bg-[var(--panel-2)] rounded-full w-fit group-hover:bg-[var(--accent)]/20 transition-colors">{icon}</div>
       <h3 className={`font-bold mb-2 uppercase tracking-wide text-sm ${enabled ? 'text-white' : 'text-[var(--muted)]'
