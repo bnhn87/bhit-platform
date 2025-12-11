@@ -194,20 +194,94 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                     ) : (
                         <>
                             {roleItems.length > 0 && <div style={sectionLabelStyle}>Workspace</div>}
-                            {roleItems.map((item) => {
-                                const isActive = router.pathname === item.href || router.asPath === item.href;
-                                return (
-                                    <Link
-                                        key={item.id}
-                                        href={item.href}
-                                        style={isActive ? activeLinkStyle : linkBaseStyle}
-                                    >
-                                        {item.label}
-                                    </Link>
-                                );
-                            })}
 
-                            {/* Special Invoice Access */}
+                            {/* Render items grouped by Category */}
+                            {(() => {
+                                const categories = [
+                                    "Planning & Quoting",
+                                    "Scheduling & Resources",
+                                    "Execution & Delivery",
+                                    "Administrative"
+                                ];
+
+                                // Group items
+                                const groupedItems: Record<string, typeof roleItems> = {};
+                                const uncategorizedItems: typeof roleItems = [];
+
+                                roleItems.forEach(item => {
+                                    if (item.category) {
+                                        if (!groupedItems[item.category]) groupedItems[item.category] = [];
+                                        groupedItems[item.category].push(item);
+                                    } else {
+                                        uncategorizedItems.push(item);
+                                    }
+                                });
+
+                                return (
+                                    <>
+                                        {/* Render categorized groups */}
+                                        {categories.map(category => {
+                                            const items = groupedItems[category];
+                                            if (!items || items.length === 0) return null;
+
+                                            return (
+                                                <div key={category}>
+                                                    <div style={{
+                                                        fontSize: '11px',
+                                                        fontWeight: 700,
+                                                        color: '#f97316', // Orange for sub-headers
+                                                        padding: '16px 24px 8px',
+                                                        letterSpacing: '0.5px'
+                                                    }}>
+                                                        {category}
+                                                    </div>
+                                                    {items.map(item => {
+                                                        const isActive = router.pathname === item.href || router.asPath === item.href;
+                                                        return (
+                                                            <Link
+                                                                key={item.id}
+                                                                href={item.href}
+                                                                style={isActive ? activeLinkStyle : linkBaseStyle}
+                                                            >
+                                                                {item.label}
+                                                            </Link>
+                                                        );
+                                                    })}
+                                                </div>
+                                            );
+                                        })}
+
+                                        {/* Render any uncategorized items at the bottom */}
+                                        {uncategorizedItems.length > 0 && (
+                                            <div>
+                                                <div style={{
+                                                    fontSize: '11px',
+                                                    fontWeight: 700,
+                                                    color: '#f97316',
+                                                    padding: '16px 24px 8px',
+                                                    letterSpacing: '0.5px'
+                                                }}>
+                                                    Other
+                                                </div>
+                                                {uncategorizedItems.map(item => {
+                                                    const isActive = router.pathname === item.href || router.asPath === item.href;
+                                                    return (
+                                                        <Link
+                                                            key={item.id}
+                                                            href={item.href}
+                                                            style={isActive ? activeLinkStyle : linkBaseStyle}
+                                                        >
+                                                            {item.label}
+                                                        </Link>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
+                                    </>
+                                );
+                            })()}
+
+                            {/* Special Invoice Access (Legacy logic, possibly redundant now but keeping for safety) */}
                             {role !== 'director' && role !== 'admin' && hasInvoiceAccess && (
                                 <Link
                                     href="/invoicing/schedule"

@@ -17,10 +17,12 @@ export interface NavItem {
   enabled: boolean;
   description?: string;
   icon?: string;
+  category?: string; // New field for grouping
 }
 
 /**
  * CORE NAVIGATION (always visible for authenticated users)
+ * Category: "Main Hub" (Implied)
  */
 export const CORE_NAV_ITEMS: NavItem[] = [
   {
@@ -55,12 +57,9 @@ export const CORE_NAV_ITEMS: NavItem[] = [
 
 /**
  * ROLE-BASED NAVIGATION
- * To disable a link, set enabled: false
- * To remove a link permanently, delete or comment out the object
  */
 export const ROLE_BASED_NAV: Record<UserRole, NavItem[]> = {
   guest: [],
-
   installer: [],
 
   supervisor: [
@@ -69,317 +68,336 @@ export const ROLE_BASED_NAV: Record<UserRole, NavItem[]> = {
       label: "101. Progress",
       href: "/construction-progress",
       enabled: true,
-      description: "Construction progress tracking"
+      category: "Execution & Delivery"
     },
     {
       id: 102,
       label: "102. Labour Calendar",
       href: "/labour-calendar",
       enabled: true,
-      description: "Team scheduling and availability"
+      category: "Scheduling & Resources"
     },
     {
       id: 103,
       label: "103. Close Day",
       href: "/close-day",
       enabled: true,
-      description: "Daily closeout workflow"
+      category: "Execution & Delivery"
     },
   ],
 
   ops: [
-    {
-      id: 201,
-      label: "201. Progress",
-      href: "/construction-progress",
-      enabled: true,
-      description: "Construction progress tracking"
-    },
+    // Planning & Quoting
     {
       id: 202,
       label: "202. Smart Quote",
       href: "/smart-quote",
       enabled: true,
-      description: "AI-powered quote generation"
+      category: "Planning & Quoting"
     },
     {
       id: 202.1,
       label: "202a. SmartQuote v3",
       href: "/smartquote-v3",
       enabled: true,
-      description: "Next-gen AI quote system"
-    },
-    {
-      id: 203,
-      label: "203. SmartInvoice",
-      href: "/smart-invoice",
-      enabled: true,
-      description: "Intelligent invoice processing"
-    },
-    {
-      id: 204,
-      label: "204. Floor Planner",
-      href: "/floor-planner",
-      enabled: true,
-      description: "Floor planning and layout tool"
-    },
-    {
-      id: 205,
-      label: "205. Labour Calendar",
-      href: "/labour-calendar",
-      enabled: true,
-      description: "Team scheduling and availability"
-    },
-    {
-      id: 206,
-      label: "206. Labour Scheduler",
-      href: "/dashboard/labour-scheduler",
-      enabled: true,
-      description: "Advanced labour scheduling"
+      category: "Planning & Quoting"
     },
     {
       id: 207,
       label: "207. Planning",
       href: "/planning",
       enabled: true,
-      description: "Project planning dashboard"
+      category: "Planning & Quoting"
+    },
+
+    // Scheduling & Resources
+    {
+      id: 204,
+      label: "204. Floor Planner",
+      href: "/floor-planner",
+      enabled: true,
+      category: "Scheduling & Resources"
+    },
+    {
+      id: 205,
+      label: "205. Labour Calendar",
+      href: "/labour-calendar",
+      enabled: true,
+      category: "Scheduling & Resources"
+    },
+    {
+      id: 206,
+      label: "206. Labour Scheduler",
+      href: "/dashboard/labour-scheduler",
+      enabled: true,
+      category: "Scheduling & Resources"
+    },
+
+    // Execution & Delivery
+    {
+      id: 201,
+      label: "201. Progress",
+      href: "/construction-progress",
+      enabled: true,
+      category: "Execution & Delivery"
     },
     {
       id: 208,
       label: "208. Close Day",
       href: "/close-day",
       enabled: true,
-      description: "Daily closeout workflow"
+      category: "Execution & Delivery"
+    },
+
+    // Administrative
+    {
+      id: 203,
+      label: "203. SmartInvoice",
+      href: "/smart-invoice",
+      enabled: true,
+      category: "Administrative"
     },
     {
       id: 209,
       label: "209. Settings",
       href: "/settings",
       enabled: true,
-      description: "Application settings"
+      category: "Administrative"
     },
   ],
 
   director: [
+    // Planning & Quoting
     {
-      id: 301,
-      label: "301. Progress",
-      href: "/construction-progress",
+      id: 308,
+      label: "308. Planning",
+      href: "/planning",
       enabled: true,
-      description: "Construction progress tracking"
+      category: "Planning & Quoting"
     },
     {
       id: 302,
       label: "302. Smart Quote",
       href: "/smart-quote",
       enabled: true,
-      description: "AI-powered quote generation"
+      category: "Planning & Quoting"
     },
     {
       id: 302.1,
       label: "302a. SmartQuote v3",
       href: "/smartquote-v3",
       enabled: true,
-      description: "Next-gen AI quote system"
-    },
-    {
-      id: 303,
-      label: "303. SmartInvoice",
-      href: "/smart-invoice",
-      enabled: true,
-      description: "Intelligent invoice processing"
-    },
-    {
-      id: 304,
-      label: "304. Invoice Schedule",
-      href: "/invoicing/schedule",
-      enabled: true,
-      description: "Invoice scheduling and tracking"
-    },
-    {
-      id: 305,
-      label: "305. Floor Planner",
-      href: "/floor-planner",
-      enabled: true,
-      description: "Floor planning and layout tool"
-    },
-    {
-      id: 306,
-      label: "306. Labour Calendar",
-      href: "/labour-calendar",
-      enabled: true,
-      description: "Team scheduling and availability"
-    },
-    {
-      id: 307,
-      label: "307. Labour Scheduler",
-      href: "/dashboard/labour-scheduler",
-      enabled: true,
-      description: "Advanced labour scheduling"
-    },
-    {
-      id: 308,
-      label: "308. Planning",
-      href: "/planning",
-      enabled: true,
-      description: "Project planning dashboard"
-    },
-    {
-      id: 309,
-      label: "309. Close Day",
-      href: "/close-day",
-      enabled: true,
-      description: "Daily closeout workflow"
-    },
-    {
-      id: 310,
-      label: "310. Admin Panel",
-      href: "/admin-panel",
-      enabled: true,
-      description: "Administrative controls"
+      category: "Planning & Quoting"
     },
     {
       id: 311,
       label: "311. Costing",
       href: "/admin/costing",
       enabled: true,
-      description: "Cost analysis and management"
+      category: "Planning & Quoting"
+    },
+
+    // Scheduling & Resources
+    {
+      id: 306,
+      label: "306. Labour Calendar",
+      href: "/labour-calendar",
+      enabled: true,
+      category: "Scheduling & Resources"
+    },
+    {
+      id: 307,
+      label: "307. Labour Scheduler",
+      href: "/dashboard/labour-scheduler",
+      enabled: true,
+      category: "Scheduling & Resources"
+    },
+    {
+      id: 305,
+      label: "305. Floor Planner",
+      href: "/floor-planner",
+      enabled: true,
+      category: "Scheduling & Resources"
+    },
+
+    // Execution & Delivery
+    {
+      id: 301,
+      label: "301. Progress",
+      href: "/construction-progress",
+      enabled: true,
+      category: "Execution & Delivery"
+    },
+    {
+      id: 309,
+      label: "309. Close Day",
+      href: "/close-day",
+      enabled: true,
+      category: "Execution & Delivery"
+    },
+
+    // Administrative
+    {
+      id: 303,
+      label: "303. SmartInvoice",
+      href: "/smart-invoice",
+      enabled: true,
+      category: "Administrative"
+    },
+    {
+      id: 304,
+      label: "304. Invoice Schedule",
+      href: "/invoicing/schedule",
+      enabled: true,
+      category: "Administrative"
+    },
+    {
+      id: 310,
+      label: "310. Admin Panel",
+      href: "/admin-panel",
+      enabled: true,
+      category: "Administrative"
     },
     {
       id: 312,
       label: "312. Users",
       href: "/admin/user-management",
       enabled: true,
-      description: "User management"
-    },
-    {
-      id: 313,
-      label: "313. Feature Flags",
-      href: "/admin/feature-flags",
-      enabled: true,
-      description: "Toggle features on/off"
-    },
-    {
-      id: 314,
-      label: "314. Deleted Jobs",
-      href: "/jobs/deleted",
-      enabled: true,
-      description: "View and restore deleted jobs"
+      category: "Administrative"
     },
     {
       id: 315,
       label: "315. Settings",
       href: "/settings",
       enabled: true,
-      description: "Application settings"
+      category: "Administrative"
+    },
+    {
+      id: 313,
+      label: "313. Feature Flags",
+      href: "/admin/feature-flags",
+      enabled: true,
+      category: "Administrative"
+    },
+    {
+      id: 314,
+      label: "314. Deleted Jobs",
+      href: "/jobs/deleted",
+      enabled: true,
+      category: "Administrative"
     },
   ],
 
   admin: [
+    // Inherits mostly same structure as Director but different IDs in original file.
+    // Mapping Admin items to categories...
     {
-      id: 401,
-      label: "401. Progress",
-      href: "/construction-progress",
+      id: 407,
+      label: "407. Planning",
+      href: "/planning",
       enabled: true,
-      description: "Construction progress tracking"
+      category: "Planning & Quoting"
     },
     {
       id: 402,
       label: "402. Smart Quote",
       href: "/smart-quote",
       enabled: true,
-      description: "AI-powered quote generation"
+      category: "Planning & Quoting"
     },
     {
       id: 402.1,
       label: "402a. SmartQuote v3",
       href: "/smartquote-v3",
       enabled: true,
-      description: "Next-gen AI quote system"
-    },
-    {
-      id: 403,
-      label: "403. SmartInvoice",
-      href: "/smart-invoice",
-      enabled: true,
-      description: "Intelligent invoice processing"
-    },
-    {
-      id: 404,
-      label: "404. Floor Planner",
-      href: "/floor-planner",
-      enabled: true,
-      description: "Floor planning and layout tool"
-    },
-    {
-      id: 405,
-      label: "405. Labour Calendar",
-      href: "/labour-calendar",
-      enabled: true,
-      description: "Team scheduling and availability"
-    },
-    {
-      id: 406,
-      label: "406. Labour Scheduler",
-      href: "/dashboard/labour-scheduler",
-      enabled: true,
-      description: "Advanced labour scheduling"
-    },
-    {
-      id: 407,
-      label: "407. Planning",
-      href: "/planning",
-      enabled: true,
-      description: "Project planning dashboard"
-    },
-    {
-      id: 408,
-      label: "408. Close Day",
-      href: "/close-day",
-      enabled: true,
-      description: "Daily closeout workflow"
-    },
-    {
-      id: 409,
-      label: "409. Admin Panel",
-      href: "/admin-panel",
-      enabled: true,
-      description: "Administrative controls"
+      category: "Planning & Quoting"
     },
     {
       id: 410,
       label: "410. Costing",
       href: "/admin/costing",
       enabled: true,
-      description: "Cost analysis and management"
+      category: "Planning & Quoting"
+    },
+
+    {
+      id: 405,
+      label: "405. Labour Calendar",
+      href: "/labour-calendar",
+      enabled: true,
+      category: "Scheduling & Resources"
+    },
+    {
+      id: 406,
+      label: "406. Labour Scheduler",
+      href: "/dashboard/labour-scheduler",
+      enabled: true,
+      category: "Scheduling & Resources"
+    },
+    {
+      id: 404,
+      label: "404. Floor Planner",
+      href: "/floor-planner",
+      enabled: true,
+      category: "Scheduling & Resources"
+    },
+
+    {
+      id: 401,
+      label: "401. Progress",
+      href: "/construction-progress",
+      enabled: true,
+      category: "Execution & Delivery"
+    },
+    {
+      id: 408,
+      label: "408. Close Day",
+      href: "/close-day",
+      enabled: true,
+      category: "Execution & Delivery"
+    },
+
+    {
+      id: 403,
+      label: "403. SmartInvoice",
+      href: "/smart-invoice",
+      enabled: true,
+      category: "Administrative"
+    },
+    {
+      id: 409,
+      label: "409. Admin Panel",
+      href: "/admin-panel",
+      enabled: true,
+      category: "Administrative"
     },
     {
       id: 411,
       label: "411. Users",
       href: "/admin/user-management",
       enabled: true,
-      description: "User management"
-    },
-    {
-      id: 412,
-      label: "412. Feature Flags",
-      href: "/admin/feature-flags",
-      enabled: true,
-      description: "Toggle features on/off"
-    },
-    {
-      id: 413,
-      label: "413. Deleted Jobs",
-      href: "/jobs/deleted",
-      enabled: true,
-      description: "View and restore deleted jobs"
+      category: "Administrative"
     },
     {
       id: 414,
       label: "414. Settings",
       href: "/settings",
       enabled: true,
-      description: "Application settings"
+      category: "Administrative"
+    },
+    {
+      id: 412,
+      label: "412. Feature Flags",
+      href: "/admin/feature-flags",
+      enabled: true,
+      category: "Administrative"
+    },
+    {
+      id: 413,
+      label: "413. Deleted Jobs",
+      href: "/jobs/deleted",
+      enabled: true,
+      category: "Administrative"
     },
   ],
 };
