@@ -155,10 +155,6 @@ export default function Dashboard() {
     });
   }, [router]);
 
-  if (!isAuthenticated && typeof window !== 'undefined') {
-    return null; // Render nothing until authenticated
-  }
-
   // Fetch active jobs from database
   const fetchActiveJobs = React.useCallback(async () => {
     setLoading(true);
@@ -316,6 +312,9 @@ export default function Dashboard() {
     }
   };
 
+  if (!isAuthenticated && typeof window !== 'undefined') {
+    return null; // Render nothing until authenticated
+  }
 
   return (
     <div style={{
