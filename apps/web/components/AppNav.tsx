@@ -17,17 +17,17 @@ import { supabase } from "@/lib/supabaseClient";
 // iOS 29 - Clean & Modern with Shimmer
 // Note: top position is dynamic and set via inline style based on banner presence
 const bar: React.CSSProperties = {
-  position: "fixed",
-  // top is set dynamically via inline style
-  left: 0,
-  right: 0,
-  zIndex: 999, // Lower than TaskBanner (9999) so banner is always on top
+  position: "relative", // Changed from fixed to relative to stack in _app.tsx
+  // top: is set via sticky sidebar in _app.tsx now
+  width: "100%",
+  zIndex: 999,
   display: "flex",
   alignItems: "center",
   gap: 14,
   padding: "10px 16px",
   background: "#0b1118",
-  borderBottom: "1px solid #1d2733"
+  borderBottom: "1px solid #1d2733",
+  boxSizing: 'border-box'
 };
 
 const brand: React.CSSProperties = {
@@ -102,48 +102,8 @@ export default function AppNav() {
   const r = useRouter();
   const [bannerHeight, setBannerHeight] = React.useState(0);
 
-  // Detect banner height on mount and resize
-  React.useEffect(() => {
-    const updateBannerHeight = () => {
-      const banner = document.querySelector('.task-banner') as HTMLElement;
-      if (banner) {
-        const height = banner.offsetHeight;
-        setBannerHeight(height);
-      } else {
-        setBannerHeight(0);
-      }
-    };
-
-    // Aggressive multi-attempt detection
-    updateBannerHeight(); // Immediate
-    const timeout1 = setTimeout(updateBannerHeight, 50);   // 50ms
-    const timeout2 = setTimeout(updateBannerHeight, 100);  // 100ms
-    const timeout3 = setTimeout(updateBannerHeight, 250);  // 250ms
-    const timeout4 = setTimeout(updateBannerHeight, 500);  // 500ms
-
-    // Update on window resize
-    window.addEventListener('resize', updateBannerHeight);
-
-    // Use MutationObserver to detect banner changes
-    const observer = new MutationObserver(updateBannerHeight);
-    // Observer will be set up after a delay to ensure banner exists
-    const observerTimeout = setTimeout(() => {
-      const banner = document.querySelector('.task-banner');
-      if (banner) {
-        observer.observe(banner, { attributes: true, childList: true, subtree: true });
-      }
-    }, 100);
-
-    return () => {
-      clearTimeout(timeout1);
-      clearTimeout(timeout2);
-      clearTimeout(timeout3);
-      clearTimeout(timeout4);
-      clearTimeout(observerTimeout);
-      window.removeEventListener('resize', updateBannerHeight);
-      observer.disconnect();
-    };
-  }, []);
+  // Detect banner height on mount and resize - REMOVED: Now handled by CSS flex/sticky
+  // React.useEffect(() => { ... }, []);
 
   // Get navigation items from centralized config
   const coreItems = getCoreNavItems();
@@ -160,7 +120,7 @@ export default function AppNav() {
         @keyframes pulse { 0% {background-position: 0% 0%} 100% {background-position: -200% 0%} }
         @media (max-width: 900px) { main { padding-top: 8px } }
       `}</style>
-      <nav style={{ ...bar, top: `${bannerHeight}px` }}>
+      <nav style={bar}>
         <Link href="/dashboard" style={brand}>BHIT&nbsp;OS</Link>
 
         {/* LEFT: core links (configured in navigation.ts) */}
