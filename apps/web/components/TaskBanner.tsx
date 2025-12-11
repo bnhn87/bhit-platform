@@ -34,13 +34,23 @@ export default function TaskBanner() {
         return;
       }
 
+      // Helper for safe fetching
+      const safeFetch = async (url: string, options?: RequestInit) => {
+        const res = await fetch(url, options);
+        if (!res.ok) {
+          // Consume body to avoid leaks, but ignore it
+          await res.text().catch(() => { });
+          throw new Error(`API Error ${res.status} for ${url}`);
+        }
+        return res.json();
+      };
+
       // Check user permission
-      const permissionRes = await fetch('/api/task-banner/user-permissions', {
+      const permissionData = await safeFetch('/api/task-banner/user-permissions', {
         headers: { 'Authorization': `Bearer ${session.access_token}` }
       });
-      const permissionData = await permissionRes.json();
 
-      if (!permissionData.enabled) {
+      if (!permissionData?.enabled) {
         setIsEnabled(false);
         setLoading(false);
         return;
@@ -49,27 +59,33 @@ export default function TaskBanner() {
       setIsEnabled(true);
 
       // Fetch tasks
-      const tasksRes = await fetch('/api/task-banner/tasks', {
+      const tasksData = await safeFetch('/api/task-banner/tasks', {
         headers: { 'Authorization': `Bearer ${session.access_token}` }
       });
-      const tasksData = await tasksRes.json();
       setTasks(tasksData.tasks || []);
 
       // Fetch global settings
-      const settingsRes = await fetch('/api/task-banner/settings');
-      const settingsData = await settingsRes.json();
+      const settingsData = await safeFetch('/api/task-banner/settings');
       setSettings(settingsData.settings);
 
       // Fetch user preferences (overrides global settings)
-      const preferencesRes = await fetch('/api/task-banner/user-preferences', {
-        headers: { 'Authorization': `Bearer ${session.access_token}` }
-      });
-      const preferencesData = await preferencesRes.json();
-      setUserPreferences(preferencesData.preferences);
+      // This endpoint might not exist or might fail, so we wrap it individually
+      try {
+        const preferencesData = await safeFetch('/api/task-banner/user-preferences', {
+          headers: { 'Authorization': `Bearer ${session.access_token}` }
+        });
+        setUserPreferences(preferencesData.preferences);
+      } catch (prefError) {
+        // Ignore preference load errors, treat as null
+        console.warn('Failed to load preferences via banner:', prefError);
+        setUserPreferences(null);
+      }
 
       setLoading(false);
     } catch (error) {
       console.error('Error loading banner data:', error);
+      // Fallback to disabled state on error to prevent UI crash
+      setIsEnabled(false);
       setLoading(false);
     }
   }
@@ -424,7 +440,7 @@ function getBrightnessStyles(brightness: number) {
 }
 
 function getTaskIcon(type: string) {
-  switch(type) {
+  switch (type) {
     case 'invoicing': return <FileText size={18} />;
     case 'costs': return <DollarSign size={18} />;
     case 'calls': return <Phone size={18} />;

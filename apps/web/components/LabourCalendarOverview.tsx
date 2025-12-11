@@ -62,7 +62,8 @@ const LabourCalendarOverview: React.FC<LabourCalendarOverviewProps> = ({
       }
 
       // Filter out days with no allocation and add job reference
-      const activeAllocations = (data || []).filter((alloc: LabourAllocation & { jobs?: { reference?: string } }) =>
+      const rawData = Array.isArray(data) ? data : [];
+      const activeAllocations = rawData.filter((alloc: LabourAllocation & { jobs?: { reference?: string } }) =>
         alloc.van_crews > 0 || alloc.foot_installers > 0 || alloc.supervisors > 0
       ).map((alloc: LabourAllocation & { jobs?: { reference?: string } }): LabourAllocation => ({
         work_date: alloc.work_date,

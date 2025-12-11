@@ -80,11 +80,17 @@ export function useDashboardData() {
       if (!active) return;
 
       // Installs series → labels + 2 series
-      const instRows = (installs.data || []) as { d: string; installs: number; crews: number }[];
-      const installsX = instRows.map((r) => new Date(r.d).toLocaleDateString(undefined, { month: "short", day: "numeric" }));
+      const instRows = (Array.isArray(installs.data) ? installs.data : []) as { d: string; installs: number; crews: number }[];
+      const installsX = instRows.map((r) => {
+        try {
+          return r.d ? new Date(r.d).toLocaleDateString(undefined, { month: "short", day: "numeric" }) : "-";
+        } catch {
+          return "-";
+        }
+      });
       const installsSeries = [
-        { name: "Installs", data: instRows.map((r) => r.installs) },
-        { name: "Crews", data: instRows.map((r) => r.crews) }
+        { name: "Installs", data: instRows.map((r) => r.installs || 0) },
+        { name: "Crews", data: instRows.map((r) => r.crews || 0) }
       ];
 
 
