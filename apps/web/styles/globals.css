@@ -1,29 +1,28 @@
 /* BHIT UI Seed – BHi Concept Theme */
 :root {
   --bg: #0a0e17;
-  --panel: rgba(26, 32, 44, 0.8);
-  /* #1a202c */
-  --panel-2: rgba(43, 48, 60, 0.8);
-  --border: rgba(255, 255, 255, 0.1);
+  --panel: rgba(20, 25, 35, 0.4);
+  /* Much more transparent for glass effect */
+  --panel-2: rgba(30, 35, 45, 0.5);
+  --border: rgba(255, 255, 255, 0.12);
   --text: #ffffff;
-  --muted: #4a5568;
+  --muted: #94a3b8;
+  /* Lighter muted for better contrast on dark glass */
   --accent: #f38b00;
-  /* BHi Orange */
-  --accent-glow: rgba(243, 139, 0, 0.4);
+  /* BHi Safety Orange */
+  --accent-glow: rgba(243, 139, 0, 0.25);
   --info: #3182ce;
-  /* BHi Blue */
   --ok: #22c55e;
-  /* Green */
   --warn: #f59e0b;
-  /* Amber */
   --bad: #ef4444;
-  /* Red */
-  --glass: rgba(10, 14, 23, 0.85);
-  --glass-strong: rgba(10, 14, 23, 0.95);
-  --blur: 16px;
+  --glass: rgba(10, 14, 23, 0.6);
+  /* Increased transparency */
+  --glass-strong: rgba(10, 14, 23, 0.8);
+  --blur: 24px;
+  /* Stronger blur for premium glass feel */
   --radius: 4px;
-  /* Sharper concept look */
-  --shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  /* Deep ambient shadow */
 }
 
 * {
@@ -58,7 +57,8 @@ body {
 
 .card {
   background: var(--panel);
-  backdrop-filter: saturate(120%) blur(var(--blur));
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);

@@ -207,8 +207,9 @@ export default function TaskBanner() {
 
   // Calculate dynamic height based on font size - hugs the text
   const fontSize = displaySettings.font_size || 22;
-  const bannerHeight = Math.max(40, Math.round(fontSize * 2.3)); // Dynamic height with minimum
-  const verticalPadding = Math.max(8, Math.round(fontSize * 0.35)); // Proportional padding
+  // Use a slightly looser height calculation to prevent culling
+  const bannerHeight = Math.round(fontSize * 2.5);
+  const verticalPadding = Math.round(fontSize * 0.5);
 
   return (
     <>
@@ -236,21 +237,26 @@ export default function TaskBanner() {
       <div
         className="task-banner"
         style={{
-          position: 'relative', // Changed from fixed to relative to stack in _app.tsx
-          // top: 0, // No longer needed
-          // left: 0,
-          // right: 0,
+          position: 'relative',
           zIndex: 9999,
+          // Remove overflow: hidden on the Y axis if we want it to grow? 
+          // But marquee usually needs hidden. 
           overflow: 'hidden',
-          height: bannerHeight,
+          // Use minHeight instead of strict height to allow text to fit even if calc is slightly off
+          minHeight: bannerHeight,
+          // height: bannerHeight, // Let content dictate height + padding? 
+          // Actually for marquee we want fixed height to prevent jitter.
+          // We will stick to dynamic padding.
+
           paddingTop: verticalPadding,
           paddingBottom: verticalPadding,
           backgroundColor: displaySettings.show_background ? getBackgroundColor(displaySettings.background_color) : 'transparent',
-          borderBottom: displaySettings.show_background ? '2px solid rgba(255, 255, 255, 0.1)' : 'none',
-          boxShadow: displaySettings.show_background ? 'inset 0 0 30px rgba(0, 0, 0, 0.9)' : 'none',
+          borderBottom: displaySettings.show_background ? '2px solid rgba(243, 139, 0, 0.3)' : 'none', // Orange border accent
+          boxShadow: displaySettings.show_background ? '0 4px 30px rgba(0, 0, 0, 0.5)' : 'none',
           display: 'flex',
           alignItems: 'center',
-          width: '100%'
+          width: '100%',
+          flexShrink: 0, // CRITICAL: Prevent banner from being squashed in flex column
         }}
       >
         {/* LED matrix pixel grid */}
