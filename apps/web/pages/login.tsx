@@ -39,7 +39,10 @@ export default function LoginPage() {
     e.preventDefault();
     setBusy(true);
     setError(null);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password: password.trim()
+    });
     setBusy(false);
     if (error) { setError(error.message); return; }
     router.replace("/dashboard");
@@ -53,7 +56,7 @@ export default function LoginPage() {
 
     const redirectTo = `${getSiteUrl()}/reset-password`;
 
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
       redirectTo,
     });
 
