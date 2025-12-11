@@ -132,15 +132,32 @@ export default function Dashboard() {
 
   useEffect(() => {
     const updateTime = () => {
-      setCurrentTime(new Date().toLocaleTimeString("en-GB", { 
-        hour: "2-digit", 
-        minute: "2-digit" 
+      setCurrentTime(new Date().toLocaleTimeString("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit"
       }));
     };
     updateTime();
     const timer = setInterval(updateTime, 1000);
     return () => clearInterval(timer);
   }, []);
+
+  // Strict Client-Side Protection
+  // Even if middleware fails, this prevents rendering
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (!data.session) {
+        router.replace('/login');
+      } else {
+        setIsAuthenticated(true);
+      }
+    });
+  }, [router]);
+
+  if (!isAuthenticated && typeof window !== 'undefined') {
+    return null; // Render nothing until authenticated
+  }
 
   // Fetch active jobs from database
   const fetchActiveJobs = React.useCallback(async () => {
@@ -248,7 +265,7 @@ export default function Dashboard() {
         .in("status", ["planned", "in_progress", "snagging"])
         .order("created_at", { ascending: false })
         .limit(3);
-      
+
       if (updatedJobs) {
         setActiveJobs(updatedJobs);
       }
@@ -301,10 +318,10 @@ export default function Dashboard() {
 
 
   return (
-    <div style={{ 
-      padding: 24, 
-      width: '100%', 
-      maxWidth: '100vw', 
+    <div style={{
+      padding: 24,
+      width: '100%',
+      maxWidth: '100vw',
       overflowX: 'hidden',
       boxSizing: 'border-box'
     }}>
@@ -694,8 +711,8 @@ export default function Dashboard() {
               <div style={{ color: theme.colors.textSubtle }}>No active jobs found.</div>
             ) : (
               activeJobs.map((job) => (
-                <div 
-                  key={job.id} 
+                <div
+                  key={job.id}
                   style={{
                     padding: 12,
                     backgroundColor: theme.colors.panelAlt,
@@ -711,19 +728,19 @@ export default function Dashboard() {
                     flexWrap: "wrap"
                   }}>
                     <div style={{ minWidth: 0, flex: 1 }}>
-                      <Link href={`/job/${job.id}`} style={{ 
-                        fontWeight: 600, 
-                        fontSize: 14, 
-                        color: theme.colors.text, 
-                        textDecoration: 'none', 
-                        marginBottom: 4, 
+                      <Link href={`/job/${job.id}`} style={{
+                        fontWeight: 600,
+                        fontSize: 14,
+                        color: theme.colors.text,
+                        textDecoration: 'none',
+                        marginBottom: 4,
                         display: 'block',
                         wordBreak: 'break-word'
                       }}>
                         {job.reference ? `${job.reference} — ` : ""}{job.title}
                       </Link>
-                      <div style={{ 
-                        fontSize: 12, 
+                      <div style={{
+                        fontSize: 12,
                         color: theme.colors.textSubtle,
                         wordBreak: 'break-word'
                       }}>
@@ -785,8 +802,8 @@ export default function Dashboard() {
               justifyContent: 'space-between',
               marginBottom: 24
             }}>
-              <h3 style={{ 
-                margin: 0, 
+              <h3 style={{
+                margin: 0,
                 color: theme.colors.text,
                 fontSize: 'clamp(18px, 4vw, 24px)'
               }}>
@@ -809,9 +826,9 @@ export default function Dashboard() {
 
             <div style={{ display: 'grid', gap: 16 }}>
               <div>
-                <label style={{ 
-                  display: 'block', 
-                  marginBottom: 8, 
+                <label style={{
+                  display: 'block',
+                  marginBottom: 8,
                   color: theme.colors.text,
                   fontWeight: 600,
                   fontSize: 'clamp(12px, 2.5vw, 14px)'
@@ -821,7 +838,7 @@ export default function Dashboard() {
                 <input
                   type="date"
                   value={quickAddForm.date}
-                  onChange={(e) => setQuickAddForm({...quickAddForm, date: e.target.value})}
+                  onChange={(e) => setQuickAddForm({ ...quickAddForm, date: e.target.value })}
                   className="glassmorphic-dropdown glassmorphic-base"
                   required
                   style={{ border: 'none', color: theme.colors.text, fontSize: '14px' }}
@@ -829,9 +846,9 @@ export default function Dashboard() {
               </div>
 
               <div>
-                <label style={{ 
-                  display: 'block', 
-                  marginBottom: 8, 
+                <label style={{
+                  display: 'block',
+                  marginBottom: 8,
                   color: theme.colors.text,
                   fontWeight: 600,
                   fontSize: 'clamp(12px, 2.5vw, 14px)'
@@ -841,7 +858,7 @@ export default function Dashboard() {
                 <input
                   type="text"
                   value={quickAddForm.reference}
-                  onChange={(e) => setQuickAddForm({...quickAddForm, reference: e.target.value})}
+                  onChange={(e) => setQuickAddForm({ ...quickAddForm, reference: e.target.value })}
                   className="glassmorphic-dropdown glassmorphic-base"
                   placeholder="e.g., JOB-2024-001"
                   required
@@ -850,9 +867,9 @@ export default function Dashboard() {
               </div>
 
               <div>
-                <label style={{ 
-                  display: 'block', 
-                  marginBottom: 8, 
+                <label style={{
+                  display: 'block',
+                  marginBottom: 8,
                   color: theme.colors.text,
                   fontWeight: 600,
                   fontSize: 'clamp(12px, 2.5vw, 14px)'
@@ -862,7 +879,7 @@ export default function Dashboard() {
                 <input
                   type="text"
                   value={quickAddForm.projectManager}
-                  onChange={(e) => setQuickAddForm({...quickAddForm, projectManager: e.target.value})}
+                  onChange={(e) => setQuickAddForm({ ...quickAddForm, projectManager: e.target.value })}
                   className="glassmorphic-dropdown glassmorphic-base"
                   placeholder="Project Manager Name"
                   required
@@ -871,9 +888,9 @@ export default function Dashboard() {
               </div>
 
               <div>
-                <label style={{ 
-                  display: 'block', 
-                  marginBottom: 8, 
+                <label style={{
+                  display: 'block',
+                  marginBottom: 8,
                   color: theme.colors.text,
                   fontWeight: 600,
                   fontSize: 'clamp(12px, 2.5vw, 14px)'
@@ -882,14 +899,14 @@ export default function Dashboard() {
                 </label>
                 <textarea
                   value={quickAddForm.jobDetail}
-                  onChange={(e) => setQuickAddForm({...quickAddForm, jobDetail: e.target.value})}
+                  onChange={(e) => setQuickAddForm({ ...quickAddForm, jobDetail: e.target.value })}
                   className="glassmorphic-dropdown glassmorphic-base"
                   placeholder="Describe the job details..."
                   required
                   rows={3}
-                  style={{ 
-                    border: 'none', 
-                    color: theme.colors.text, 
+                  style={{
+                    border: 'none',
+                    color: theme.colors.text,
                     fontSize: '14px',
                     resize: 'vertical'
                   }}
@@ -897,9 +914,9 @@ export default function Dashboard() {
               </div>
 
               <div>
-                <label style={{ 
-                  display: 'block', 
-                  marginBottom: 8, 
+                <label style={{
+                  display: 'block',
+                  marginBottom: 8,
                   color: theme.colors.text,
                   fontWeight: 600,
                   fontSize: 'clamp(12px, 2.5vw, 14px)'
@@ -908,14 +925,14 @@ export default function Dashboard() {
                 </label>
                 <textarea
                   value={quickAddForm.address}
-                  onChange={(e) => setQuickAddForm({...quickAddForm, address: e.target.value})}
+                  onChange={(e) => setQuickAddForm({ ...quickAddForm, address: e.target.value })}
                   className="glassmorphic-dropdown glassmorphic-base"
                   placeholder="Full job address..."
                   required
                   rows={2}
-                  style={{ 
-                    border: 'none', 
-                    color: theme.colors.text, 
+                  style={{
+                    border: 'none',
+                    color: theme.colors.text,
                     fontSize: '14px',
                     resize: 'vertical'
                   }}
@@ -923,9 +940,9 @@ export default function Dashboard() {
               </div>
 
               <div>
-                <label style={{ 
-                  display: 'block', 
-                  marginBottom: 8, 
+                <label style={{
+                  display: 'block',
+                  marginBottom: 8,
                   color: theme.colors.text,
                   fontWeight: 600,
                   fontSize: 'clamp(12px, 2.5vw, 14px)'
@@ -935,11 +952,11 @@ export default function Dashboard() {
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={(e) => setQuickAddForm({...quickAddForm, image: e.target.files?.[0] || null})}
+                  onChange={(e) => setQuickAddForm({ ...quickAddForm, image: e.target.files?.[0] || null })}
                   className="glassmorphic-dropdown glassmorphic-base"
-                  style={{ 
-                    border: 'none', 
-                    color: theme.colors.text, 
+                  style={{
+                    border: 'none',
+                    color: theme.colors.text,
                     fontSize: '14px',
                     cursor: 'pointer'
                   }}
@@ -1049,7 +1066,7 @@ export default function Dashboard() {
                 <input
                   type="text"
                   value={taskForm.title}
-                  onChange={(e) => setTaskForm({...taskForm, title: e.target.value})}
+                  onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })}
                   className="glassmorphic-dropdown glassmorphic-base"
                   placeholder="e.g., REVIEW PENDING INVOICES"
                   required
@@ -1070,7 +1087,7 @@ export default function Dashboard() {
                   </label>
                   <select
                     value={taskForm.type}
-                    onChange={(e) => setTaskForm({...taskForm, type: e.target.value as any})}
+                    onChange={(e) => setTaskForm({ ...taskForm, type: e.target.value as any })}
                     className="glassmorphic-dropdown glassmorphic-base"
                     style={{ border: 'none', color: theme.colors.text, fontSize: '14px' }}
                   >
@@ -1093,7 +1110,7 @@ export default function Dashboard() {
                   </label>
                   <select
                     value={taskForm.frequency}
-                    onChange={(e) => setTaskForm({...taskForm, frequency: e.target.value as any})}
+                    onChange={(e) => setTaskForm({ ...taskForm, frequency: e.target.value as any })}
                     className="glassmorphic-dropdown glassmorphic-base"
                     style={{ border: 'none', color: theme.colors.text, fontSize: '14px' }}
                   >
@@ -1119,7 +1136,7 @@ export default function Dashboard() {
                 <input
                   type="datetime-local"
                   value={taskForm.due_date}
-                  onChange={(e) => setTaskForm({...taskForm, due_date: e.target.value})}
+                  onChange={(e) => setTaskForm({ ...taskForm, due_date: e.target.value })}
                   className="glassmorphic-dropdown glassmorphic-base"
                   required
                   style={{ border: 'none', color: theme.colors.text, fontSize: '14px' }}
@@ -1139,7 +1156,7 @@ export default function Dashboard() {
                 <input
                   type="text"
                   value={taskForm.navigation_route}
-                  onChange={(e) => setTaskForm({...taskForm, navigation_route: e.target.value})}
+                  onChange={(e) => setTaskForm({ ...taskForm, navigation_route: e.target.value })}
                   className="glassmorphic-dropdown glassmorphic-base"
                   placeholder="/invoicing/schedule"
                   style={{ border: 'none', color: theme.colors.text, fontSize: '14px' }}
@@ -1158,7 +1175,7 @@ export default function Dashboard() {
                 </label>
                 <select
                   value={taskForm.assigned_to}
-                  onChange={(e) => setTaskForm({...taskForm, assigned_to: e.target.value as any})}
+                  onChange={(e) => setTaskForm({ ...taskForm, assigned_to: e.target.value as any })}
                   className="glassmorphic-dropdown glassmorphic-base"
                   style={{ border: 'none', color: theme.colors.text, fontSize: '14px' }}
                 >

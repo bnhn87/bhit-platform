@@ -7,6 +7,31 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(req: NextRequest) {
+  /*
+   * STRICT AUTH ENFORCEMENT
+   * Check for Supabase session cookie. If missing, redirect to login.
+   * This prevents protected routes from even rendering.
+   */
+
+  // Basic check for session cookie existence (fast check)
+  // supabase-auth-token is the default cookie name prefix
+  const hasSession = req.cookies.getAll().some(cookie => cookie.name.includes('sb-') && cookie.name.includes('-auth-token'));
+
+  // If no session and trying to access protected route
+  // The matcher below handles the "protected route" definition
+  // We simply redirect everything that matches but isn't public
+
+  // Whitelist public paths that might be caught by the matcher
+  const publicPaths = ['/login', '/reset-password', '/api/auth', '/_next', '/static', '/favicon.ico'];
+  const isPublic = publicPaths.some(path => req.nextUrl.pathname.startsWith(path));
+
+  if (!hasSession && !isPublic) {
+    const redirectUrl = req.nextUrl.clone();
+    redirectUrl.pathname = '/login';
+    // redirectUrl.searchParams.set(`redirectedFrom`, req.nextUrl.pathname);
+    return NextResponse.redirect(redirectUrl);
+  }
+
   const res = NextResponse.next();
 
   // Add security headers to all responses
@@ -14,10 +39,6 @@ export function middleware(req: NextRequest) {
   res.headers.set('X-Frame-Options', 'DENY');
   res.headers.set('X-XSS-Protection', '1; mode=block');
   res.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-
-  // Check if this is an API route that requires authentication
-  // Most API routes now handle auth internally using requireAuth()
-  // This middleware adds additional security headers
 
   return res;
 }
