@@ -1,25 +1,28 @@
-/* BHIT UI Seed – BHi Industrial Theme */
+/* BHIT UI Seed – BHi Concept Theme */
 :root {
-  --bg: #050505;
-  --panel: rgba(20, 20, 20, 0.6);
-  --panel-2: rgba(30, 30, 30, 0.6);
+  --bg: #0a0e17;
+  --panel: rgba(26, 32, 44, 0.8);
+  /* #1a202c */
+  --panel-2: rgba(43, 48, 60, 0.8);
   --border: rgba(255, 255, 255, 0.1);
   --text: #ffffff;
-  --muted: #a1a1aa;
-  --accent: #f97316;
+  --muted: #4a5568;
+  --accent: #f38b00;
   /* BHi Orange */
-  --accent-glow: rgba(249, 115, 22, 0.4);
+  --accent-glow: rgba(243, 139, 0, 0.4);
+  --info: #3182ce;
+  /* BHi Blue */
   --ok: #22c55e;
   /* Green */
   --warn: #f59e0b;
   /* Amber */
   --bad: #ef4444;
   /* Red */
-  --glass: rgba(10, 10, 10, 0.7);
-  --glass-strong: rgba(20, 20, 20, 0.9);
+  --glass: rgba(10, 14, 23, 0.85);
+  --glass-strong: rgba(10, 14, 23, 0.95);
   --blur: 16px;
-  --radius: 8px;
-  /* Sharper industrial look */
+  --radius: 4px;
+  /* Sharper concept look */
   --shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
 }
 
@@ -37,9 +40,8 @@ body {
   margin: 0;
   font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   color: var(--text);
-  background: #050505;
-  /* Flat void background for high contrast */
-  /* subtle texture could be added here if desired */
+  background: #0a0e17;
+  /* BHi Concept Bg */
 }
 
 .container {
@@ -655,13 +657,13 @@ select:focus {
     linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%),
     rgba(255, 255, 255, 0.02);
 
-  border-color: rgba(249, 115, 22, 0.6);
+  border-color: rgba(243, 139, 0, 0.6);
 
   /* Premium Orange glow effect */
   box-shadow:
     inset 0 1px 1px rgba(255, 255, 255, 0.1),
-    0 0 0 2px rgba(249, 115, 22, 0.1),
-    0 0 24px rgba(249, 115, 22, 0.2),
+    0 0 0 2px rgba(243, 139, 0, 0.1),
+    0 0 24px rgba(243, 139, 0, 0.2),
     0 8px 16px rgba(0, 0, 0, 0.4);
 
   transform: translateY(-1px);
@@ -801,32 +803,33 @@ button:disabled {
 button.primary,
 button[type="submit"] {
   background:
-    linear-gradient(135deg, #fb923c 0%, #ea580c 100%),
+    linear-gradient(135deg, #f38b00 0%, #d97706 100%),
     var(--accent);
 
-  border: 1px solid rgba(251, 146, 60, 0.4);
+  border: 1px solid rgba(243, 139, 0, 0.4);
   color: #ffffff;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  border-radius: var(--radius);
 
   box-shadow:
     inset 0 1px 1px rgba(255, 255, 255, 0.3),
     0 4px 12px rgba(0, 0, 0, 0.3),
-    0 0 20px rgba(234, 88, 12, 0.4);
+    0 0 20px rgba(243, 139, 0, 0.3);
 }
 
 button.primary:hover:not(:disabled),
 button[type="submit"]:hover:not(:disabled) {
   background:
-    linear-gradient(135deg, #fdba74 0%, #f97316 100%),
-    #f97316;
+    linear-gradient(135deg, #fb923c 0%, #f38b00 100%),
+    #f38b00;
 
   box-shadow:
     inset 0 1px 1px rgba(255, 255, 255, 0.5),
-    0 0 0 2px rgba(251, 146, 60, 0.2),
+    0 0 0 2px rgba(243, 139, 0, 0.2),
     0 8px 16px rgba(0, 0, 0, 0.4),
-    0 0 40px rgba(249, 115, 22, 0.6);
+    0 0 40px rgba(243, 139, 0, 0.5);
 
   transform: translateY(-2px);
 }

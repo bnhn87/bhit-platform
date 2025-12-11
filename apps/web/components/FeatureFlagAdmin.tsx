@@ -107,56 +107,46 @@ export default function FeatureFlagAdmin() {
   }
 
   return (
-    <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6">
+    <div style={{ width: '100%' }}>
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-neutral-100 mb-2">Feature Flags</h2>
-        <p className="text-neutral-400">Manage feature rollouts and experimental functionality</p>
+        {/* Header moved to parent page */}
       </div>
 
       <div className="space-y-4">
         {flags.map((flag) => (
-          <div
-            key={flag.flag_key}
-            className="flex items-center justify-between p-4 bg-neutral-800 rounded-lg border border-neutral-700"
-          >
-            <div className="flex-1">
-              <div className="flex items-center gap-3">
-                <h3 className="text-lg font-semibold text-neutral-100">{flag.name}</h3>
-                <span className="px-2 py-1 text-xs font-medium bg-neutral-700 text-neutral-300 rounded-md">
-                  {flag.category}
-                </span>
-              </div>
-              {flag.description && (
-                <p className="text-sm text-neutral-400 mt-1">{flag.description}</p>
-              )}
-              <p className="text-xs text-neutral-500 mt-2">Key: {flag.flag_key}</p>
+          <div key={flag.flag_key} className="feature-section" style={{
+            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+            paddingBottom: '25px',
+            marginBottom: '25px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}>
+            <div className="feature-info" style={{ flex: 1 }}>
+              <h2 style={{
+                fontSize: '24px',
+                fontWeight: 900,
+                color: 'var(--accent)',
+                textTransform: 'uppercase',
+                margin: '0 0 10px 0'
+              }}>
+                {flag.name}
+              </h2>
+              <p style={{ fontSize: '16px', margin: '0 0 5px 0' }}>{flag.description || 'No description'}</p>
+              <p style={{ fontSize: '16px', color: 'var(--accent)', margin: 0 }}>Key: {flag.flag_key}</p>
             </div>
 
-            <div className="flex items-center gap-3">
-              <span className={`text-sm font-medium ${
-                flag.is_enabled ? 'text-green-400' : 'text-red-400'
-              }`}>
-                {flag.is_enabled ? 'Enabled' : 'Disabled'}
-              </span>
-
-              <button
-                onClick={() => handleToggle(flag.flag_key, flag.is_enabled)}
-                disabled={updating === flag.flag_key}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  flag.is_enabled ? 'bg-green-600' : 'bg-neutral-600'
-                } ${updating === flag.flag_key ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-              >
-                <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                    flag.is_enabled ? 'translate-x-6' : 'translate-x-1'
-                  }`}
+            <div className="toggle-container" style={{ display: 'flex', alignItems: 'center' }}>
+              <span style={{ marginRight: '15px', fontWeight: 700 }}>{flag.is_enabled ? 'Enabled' : 'Disabled'}</span>
+              <label className="switch">
+                <input
+                  type="checkbox"
+                  checked={flag.is_enabled}
+                  onChange={() => handleToggle(flag.flag_key, flag.is_enabled)}
+                  disabled={updating === flag.flag_key}
                 />
-                {updating === flag.flag_key && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-3 h-3 border-t border-white rounded-full animate-spin"></div>
-                  </div>
-                )}
-              </button>
+                <span className="slider"></span>
+              </label>
             </div>
           </div>
         ))}

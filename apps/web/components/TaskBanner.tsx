@@ -215,9 +215,9 @@ export default function TaskBanner() {
       <link href="https://fonts.googleapis.com/css2?family=Rubik+Pixels&display=swap" rel="stylesheet" />
 
       <style>{`
-        @keyframes scroll {
-          0% { transform: translateX(100%); }
-          100% { transform: translateX(-100%); }
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); } 
         }
 
         @keyframes led-pulse {
@@ -272,20 +272,38 @@ export default function TaskBanner() {
           }}
         />
 
-        {/* Scrolling tasks */}
-        <div style={{ display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
-          {[...displayTasks, ...displayTasks].map((task, index) => (
-            <TaskCard
-              key={`${task.id}-${index}`}
-              task={task}
-              index={index}
-              settings={displaySettings}
-              onClick={() => handleTaskClick(task)}
-              messageSpacing={displaySettings.message_spacing || 96}
-            />
-          ))}
-        </div>
-      </div >
+        {/* Scrolling tasks container */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          overflow: 'hidden',
+          width: '100%',
+          maskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)',
+          WebkitMaskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)'
+        }}>
+          {/* Animated Track */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            whiteSpace: 'nowrap',
+            animation: `marquee ${displaySettings.scroll_speed || 30}s linear infinite`,
+            paddingLeft: '100%' // Start off-screen
+          }}>
+            {/* Render tasks multiple times to ensure continuous flow */}
+            {[...displayTasks, ...displayTasks, ...displayTasks].map((task, index) => (
+              <TaskCard
+                key={`${task.id}-${index}`}
+                task={task}
+                index={index}
+                settings={displaySettings}
+                onClick={() => handleTaskClick(task)}
+                // Use a fixed extensive margin or the setting
+                messageSpacing={displaySettings.message_spacing || 96}
+              />
+            ))}
+          </div>
+        </div >
+      </div>
     </>
   );
 }
@@ -315,8 +333,6 @@ function TaskCard({
       style={{
         cursor: 'pointer',
         flexShrink: 0,
-        animation: `scroll ${settings.scroll_speed}s linear infinite`,
-        animationDelay: `${index * -5}s`,
         zIndex: task.brightness * 10,
         marginRight: `${messageSpacing}px`
       }}
