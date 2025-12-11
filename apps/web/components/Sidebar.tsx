@@ -82,15 +82,15 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         left: 0,
         bottom: 0,
         width: '280px',
-        backgroundColor: 'rgba(11, 17, 24, 0.95)', // Deep dark blue/black
-        backdropFilter: 'blur(16px)',
-        borderRight: '1px solid rgba(255, 255, 255, 0.1)',
+        backgroundColor: 'rgba(5, 5, 5, 0.95)', // BHi Deep Void Black
+        backdropFilter: 'blur(20px)',
+        borderRight: '1px solid rgba(255, 255, 255, 0.08)',
         zIndex: 9999,
         transform: isOpen ? 'translateX(0)' : 'translateX(-100%)',
         transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
         display: 'flex',
         flexDirection: 'column',
-        boxShadow: '4px 0 24px rgba(0,0,0,0.5)',
+        boxShadow: '4px 0 40px rgba(0,0,0,0.8)', // Heavier shadow
     };
 
     const headerStyle: React.CSSProperties = {
@@ -102,11 +102,13 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     };
 
     const brandStyle: React.CSSProperties = {
-        fontSize: '20px',
+        fontSize: '24px',
         fontWeight: 900,
-        letterSpacing: '1px',
-        color: '#e8eef6',
+        letterSpacing: '-1px',
+        color: '#ffffff', // BHi White
         textDecoration: 'none',
+        fontFamily: 'Inter, sans-serif',
+        textTransform: 'uppercase'
     };
 
     const linkBaseStyle: React.CSSProperties = {
@@ -115,28 +117,30 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         gap: '12px',
         padding: '12px 16px',
         margin: '4px 12px',
-        borderRadius: '12px',
-        color: '#94a3b8',
+        borderRadius: '8px', // Sharper corners
+        color: '#a3a3a3',
         textDecoration: 'none',
         fontSize: '14px',
-        fontWeight: 500,
+        fontWeight: 600,
         transition: 'all 0.2s ease',
+        border: '1px solid transparent',
     };
 
     const activeLinkStyle: React.CSSProperties = {
         ...linkBaseStyle,
-        backgroundColor: 'rgba(29, 145, 255, 0.1)',
-        color: '#3b82f6',
-        fontWeight: 600,
+        backgroundColor: 'rgba(249, 115, 22, 0.1)', // Orange tint
+        color: '#f97316', // BHi Orange
+        fontWeight: 700,
+        border: '1px solid rgba(249, 115, 22, 0.2)',
     };
 
     const sectionLabelStyle: React.CSSProperties = {
-        fontSize: '11px',
+        fontSize: '10px',
         textTransform: 'uppercase',
-        letterSpacing: '1.5px',
-        color: '#64748b',
-        padding: '24px 24px 8px',
-        fontWeight: 700,
+        letterSpacing: '2px',
+        color: '#525252',
+        padding: '32px 24px 12px',
+        fontWeight: 800,
     };
 
     return (
@@ -148,17 +152,20 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             <nav ref={sidebarRef} style={drawerStyle}>
                 <div style={headerStyle}>
                     <Link href="/dashboard" style={brandStyle}>
-                        BHIT OS
+                        <span style={{ color: '#f97316' }}>.</span>BHi
                     </Link>
                     <button
                         onClick={onClose}
                         style={{
                             background: 'transparent',
                             border: 'none',
-                            color: '#94a3b8',
+                            color: '#525252',
                             cursor: 'pointer',
                             padding: 4,
+                            transition: 'color 0.2s',
                         }}
+                        onMouseEnter={(e) => e.currentTarget.style.color = '#ffffff'}
+                        onMouseLeave={(e) => e.currentTarget.style.color = '#525252'}
                     >
                         <X size={24} />
                     </button>
@@ -166,7 +173,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
                 <div style={{ flex: 1, overflowY: 'auto', paddingBottom: 20 }}>
                     {/* CORE NAVIGATION */}
-                    <div style={sectionLabelStyle}>Menu</div>
+                    <div style={sectionLabelStyle}>Main Hub</div>
                     {coreItems.map((item) => {
                         const isActive = router.pathname === item.href ||
                             (item.href !== '/dashboard' && router.pathname.startsWith(item.href));
@@ -217,21 +224,25 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 <div style={{
                     padding: '16px',
                     borderTop: '1px solid rgba(255, 255, 255, 0.05)',
-                    backgroundColor: 'rgba(0,0,0,0.2)'
+                    backgroundColor: 'rgba(0,0,0,0.4)'
                 }}>
                     {!loading && (
                         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16, padding: '0 12px' }}>
                             <div style={{
-                                width: 32, height: 32, borderRadius: '50%',
-                                background: 'linear-gradient(135deg, #3b82f6, #06b6d4)',
+                                width: 36, height: 36, borderRadius: '6px', // Sharper avatar
+                                background: 'linear-gradient(135deg, #f97316, #ea580c)', // Orange Gradient
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                fontSize: 12, fontWeight: 'bold', color: 'white'
+                                fontSize: 14, fontWeight: '900', color: 'black',
+                                boxShadow: '0 4px 12px rgba(249, 115, 22, 0.3)'
                             }}>
                                 {role.charAt(0).toUpperCase()}
                             </div>
                             <div style={{ flex: 1 }}>
-                                <div style={{ fontSize: 14, color: '#e8eef6', fontWeight: 500, textTransform: 'capitalize' }}>
-                                    {role} Account
+                                <div style={{ fontSize: 14, color: '#ffffff', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                    {role}
+                                </div>
+                                <div style={{ fontSize: 10, color: '#737373', fontWeight: 500 }}>
+                                    Logged In
                                 </div>
                             </div>
                         </div>
