@@ -14,8 +14,11 @@ export function middleware(req: NextRequest) {
    */
 
   // Basic check for session cookie existence (fast check)
-  // supabase-auth-token is the default cookie name prefix
-  const hasSession = req.cookies.getAll().some(cookie => cookie.name.includes('sb-') && cookie.name.includes('-auth-token'));
+  // Check for session cookie (default 'sb-' or custom 'bhit-auth-token')
+  const hasSession = req.cookies.getAll().some(cookie =>
+    (cookie.name.includes('sb-') && cookie.name.includes('-auth-token')) ||
+    cookie.name === 'bhit-auth-token'
+  );
 
   // If no session and trying to access protected route
   // The matcher below handles the "protected route" definition
