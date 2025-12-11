@@ -6,6 +6,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
+import { getSiteUrl } from "../lib/utils/url";
 import { supabase } from "../lib/supabaseClient";
 
 export default function LoginPage() {
@@ -14,7 +15,9 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [signedIn, setSignedIn] = useState(false);
+  const [view, setView] = useState<'signin' | 'forgot_password'>('signin');
 
   useEffect(() => {
     let alive = true;
@@ -42,6 +45,26 @@ export default function LoginPage() {
     router.replace("/dashboard");
   }
 
+  async function handleResetPassword(e: React.FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    setError(null);
+    setSuccessMsg(null);
+
+    const redirectTo = `${getSiteUrl()}/reset-password`;
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo,
+    });
+
+    setBusy(false);
+    if (error) {
+      setError(error.message);
+    } else {
+      setSuccessMsg("Check your email for the password reset link.");
+    }
+  }
+
   async function handleSignOut() {
     await supabase.auth.signOut();
     setSignedIn(false);
@@ -66,23 +89,54 @@ export default function LoginPage() {
               </button>
             </div>
           </>
+        ) : view === 'forgot_password' ? (
+          <form onSubmit={handleResetPassword} style={{ display: "grid", gap: 12 }}>
+            <p style={{ margin: 0, fontSize: 14, color: "#9fb2c8" }}>
+              Enter your email to receive a password reset link.
+            </p>
+            <label style={{ display: "grid", gap: 6 }}>
+              <span>Email</span>
+              <input type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required
+                style={{ padding: "10px 12px", borderRadius: 8, border: "1px solid #1d2733", background: "#0b1117", color: "#e8eef6" }} />
+            </label>
+            {error && <div style={{ color: "#ef4444", fontSize: 14 }}>{error}</div>}
+            {successMsg && <div style={{ color: "#4ade80", fontSize: 14 }}>{successMsg}</div>}
+
+            <button type="submit" disabled={busy}
+              style={{
+                padding: "10px 12px", borderRadius: 8, border: "1px solid #1d2733",
+                background: busy ? "#223041" : "#3b82f6", color: "#fff", cursor: busy ? "not-allowed" : "pointer", fontWeight: 600
+              }}>
+              {busy ? "Sending..." : "Send Reset Link"}
+            </button>
+            <button type="button" onClick={() => { setView('signin'); setError(null); setSuccessMsg(null); }}
+              style={{ background: "transparent", border: "none", color: "#9fb2c8", cursor: "pointer", fontSize: 14, textDecoration: "underline" }}>
+              Back to Sign In
+            </button>
+          </form>
         ) : (
           <form onSubmit={handleSignIn} style={{ display: "grid", gap: 12 }}>
             <label style={{ display: "grid", gap: 6 }}>
               <span>Email</span>
               <input type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required
-                     style={{ padding: "10px 12px", borderRadius: 8, border: "1px solid #1d2733", background: "#0b1117", color: "#e8eef6" }} />
+                style={{ padding: "10px 12px", borderRadius: 8, border: "1px solid #1d2733", background: "#0b1117", color: "#e8eef6" }} />
             </label>
             <label style={{ display: "grid", gap: 6 }}>
               <span>Password</span>
               <input type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required
-                     style={{ padding: "10px 12px", borderRadius: 8, border: "1px solid #1d2733", background: "#0b1117", color: "#e8eef6" }} />
+                style={{ padding: "10px 12px", borderRadius: 8, border: "1px solid #1d2733", background: "#0b1117", color: "#e8eef6" }} />
             </label>
             {error && <div style={{ color: "#ef4444", fontSize: 14 }}>{error}</div>}
             <button type="submit" disabled={busy}
-                    style={{ padding: "10px 12px", borderRadius: 8, border: "1px solid #1d2733",
-                             background: busy ? "#223041" : "#3b82f6", color: "#fff", cursor: busy ? "not-allowed" : "pointer", fontWeight: 600 }}>
+              style={{
+                padding: "10px 12px", borderRadius: 8, border: "1px solid #1d2733",
+                background: busy ? "#223041" : "#3b82f6", color: "#fff", cursor: busy ? "not-allowed" : "pointer", fontWeight: 600
+              }}>
               {busy ? "Signing in..." : "Sign In"}
+            </button>
+            <button type="button" onClick={() => { setView('forgot_password'); setError(null); }}
+              style={{ background: "transparent", border: "none", color: "#9fb2c8", cursor: "pointer", fontSize: 14, textAlign: "right" }}>
+              Forgot Password?
             </button>
           </form>
         )}
