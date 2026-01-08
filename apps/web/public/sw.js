@@ -238,6 +238,11 @@ async function handlePageRequest(request) {
       cache.put(request, networkResponse.clone());
       return networkResponse;
     }
+
+    // If it's a 404 or redirect, return it (don't show offline page)
+    if (networkResponse.status === 404 || networkResponse.status === 307 || networkResponse.status === 308) {
+      return networkResponse;
+    }
   } catch (error) {
   }
 

@@ -3,6 +3,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useHasInvoiceAccess } from '@/hooks/useHasInvoiceAccess';
 import { useUserRole } from '@/hooks/useUserRole';
 import { supabase } from '@/lib/supabaseClient';
+import Link from 'next/link';
 
 interface InvoiceJob {
   id: string;
@@ -76,6 +77,7 @@ const InvoiceScheduleTab: React.FC = () => {
           title,
           client_name,
           status,
+          percent_complete,
           created_at,
           updated_at,
           quotes (
@@ -112,7 +114,7 @@ const InvoiceScheduleTab: React.FC = () => {
         const additions = (quote?.materials_cost || 0) + (quote?.misc_cost || 0);
 
         // Calculate progress based on status
-        let progress = 0;
+        let progress = job.percent_complete || 0;
         let invoiceStatus: 'ready' | 'partial' | 'none' = 'none';
 
         switch (job.status) {
@@ -121,11 +123,11 @@ const InvoiceScheduleTab: React.FC = () => {
             invoiceStatus = 'ready';
             break;
           case 'snagging':
-            progress = 95;
+            if (progress < 90) progress = 95; // Assume nearly done if snagging
             invoiceStatus = 'partial';
             break;
           case 'in_progress':
-            progress = Math.floor(Math.random() * 70) + 20; // Mock progress
+            // Use real progress
             invoiceStatus = 'partial';
             break;
           default:
@@ -1061,7 +1063,7 @@ const InvoiceScheduleTab: React.FC = () => {
             type="week"
             className="filter-input"
             value={filters.fromWeek}
-            onChange={(e) => setFilters({...filters, fromWeek: e.target.value})}
+            onChange={(e) => setFilters({ ...filters, fromWeek: e.target.value })}
           />
         </div>
         <div className="filter-group">
@@ -1070,7 +1072,7 @@ const InvoiceScheduleTab: React.FC = () => {
             type="week"
             className="filter-input"
             value={filters.toWeek}
-            onChange={(e) => setFilters({...filters, toWeek: e.target.value})}
+            onChange={(e) => setFilters({ ...filters, toWeek: e.target.value })}
           />
         </div>
         <div className="filter-group">
@@ -1078,7 +1080,7 @@ const InvoiceScheduleTab: React.FC = () => {
           <select
             className="filter-input"
             value={filters.statusFilter}
-            onChange={(e) => setFilters({...filters, statusFilter: e.target.value as typeof filters.statusFilter})}
+            onChange={(e) => setFilters({ ...filters, statusFilter: e.target.value as typeof filters.statusFilter })}
           >
             <option value="all">All Invoiceable</option>
             <option value="complete">Complete Only</option>
@@ -1094,7 +1096,7 @@ const InvoiceScheduleTab: React.FC = () => {
             className="filter-input"
             placeholder="Job ref, client..."
             value={filters.searchTerm}
-            onChange={(e) => setFilters({...filters, searchTerm: e.target.value})}
+            onChange={(e) => setFilters({ ...filters, searchTerm: e.target.value })}
           />
         </div>
         <button className="btn btn-primary" onClick={loadInvoiceData}>
@@ -1126,7 +1128,7 @@ const InvoiceScheduleTab: React.FC = () => {
           <table className="data-table">
             <thead>
               <tr>
-                <th style={{width: '40px'}}>
+                <th style={{ width: '40px' }}>
                   <div className="checkbox" onClick={handleSelectAll}>
                     {selectedJobs.size > 0 && '✓'}
                   </div>
@@ -1147,7 +1149,7 @@ const InvoiceScheduleTab: React.FC = () => {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={12} style={{textAlign: 'center', padding: '60px'}}>
+                  <td colSpan={12} style={{ textAlign: 'center', padding: '60px' }}>
                     <div className="loading-state">
                       <div className="loading-spinner"></div>
                       <div className="loading-text">Loading invoice data...</div>
@@ -1156,7 +1158,7 @@ const InvoiceScheduleTab: React.FC = () => {
                 </tr>
               ) : filteredJobs.length === 0 ? (
                 <tr>
-                  <td colSpan={12} style={{textAlign: 'center', padding: '60px', color: '#888'}}>
+                  <td colSpan={12} style={{ textAlign: 'center', padding: '60px', color: '#888' }}>
                     <div className="empty-state">
                       <div className="empty-icon">📊</div>
                       <div className="empty-text">No jobs found matching current filters</div>
@@ -1178,7 +1180,11 @@ const InvoiceScheduleTab: React.FC = () => {
                         {selectedJobs.has(job.id) && '✓'}
                       </div>
                     </td>
-                    <td><span className="job-ref">{job.reference}</span></td>
+                    <td>
+                      <Link href={`/jobs/${job.id}`} className="job-ref-link">
+                        <span className="job-ref">{job.reference}</span>
+                      </Link>
+                    </td>
                     <td>
                       <div className="location-cell">
                         <div className="location-name">{job.location}</div>
@@ -1201,7 +1207,7 @@ const InvoiceScheduleTab: React.FC = () => {
                         <div className="progress-bar">
                           <div
                             className="progress-fill"
-                            style={{width: `${job.progress}%`}}
+                            style={{ width: `${job.progress}%` }}
                           ></div>
                         </div>
                         <span className="progress-text">{job.progress}%</span>
@@ -1211,7 +1217,7 @@ const InvoiceScheduleTab: React.FC = () => {
                     <td className="invoiced">
                       <span className={`invoice-indicator ${job.invoice_status}`}>
                         {job.invoice_status === 'ready' ? '✓' :
-                         job.invoice_status === 'partial' ? '◐' : '○'}
+                          job.invoice_status === 'partial' ? '◐' : '○'}
                       </span>
                     </td>
                     <td className="actions">

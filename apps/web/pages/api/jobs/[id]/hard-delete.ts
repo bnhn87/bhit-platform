@@ -55,15 +55,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    // Check user permissions using admin client
-    const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(user.id);
+    // Check user role directly from profiles table
+    const { data: profile } = await supabaseAdmin
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
 
-    const permissions = authUser?.user?.user_metadata?.permissions;
-    const canHardDelete = permissions?.can_hard_delete_jobs === true;
+    const role = profile?.role;
+    // Strictly Director and General Manager only
+    const canHardDelete = ['director', 'general_manager'].includes(role);
 
     if (!canHardDelete) {
       return res.status(403).json({
-        error: 'Forbidden: You do not have permission to permanently delete jobs'
+        error: 'Forbidden: You do not have permission to permanently delete jobs. Only Directors can perform this action.'
       });
     }
 

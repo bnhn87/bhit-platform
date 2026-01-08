@@ -1,7 +1,7 @@
-export type UserRole = "installer" | "supervisor" | "ops" | "director" | "admin" | "guest";
+export type UserRole = "installer" | "supervisor" | "ops" | "director" | "admin" | "guest" | "manager" | "general_manager";
 
 export const canEdit = (role?: string): boolean => {
-  return role === "director" || role === "ops" || role === "admin";
+  return role === "director" || role === "ops" || role === "admin" || role === "general_manager";
 };
 
 // Labour calendar specific edit permission (Director only)

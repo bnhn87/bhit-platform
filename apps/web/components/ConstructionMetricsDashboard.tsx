@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import { supabase } from '@/lib/supabaseClient';
+import Link from 'next/link';
 
 interface MetricCard {
   title: string;
@@ -45,37 +46,34 @@ export default function ConstructionMetricsDashboard() {
       setLoading(true);
 
       // Load active jobs for summary
+      // Load active jobs for summary from the aggregated view
       const { data: jobsData, error: jobsError } = await supabase
-        .from('jobs')
-        .select('id, reference, location, status, quoted_amount, start_date, end_date')
-        .in('status', ['in_progress', 'active', 'started'])
-        .is('deleted_at', null)
-        .limit(10);
+        .from('v_construction_dashboard')
+        .select('*')
+        .order('risk_level', { ascending: false }) // Show high risk first
+        .limit(15);
 
       if (jobsError) throw jobsError;
 
       // Transform jobs data
       const transformedJobs: JobSummary[] = (jobsData || []).map(job => {
-        const completion = Math.floor(Math.random() * 100); // Mock completion data
         const daysRemaining = job.end_date
           ? Math.max(0, Math.ceil((new Date(job.end_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)))
           : 0;
-        const budgetUsed = Math.floor(Math.random() * (job.quoted_amount || 0));
-
-        let riskLevel: 'low' | 'medium' | 'high' = 'low';
-        if (completion < 50 && daysRemaining < 30) riskLevel = 'high';
-        else if (completion < 80 && daysRemaining < 14) riskLevel = 'medium';
 
         return {
           id: job.id,
           reference: job.reference || 'N/A',
           location: job.location || 'N/A',
           status: job.status,
-          completion,
+          // Use completion from view (aggregates Targets Page)
+          completion: job.completion || 0,
           daysRemaining,
-          budgetUsed,
-          totalBudget: job.quoted_amount || 0,
-          riskLevel
+          // Use budget/labour from view (aggregates Labour Page)
+          budgetUsed: 0, // Pending 'costs' table integration
+          totalBudget: job.total_budget || 0,
+          // Use risk level calculated by DB view
+          riskLevel: job.risk_level || 'low'
         };
       });
 
@@ -300,7 +298,7 @@ export default function ConstructionMetricsDashboard() {
                 }}>
                   <span style={{
                     color: metric.trend === 'up' ? '#22c55e' :
-                          metric.trend === 'down' ? '#ef4444' : '#9ca3af'
+                      metric.trend === 'down' ? '#ef4444' : '#9ca3af'
                   }}>
                     {metric.trend === 'up' ? '↗' : metric.trend === 'down' ? '↘' : '→'}
                   </span>
@@ -355,7 +353,9 @@ export default function ConstructionMetricsDashboard() {
                 <tr key={job.id} style={{ borderBottom: '1px solid #1d2733' }}>
                   <td style={{ padding: 16 }}>
                     <div style={{ fontWeight: 600, marginBottom: 2 }}>
-                      {job.reference}
+                      <Link href={`/jobs/${job.id}`} style={{ color: 'inherit', textDecoration: 'none', cursor: 'pointer' }}>
+                        {job.reference}
+                      </Link>
                     </div>
                     <div style={{ fontSize: 12, color: '#9ca3af' }}>
                       {job.location}
@@ -373,8 +373,8 @@ export default function ConstructionMetricsDashboard() {
                           width: `${job.completion}%`,
                           height: '100%',
                           background: job.completion > 75 ? '#22c55e' :
-                                   job.completion > 50 ? '#3b82f6' :
-                                   job.completion > 25 ? '#f59e0b' : '#ef4444',
+                            job.completion > 50 ? '#3b82f6' :
+                              job.completion > 25 ? '#f59e0b' : '#ef4444',
                           borderRadius: 3
                         }} />
                       </div>
@@ -394,7 +394,7 @@ export default function ConstructionMetricsDashboard() {
                   <td style={{ padding: 16 }}>
                     <div style={{
                       color: job.daysRemaining < 7 ? '#ef4444' :
-                             job.daysRemaining < 30 ? '#f59e0b' : '#22c55e',
+                        job.daysRemaining < 30 ? '#f59e0b' : '#22c55e',
                       fontWeight: 600,
                       marginBottom: 2
                     }}>

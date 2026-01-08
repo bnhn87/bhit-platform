@@ -56,7 +56,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
 
-    // Simple approach: just run the update and see if it works
+    // Verify user role directly from profiles table (SSOT)
+    const userId = await getUserIdFromRequest(req);
+
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const { data: profile } = await supabaseServiceRole
+      .from('profiles')
+      .select('role')
+      .eq('id', userId)
+      .single();
+
+    const role = profile?.role;
+    const canArchive = ['admin', 'director', 'ops', 'general_manager'].includes(role);
+
+    if (!canArchive) {
+      return res.status(403).json({ error: 'Forbidden: Insufficient permissions to archive jobs' });
+    }
+
+    // Run the soft delete (archive)
     const { data, error } = await supabaseServiceRole
       .from('jobs')
       .update({ deleted_at: new Date().toISOString() })
