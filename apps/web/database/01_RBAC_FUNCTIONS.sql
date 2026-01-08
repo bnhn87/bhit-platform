@@ -67,17 +67,32 @@ AS $$
   SELECT public.is_role(ARRAY['admin','ops','director','general_manager','manager']);
 $$;
 
+CREATE OR REPLACE FUNCTION public.can_select_job(_job_id uuid)
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY INVOKER
+AS $$
+  SELECT EXISTS (
+    SELECT 1
+    FROM public.jobs j
+    WHERE j.id = _job_id
+  );
+$$;
+
 -- Lock down EXECUTE (do NOT rely on defaults)
 REVOKE EXECUTE ON FUNCTION public.my_role() FROM PUBLIC;
 REVOKE EXECUTE ON FUNCTION public.is_role(text[]) FROM PUBLIC;
 REVOKE EXECUTE ON FUNCTION public.is_soft_delete_role() FROM PUBLIC;
 REVOKE EXECUTE ON FUNCTION public.is_hard_delete_role() FROM PUBLIC;
 REVOKE EXECUTE ON FUNCTION public.is_privileged_read() FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.can_select_job(uuid) FROM PUBLIC;
 
 GRANT EXECUTE ON FUNCTION public.my_role() TO authenticated;
 GRANT EXECUTE ON FUNCTION public.is_role(text[]) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.is_soft_delete_role() TO authenticated;
 GRANT EXECUTE ON FUNCTION public.is_hard_delete_role() TO authenticated;
 GRANT EXECUTE ON FUNCTION public.is_privileged_read() TO authenticated;
+GRANT EXECUTE ON FUNCTION public.can_select_job(uuid) TO authenticated;
 
 COMMIT;
