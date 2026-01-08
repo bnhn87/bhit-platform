@@ -1,10 +1,35 @@
 -- =============================================================================
--- 02_APPLY_RBAC_POLICIES.sql (FIXED + ENFORCED)
--- - Profiles: SELECT = self only (enforced even if other policies exist)
--- - Tables: privileged SELECT; UPDATE restricted to admin/ops/director/gm; DELETE restricted to director/gm
+-- RBAC + RLS ENFORCEMENT (FIXED) - SUPABASE
 -- =============================================================================
 BEGIN;
 
+-- -----------------------------------------------------------------------------
+-- Helpers required by the policies
+-- -----------------------------------------------------------------------------
+
+-- Returns caller's current role from profiles (bypasses RLS safely)
+CREATE OR REPLACE FUNCTION public.my_role()
+RETURNS text
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = public
+SET row_security = off
+AS $$
+  SELECT p.role
+  FROM public.profiles p
+  WHERE p.id = auth.uid()
+  LIMIT 1;
+$$;
+
+-- NOTE: assumes these exist already (from your 01_RBAC_FUNCTIONS.sql):
+-- public.is_role(text[])
+-- public.is_privileged_read()
+-- public.is_hard_delete_role()
+
+-- -----------------------------------------------------------------------------
+-- 02_APPLY_RBAC_POLICIES.sql (FIXED + ENFORCED)
+-- -----------------------------------------------------------------------------
 DO $$
 DECLARE
   tables text[] := ARRAY[
@@ -16,7 +41,6 @@ DECLARE
     'daily_progress_reports', 'quote_shares',
     'progress_photos', 'weather_impact_log', 'invoice_schedule_items',
     'job_invoice_history',
-    -- Added dependencies for views:
     'clients', 'job_costs', 'job_risk_flags', 'job_tasks', 'job_documents',
     'job_photos', 'job_notes', 'job_items', 'job_drawings'
   ];
@@ -32,7 +56,7 @@ BEGIN
       AND c.relname = t;
 
     IF relkind IN ('r','p') THEN
-      -- Ensure RLS is enabled
+      -- Ensure RLS enabled
       EXECUTE format('ALTER TABLE public.%I ENABLE ROW LEVEL SECURITY;', t);
 
       -- Drop only the policies we manage
@@ -57,7 +81,10 @@ BEGIN
         WITH CHECK (public.is_role(ARRAY['admin','ops','director','general_manager']));
       $pol$, t);
 
-      -- UPDATE: enforced restriction (restrictive) so other permissive policies can't widen access
+      -- UPDATE: ENFORCEMENT REMOVED TO ALLOW OWNERS TO UPDATE (e.g. Installers in Time Tracking)
+      -- To enable strict enforcement, we need a per-table "owner_id" check which varies by table.
+      -- For now, we rely on specific table policies for owner access.
+      /*
       EXECUTE format($pol$
         CREATE POLICY rls_enforce_privileged_update ON public.%I
         AS RESTRICTIVE
@@ -65,6 +92,7 @@ BEGIN
         USING (public.is_role(ARRAY['admin','ops','director','general_manager']))
         WITH CHECK (public.is_role(ARRAY['admin','ops','director','general_manager']));
       $pol$, t);
+      */
 
       -- DELETE: hard delete only (permissive)
       EXECUTE format($pol$
@@ -88,11 +116,10 @@ BEGIN
   END LOOP;
 
   -- ---------------------------------------------------------------------------
-  -- PROFILES: self-only SELECT (no directory / no privileged browsing)
-  -- Also blocks self-role escalation (role is immutable for self-updates)
+  -- PROFILES: self-only SELECT (enforced), self-update allowed but cannot change
+  -- role; privileged roles can update any profile; DELETE blocked
   -- ---------------------------------------------------------------------------
 
-  -- Ensure RLS enabled
   EXECUTE 'ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;';
 
   -- Drop policies we manage (plus legacy names)
@@ -113,7 +140,7 @@ BEGIN
     USING (id = auth.uid());
   $pol$;
 
-  -- SELECT: self-only (restrictive enforcement)
+  -- SELECT: self-only (restrictive)
   EXECUTE $pol$
     CREATE POLICY rls_profiles_select_self_enforce ON public.profiles
     AS RESTRICTIVE
@@ -122,8 +149,8 @@ BEGIN
   $pol$;
 
   -- UPDATE: self OR privileged (permissive)
-  -- - self: role must not change
-  -- - privileged: admin/ops/director/gm can update any profile (including role)
+  -- - self: cannot change role (new.role must equal current role)
+  -- - privileged: admin/ops/director/gm can update any profile including role
   EXECUTE $pol$
     CREATE POLICY rls_profiles_update ON public.profiles
     FOR UPDATE TO authenticated
@@ -137,7 +164,7 @@ BEGIN
     );
   $pol$;
 
-  -- UPDATE: enforce constraints even if other policies exist (restrictive)
+  -- UPDATE: enforce (restrictive)
   EXECUTE $pol$
     CREATE POLICY rls_profiles_update_enforce ON public.profiles
     AS RESTRICTIVE
@@ -152,7 +179,7 @@ BEGIN
     );
   $pol$;
 
-  -- DELETE: blocked operationally (restrictive FALSE) even if other permissive policies exist
+  -- DELETE: blocked (restrictive false)
   EXECUTE $pol$
     CREATE POLICY rls_profiles_delete_block ON public.profiles
     AS RESTRICTIVE
