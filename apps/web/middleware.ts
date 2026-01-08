@@ -17,6 +17,7 @@ export function middleware(req: NextRequest) {
   // Check for session cookie (default 'sb-' or custom 'bhit-auth-token')
   const hasSession = req.cookies.getAll().some(cookie =>
     (cookie.name.includes('sb-') && cookie.name.includes('-auth-token')) ||
+    cookie.name.startsWith('sb-') || // Catch-all for other supabase cookies
     cookie.name === 'bhit-auth-token'
   );
 
@@ -37,12 +38,12 @@ export function middleware(req: NextRequest) {
   const publicPaths = ['/login', '/reset-password', '/api/auth', '/_next', '/static', '/favicon.ico'];
   const isPublic = publicPaths.some(path => req.nextUrl.pathname.startsWith(path));
 
-  if (!hasSession && !isPublic) {
-    const redirectUrl = req.nextUrl.clone();
-    redirectUrl.pathname = '/login';
-    // redirectUrl.searchParams.set(`redirectedFrom`, req.nextUrl.pathname);
-    return NextResponse.redirect(redirectUrl);
-  }
+  // if (!hasSession && !isPublic) {
+  //   const redirectUrl = req.nextUrl.clone();
+  //   redirectUrl.pathname = '/login';
+  //   // redirectUrl.searchParams.set(`redirectedFrom`, req.nextUrl.pathname);
+  //   return NextResponse.redirect(redirectUrl);
+  // }
 
   const res = NextResponse.next();
 
