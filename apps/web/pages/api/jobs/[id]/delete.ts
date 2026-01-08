@@ -95,7 +95,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Log the deletion activity
-    const userId = await getUserIdFromRequest(req);
     const jobTitle = (data[0] as any)?.title || 'Unknown Job';
     await logJobDeleted(id, jobTitle, userId || undefined);
 
