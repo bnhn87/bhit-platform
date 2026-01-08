@@ -31,49 +31,52 @@ $$;
 -- 02_APPLY_RBAC_POLICIES.sql (FIXED + ENFORCED)
 -- -----------------------------------------------------------------------------
 DO $$
-DECLARE
-  tables text[] := ARRAY[
+  -- 1. OPERATIONAL TABLES (Visible to all authenticated users for READ, Restricted for WRITE)
+  operational_tables text[] := ARRAY[
     'jobs', 'projects', 'floor_components', 'floor_plans', 'queued_uploads', 'rams_docs',
     'snags', 'component_completions', 'job_pins', 'organizations',
-    'labour_time_tracking', 'labour_availability', 'labour_budget_tracking',
-    'project_labour_allocation', 'product_labour_rates', 'job_floorplans',
-    'daily_progress_log', 'construction_milestones', 'product_catalogue',
-    'daily_progress_reports', 'quote_shares',
-    'progress_photos', 'weather_impact_log', 'invoice_schedule_items',
-    'job_invoice_history',
-    'clients', 'job_costs', 'job_risk_flags', 'job_tasks', 'job_documents',
+    'labour_time_tracking', 'labour_availability', 'project_labour_allocation',
+    'job_floorplans', 'daily_progress_log', 'construction_milestones', 'product_catalogue',
+    'daily_progress_reports', 'progress_photos', 'weather_impact_log',
+    'clients', 'job_risk_flags', 'job_tasks', 'job_documents',
     'job_photos', 'job_notes', 'job_items', 'job_drawings'
   ];
+
+  -- 2. SENSITIVE TABLES (Restricted READ and WRITE)
+  sensitive_tables text[] := ARRAY[
+    'labour_budget_tracking', 'product_labour_rates', 'quote_shares',
+    'invoice_schedule_items', 'job_invoice_history', 'job_costs'
+  ];
+
   t text;
   relkind "char";
 BEGIN
-  FOREACH t IN ARRAY tables LOOP
-    SELECT c.relkind
-      INTO relkind
-    FROM pg_class c
-    JOIN pg_namespace n ON n.oid = c.relnamespace
-    WHERE n.nspname = 'public'
-      AND c.relname = t;
+
+  -- PROCESS OPERATIONAL TABLES
+  FOREACH t IN ARRAY operational_tables LOOP
+    SELECT c.relkind INTO relkind
+    FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
+    WHERE n.nspname = 'public' AND c.relname = t;
 
     IF relkind IN ('r','p') THEN
-      -- Ensure RLS enabled
       EXECUTE format('ALTER TABLE public.%I ENABLE ROW LEVEL SECURITY;', t);
-
-      -- Drop only the policies we manage
+      
+      -- Cleanup old policies
       EXECUTE format('DROP POLICY IF EXISTS rls_privileged_select ON public.%I;', t);
+      EXECUTE format('DROP POLICY IF EXISTS rls_operational_select ON public.%I;', t); -- New name
       EXECUTE format('DROP POLICY IF EXISTS rls_privileged_update ON public.%I;', t);
       EXECUTE format('DROP POLICY IF EXISTS rls_privileged_delete ON public.%I;', t);
       EXECUTE format('DROP POLICY IF EXISTS rls_enforce_privileged_update ON public.%I;', t);
       EXECUTE format('DROP POLICY IF EXISTS rls_enforce_privileged_delete ON public.%I;', t);
 
-      -- SELECT: privileged read
+      -- SELECT: Open to all authenticated (Installers need to see jobs/plans)
       EXECUTE format($pol$
-        CREATE POLICY rls_privileged_select ON public.%I
+        CREATE POLICY rls_operational_select ON public.%I
         FOR SELECT TO authenticated
-        USING (public.is_privileged_read());
+        USING (true);
       $pol$, t);
 
-      -- UPDATE: allowed roles (permissive)
+      -- UPDATE: Privileged (Permissive)
       EXECUTE format($pol$
         CREATE POLICY rls_privileged_update ON public.%I
         FOR UPDATE TO authenticated
@@ -81,27 +84,14 @@ BEGIN
         WITH CHECK (public.is_role(ARRAY['admin','ops','director','general_manager']));
       $pol$, t);
 
-      -- UPDATE: ENFORCEMENT REMOVED TO ALLOW OWNERS TO UPDATE (e.g. Installers in Time Tracking)
-      -- To enable strict enforcement, we need a per-table "owner_id" check which varies by table.
-      -- For now, we rely on specific table policies for owner access.
-      /*
-      EXECUTE format($pol$
-        CREATE POLICY rls_enforce_privileged_update ON public.%I
-        AS RESTRICTIVE
-        FOR UPDATE TO authenticated
-        USING (public.is_role(ARRAY['admin','ops','director','general_manager']))
-        WITH CHECK (public.is_role(ARRAY['admin','ops','director','general_manager']));
-      $pol$, t);
-      */
-
-      -- DELETE: hard delete only (permissive)
+      -- DELETE: Hard Delete Role (Permissive)
       EXECUTE format($pol$
         CREATE POLICY rls_privileged_delete ON public.%I
         FOR DELETE TO authenticated
         USING (public.is_hard_delete_role());
       $pol$, t);
 
-      -- DELETE: enforced restriction (restrictive)
+      -- DELETE: Hard Delete Role (Restrictive)
       EXECUTE format($pol$
         CREATE POLICY rls_enforce_privileged_delete ON public.%I
         AS RESTRICTIVE
@@ -109,9 +99,58 @@ BEGIN
         USING (public.is_hard_delete_role());
       $pol$, t);
 
-      RAISE NOTICE 'Applied RBAC policies to public.%', t;
-    ELSE
-      RAISE NOTICE 'Skipping public.% (missing or not a table)', t;
+      RAISE NOTICE 'Applied OPERATIONAL RBAC policies to public.%', t;
+    END IF;
+  END LOOP;
+
+  -- PROCESS SENSITIVE TABLES
+  FOREACH t IN ARRAY sensitive_tables LOOP
+    SELECT c.relkind INTO relkind
+    FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
+    WHERE n.nspname = 'public' AND c.relname = t;
+
+    IF relkind IN ('r','p') THEN
+      EXECUTE format('ALTER TABLE public.%I ENABLE ROW LEVEL SECURITY;', t);
+
+      -- Cleanup
+      EXECUTE format('DROP POLICY IF EXISTS rls_privileged_select ON public.%I;', t);
+      EXECUTE format('DROP POLICY IF EXISTS rls_operational_select ON public.%I;', t);
+      EXECUTE format('DROP POLICY IF EXISTS rls_privileged_update ON public.%I;', t);
+      EXECUTE format('DROP POLICY IF EXISTS rls_privileged_delete ON public.%I;', t);
+      EXECUTE format('DROP POLICY IF EXISTS rls_enforce_privileged_update ON public.%I;', t);
+      EXECUTE format('DROP POLICY IF EXISTS rls_enforce_privileged_delete ON public.%I;', t);
+
+      -- SELECT: Privileged Read Only
+      EXECUTE format($pol$
+        CREATE POLICY rls_privileged_select ON public.%I
+        FOR SELECT TO authenticated
+        USING (public.is_privileged_read());
+      $pol$, t);
+
+      -- UPDATE: Privileged
+      EXECUTE format($pol$
+        CREATE POLICY rls_privileged_update ON public.%I
+        FOR UPDATE TO authenticated
+        USING (public.is_role(ARRAY['admin','ops','director','general_manager']))
+        WITH CHECK (public.is_role(ARRAY['admin','ops','director','general_manager']));
+      $pol$, t);
+
+      -- DELETE: Hard Delete Role
+      EXECUTE format($pol$
+        CREATE POLICY rls_privileged_delete ON public.%I
+        FOR DELETE TO authenticated
+        USING (public.is_hard_delete_role());
+      $pol$, t);
+
+      -- DELETE: Hard Delete Role (Restrictive)
+      EXECUTE format($pol$
+        CREATE POLICY rls_enforce_privileged_delete ON public.%I
+        AS RESTRICTIVE
+        FOR DELETE TO authenticated
+        USING (public.is_hard_delete_role());
+      $pol$, t);
+
+      RAISE NOTICE 'Applied SENSITIVE RBAC policies to public.%', t;
     END IF;
   END LOOP;
 
