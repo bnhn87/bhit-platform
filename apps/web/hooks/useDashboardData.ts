@@ -26,18 +26,9 @@ function startOfTodayISO(): string {
 }
 
 // Mock data generators for fallback when tables don't exist
+// Mock data generation removed for production realism
 function generateMockInstallsData() {
-  const data = [];
-  for (let i = 0; i < 30; i++) {
-    const date = new Date();
-    date.setDate(date.getDate() - (29 - i));
-    data.push({
-      d: date.toISOString().split('T')[0],
-      installs: Math.floor(Math.random() * 50) + 20,
-      crews: Math.floor(Math.random() * 4) + 4
-    });
-  }
-  return data;
+  return [];
 }
 
 
@@ -70,10 +61,10 @@ export function useDashboardData() {
         (supabase.from("quotes") as any).select("*", { count: "exact", head: true }).eq("status", "pending").is("deleted_at", null).then((r: any) => r, () => ({ count: 0, error: null, data: [] })),
         (supabase.from("vehicles") as any).select("*", { count: "exact", head: true }).eq("in_use", true).is("deleted_at", null).then((r: any) => r, () => ({ count: 0, error: null })),
         (supabase.from("waste_loads") as any).select("*", { count: "exact", head: true }).gte("booked_at", todayISO).is("deleted_at", null).then((r: any) => r, () => ({ count: 0, error: null })),
-        (supabase.from("crew_usage") as any).select("d, utilization").order("d", { ascending: false }).limit(1).then((r: any) => r, () => ({ data: [{ utilization: 85 }], error: null })),
-        (supabase.from("buffer_usage") as any).select("d, percent").order("d", { ascending: false }).limit(1).then((r: any) => r, () => ({ data: [{ percent: 15 }], error: null })),
-        (supabase.from("finance_metrics") as any).select("d, net_margin").order("d", { ascending: false }).limit(1).then((r: any) => r, () => ({ data: [{ net_margin: 24800 }], error: null })),
-        (supabase.from("installs_by_day") as any).select("*").order("d", { ascending: true }).limit(30).then((r: any) => r, () => ({ data: generateMockInstallsData(), error: null })),
+        (supabase.from("crew_usage") as any).select("d, utilization").order("d", { ascending: false }).limit(1).then((r: any) => r, () => ({ data: [{ utilization: 0 }], error: null })),
+        (supabase.from("buffer_usage") as any).select("d, percent").order("d", { ascending: false }).limit(1).then((r: any) => r, () => ({ data: [{ percent: 0 }], error: null })),
+        (supabase.from("finance_metrics") as any).select("d, net_margin").order("d", { ascending: false }).limit(1).then((r: any) => r, () => ({ data: [{ net_margin: 0 }], error: null })),
+        (supabase.from("installs_by_day") as any).select("*").order("d", { ascending: true }).limit(30).then((r: any) => r, () => ({ data: [], error: null })),
         (supabase.from("activity_log") as any).select("id, text, occurred_at").order("occurred_at", { ascending: false }).limit(12).then((r: any) => r, () => ({ data: [], error: null })),
       ]);
 

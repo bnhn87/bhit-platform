@@ -24,6 +24,7 @@ export function TaskBannerSettingsComponent({ isDirector }: TaskBannerSettingsPr
     navigation_route: '/dashboard',
     assigned_to: 'all' as TaskAssignment
   });
+  const [creationError, setCreationError] = useState<string | null>(null);
 
   useEffect(() => {
     loadSettings();
@@ -135,9 +136,14 @@ export function TaskBannerSettingsComponent({ isDirector }: TaskBannerSettingsPr
   async function createTask() {
     if (!isDirector) return;
 
+    setCreationError(null);
+
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
+      if (!session) {
+        setCreationError('Session expired. Please log in again.');
+        return;
+      }
 
       const res = await fetch('/api/task-banner/tasks', {
         method: 'POST',
@@ -161,9 +167,13 @@ export function TaskBannerSettingsComponent({ isDirector }: TaskBannerSettingsPr
         loadTasks();
         setSaveMessage('Task created successfully!');
         setTimeout(() => setSaveMessage(null), 3000);
+      } else {
+        const errorData = await res.json();
+        setCreationError(errorData.error || 'Failed to create task');
       }
     } catch (error) {
       console.error('Error creating task:', error);
+      setCreationError(error instanceof Error ? error.message : 'Unknown network error');
     }
   }
 
@@ -187,9 +197,15 @@ export function TaskBannerSettingsComponent({ isDirector }: TaskBannerSettingsPr
         loadTasks();
         setSaveMessage('Task deleted');
         setTimeout(() => setSaveMessage(null), 3000);
+      } else {
+        const errorData = await res.json();
+        setSaveMessage(`Error deleting task: ${errorData.error || 'Unknown error'}`);
+        setTimeout(() => setSaveMessage(null), 5000);
       }
     } catch (error) {
       console.error('Error deleting task:', error);
+      setSaveMessage('Error deleting task: Network error');
+      setTimeout(() => setSaveMessage(null), 5000);
     }
   }
 
@@ -706,6 +722,21 @@ export function TaskBannerSettingsComponent({ isDirector }: TaskBannerSettingsPr
               <h3 style={{ fontSize: 22, fontWeight: 700, color: theme.colors.text, marginBottom: 24 }}>
                 Create New Task
               </h3>
+
+              {creationError && (
+                <div style={{
+                  padding: "12px 16px",
+                  marginBottom: 20,
+                  background: "rgba(239, 68, 68, 0.1)",
+                  border: "1px solid rgba(239, 68, 68, 0.2)",
+                  borderRadius: theme.radii.md,
+                  color: "#f87171",
+                  fontSize: 14,
+                  fontWeight: 500
+                }}>
+                  ⚠️ {creationError}
+                </div>
+              )}
 
               <div style={{ display: 'grid', gap: 16, marginBottom: 24 }}>
                 <div>

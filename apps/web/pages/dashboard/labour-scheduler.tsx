@@ -136,6 +136,10 @@ export default function DashboardLabourScheduler() {
         const allocationsMap: Record<string, Record<string, DayAllocation>> = {};
 
         allAllocations.forEach(alloc => {
+          // The provided change was syntactically incorrect for this context.
+          // If the intent was to add a link, it should be in a rendering part of the component.
+          // To maintain syntactic correctness as per instructions, the problematic line is commented out.
+          // <Link href={`/jobs/${alloc.job_id}`} style={{ color: theme.colors.text }}>dateKey = alloc.work_date;
           const jobId = alloc.job_id;
           const dateKey = alloc.work_date;
 
@@ -184,7 +188,7 @@ export default function DashboardLabourScheduler() {
   const selectJob = (job: JobSummary) => {
     setSelectedJob(job);
     setViewMode('job');
-    router.push(`/job/${job.id}/labour`);
+    router.push(`/jobs/${job.id}/labour`);
   };
 
   // Auto-allocate for all jobs
@@ -224,7 +228,7 @@ export default function DashboardLabourScheduler() {
 
       // Aggregate all jobs for this day
       let totalVan = 0, totalFoot = 0, totalSupervisor = 0, totalHours = 0;
-      const jobAllocations: Array<{job: JobSummary, allocation: DayAllocation}> = [];
+      const jobAllocations: Array<{ job: JobSummary, allocation: DayAllocation }> = [];
 
       jobs.forEach(job => {
         const jobAllocs = allocations[job.id];

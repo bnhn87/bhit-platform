@@ -657,7 +657,7 @@ const App: React.FC = () => {
             displaySuccessMessage(`Job "${jobTitle}" created successfully! Job ID: ${result.jobId}`);
 
             // Optionally redirect to the job page
-            window.open(`/job/${result.jobId}`, '_blank');
+            window.open(`/jobs/${result.jobId}`, '_blank');
 
         } catch (error: unknown) {
             const errorMessage = error instanceof Error ? error.message : 'Failed to create job';

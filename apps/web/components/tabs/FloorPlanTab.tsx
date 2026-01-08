@@ -11,18 +11,18 @@ export default function FloorPlanTab({ jobId, canManage: _canManage }: { jobId: 
   useEffect(() => {
     const checkFloorPlan = async () => {
       if (!jobId) return;
-      
+
       try {
         const { data, error } = await supabase
           .from('job_floorplans')
           .select('id')
           .eq('job_id', jobId)
           .single();
-          
+
         if (error && error.code !== 'PGRST116') { // PGRST116 is "no rows" error
           console.error('Error checking floor plan:', error);
         }
-        
+
         setHasFloorPlan(!!data);
       } catch (error: unknown) {
         console.error('Error checking floor plan:', error);
@@ -30,13 +30,13 @@ export default function FloorPlanTab({ jobId, canManage: _canManage }: { jobId: 
         setLoading(false);
       }
     };
-    
+
     checkFloorPlan();
   }, [jobId]);
 
   const openJobFloorPlanner = () => {
     // Open job-specific floor planner in a pop-out window
-    const url = `/job/${jobId}/floorplan`;
+    const url = `/jobs/${jobId}/floorplan`;
     window.open(url, 'floor-planner-job', 'width=1400,height=900,scrollbars=yes,resizable=yes,toolbar=no,menubar=no');
   };
 
@@ -48,23 +48,23 @@ export default function FloorPlanTab({ jobId, canManage: _canManage }: { jobId: 
 
   return (
     <div style={{ display: "grid", gap: 16 }}>
-      <div style={{ 
-        padding: 20, 
-        background: theme.colors.panelAlt, 
-        borderRadius: 8, 
-        border: `1px solid ${theme.colors.border}` 
+      <div style={{
+        padding: 20,
+        background: theme.colors.panelAlt,
+        borderRadius: 8,
+        border: `1px solid ${theme.colors.border}`
       }}>
         <h3 style={{ margin: "0 0 16px 0", color: theme.colors.text, fontSize: 18 }}>
           🏗️ Floor Plan & Installation Planner
         </h3>
         <p style={{ margin: "0 0 20px 0", color: theme.colors.textSubtle, fontSize: 14, lineHeight: 1.5 }}>
-          Create interactive floor plans with AI-powered furniture placement. 
-          Import work orders, drag and drop furniture items, and automatically 
+          Create interactive floor plans with AI-powered furniture placement.
+          Import work orders, drag and drop furniture items, and automatically
           generate installation tasks for your team.
         </p>
 
         <div style={{
-          display: "grid", 
+          display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
           gap: 16,
           marginBottom: 20
@@ -192,10 +192,10 @@ export default function FloorPlanTab({ jobId, canManage: _canManage }: { jobId: 
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <span>ℹ️</span>
             <div>
-              Floor planners open in pop-out windows for the best experience. 
-              {loading ? " Checking for existing plans..." : 
-                hasFloorPlan ? " This job already has floor plan data." : 
-                " No floor plan data found for this job yet."
+              Floor planners open in pop-out windows for the best experience.
+              {loading ? " Checking for existing plans..." :
+                hasFloorPlan ? " This job already has floor plan data." :
+                  " No floor plan data found for this job yet."
               }
             </div>
           </div>

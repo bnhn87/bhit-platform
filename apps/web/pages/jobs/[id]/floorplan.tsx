@@ -28,11 +28,11 @@ export default function FloorPlanPage() {
 
   const activePath = router.asPath;
   const tabs = [
-    { label: "Overview", href: `/job/${jobId}`, active: activePath === `/job/${jobId}` },
-    { label: "Floor Plan", href: `/job/${jobId}/floorplan`, active: true },
-    { label: "Tasks", href: `/job/${jobId}#tasks`, active: false },
-    { label: "Documents", href: `/job/${jobId}/documents`, active: false },
-    { label: "Products", href: `/job/${jobId}/products`, active: false },
+    { label: "Overview", href: `/jobs/${jobId}`, active: activePath === `/jobs/${jobId}` },
+    { label: "Floor Plan", href: `/jobs/${jobId}/floorplan`, active: true },
+    { label: "Tasks", href: `/jobs/${jobId}#tasks`, active: false },
+    { label: "Documents", href: `/jobs/${jobId}/documents`, active: false },
+    { label: "Products", href: `/jobs/${jobId}/products`, active: false },
   ];
 
   const tabLink = (active: boolean): React.CSSProperties => ({
@@ -61,7 +61,7 @@ export default function FloorPlanPage() {
       <Head>
         <title>Floor Plan - Job {jobId} | BHIT Work OS</title>
       </Head>
-      
+
       <div style={{
         minHeight: '100vh',
         background: theme.colors.bg,
@@ -78,7 +78,7 @@ export default function FloorPlanPage() {
           <Link href="/jobs" style={btn(false)}>Back to Jobs</Link>
           <button
             onClick={async () => {
-              const url = `${window.location.origin}/job/${jobId}/floorplan`;
+              const url = `${window.location.origin}/jobs/${jobId}/floorplan`;
               try {
                 const nav = navigator as unknown as { share?: (data: { title: string; url: string }) => Promise<void>; clipboard: { writeText: (text: string) => Promise<void> } };
                 if ('share' in navigator && nav.share) {
@@ -106,7 +106,7 @@ export default function FloorPlanPage() {
           borderRadius: 8,
           padding: 16
         }}>
-          <JobFloorPlanner 
+          <JobFloorPlanner
             jobId={jobId}
             canManage={canManage}
             onGenerateTasks={(tasks) => {

@@ -14,7 +14,7 @@ type JobStatus = "planned" | "in_progress" | "delayed" | "on_hold" | "completed"
 // Legacy database status mapping (same as jobs page)
 const _LEGACY_STATUS_MAP: Record<string, JobStatus> = {
   'planned': 'planned',
-  'in_progress': 'in_progress', 
+  'in_progress': 'in_progress',
   'installing': 'in_progress', // Legacy mapping
   'snagging': 'delayed', // Map snagging to delayed
   'completed': 'completed',
@@ -92,7 +92,7 @@ export default function Today() {
   }, []);
 
   return (<>
-<div style={{ display: "grid", gap: 16 }}>
+    <div style={{ display: "grid", gap: 16 }}>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 16 }}>
         <Kpi title="Planned" value={counts.planned} accent />
         <Kpi title="In Progress" value={counts.in_progress} />
@@ -136,19 +136,20 @@ export default function Today() {
                     borderRadius: 10,
                   }}
                 >
-                  <Link href={`/job/${j.id}`} style={{ fontWeight: 600, color: theme.colors.text, textDecoration: 'none' }}>
+                  <Link
+                    href={`/jobs/${j.id}`} style={{ fontWeight: 600, color: theme.colors.text, textDecoration: 'none' }}>
                     {j.reference ? `${j.reference} — ` : ""}
                     {j.title}
                   </Link>
                   <div style={{ color: theme.colors.textSubtle }}>{j.client_name ?? "-"}</div>
                   <div style={{ justifySelf: "end" }}>
-                    <StatusPill 
+                    <StatusPill
                       status={j.status}
                       jobId={j.id}
                       canManage={true}
                       onStatusChange={(newStatus) => {
                         // Update local state with new status
-                        setNextJobs(prev => prev.map(job => 
+                        setNextJobs(prev => prev.map(job =>
                           job.id === j.id ? { ...job, status: newStatus } : job
                         ));
                       }}
@@ -200,13 +201,13 @@ export default function Today() {
         </div>
       </div>
     </div>
-  
-</>);
+
+  </>);
 }
 
 function Kpi({ title, value, accent = false }: { title: string; value: number | string; accent?: boolean }) {
   return (<>
-<div style={{ padding: 16 }}>
+    <div style={{ padding: 16 }}>
       <div style={{ fontSize: 12, color: theme.colors.textSubtle, marginBottom: 6 }}>
         {title.toUpperCase()}
       </div>
@@ -214,6 +215,6 @@ function Kpi({ title, value, accent = false }: { title: string; value: number | 
         {value}
       </div>
     </div>
-  
-</>);
+
+  </>);
 }

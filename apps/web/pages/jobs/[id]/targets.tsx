@@ -63,7 +63,7 @@ export default function BuildTargetsPage() {
   const router = useRouter();
   const { id } = router.query;
   const { role, loading: roleLoading } = useUserRole();
-  
+
   // State management
   const [jobInfo, setJobInfo] = useState<JobBasicInfo | null>(null);
   const [targets, setTargets] = useState<BuildTarget[]>([]);
@@ -72,7 +72,7 @@ export default function BuildTargetsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [_isAddingCompletion, setIsAddingCompletion] = useState<string | null>(null);
-  
+
   const [newCompletion, setNewCompletion] = useState<NewCompletion>({
     target_id: '',
     work_date: new Date().toISOString().split('T')[0],
@@ -85,7 +85,7 @@ export default function BuildTargetsPage() {
   // Load job data
   const loadJobData = useCallback(async () => {
     if (!id) return;
-    
+
     try {
       setLoading(true);
       setError(null);
@@ -117,7 +117,7 @@ export default function BuildTargetsPage() {
         .eq('job_id', id);
 
       if (completionError) throw completionError;
-      
+
       // Convert to record for easy lookup
       const completionRecord: Record<string, CompletionSummary> = {};
       (completionData || []).forEach(comp => {
@@ -141,7 +141,7 @@ export default function BuildTargetsPage() {
         .order('work_date', { ascending: false });
 
       if (dailyError) throw dailyError;
-      
+
       // Group by target_id
       const dailyRecord: Record<string, DailyCompletion[]> = {};
       (dailyData || []).forEach(daily => {
@@ -218,8 +218,8 @@ export default function BuildTargetsPage() {
 
   if (roleLoading || loading) {
     return (
-      <div style={{ 
-        minHeight: '100vh', 
+      <div style={{
+        minHeight: '100vh',
         background: theme.colors.bg,
         display: 'flex',
         alignItems: 'center',
@@ -232,12 +232,12 @@ export default function BuildTargetsPage() {
 
   if (error) {
     return (
-      <div style={{ 
-        minHeight: '100vh', 
+      <div style={{
+        minHeight: '100vh',
         background: theme.colors.bg,
         padding: '2rem'
       }}>
-        <div style={{ 
+        <div style={{
           color: theme.colors.danger,
           backgroundColor: theme.colors.panel,
           padding: '1rem',
@@ -246,7 +246,7 @@ export default function BuildTargetsPage() {
         }}>
           <h2>Error Loading Build Targets</h2>
           <p>{error}</p>
-          <button 
+          <button
             onClick={loadJobData}
             style={{
               padding: '8px 16px',
@@ -265,7 +265,7 @@ export default function BuildTargetsPage() {
   }
 
   // Calculate overall progress
-  const overallProgress = targets.length > 0 
+  const overallProgress = targets.length > 0
     ? targets.reduce((sum, target) => sum + getCompletionPercentage(target.id), 0) / targets.length
     : 0;
 
@@ -278,7 +278,7 @@ export default function BuildTargetsPage() {
         <title>{jobInfo ? `Build Targets - ${jobInfo.reference} • BHIT Work OS` : "Build Targets • BHIT Work OS"}</title>
       </Head>
 
-      <main style={{ 
+      <main style={{
         minHeight: '100vh',
         background: theme.colors.bg,
         color: theme.colors.text,
@@ -296,7 +296,7 @@ export default function BuildTargetsPage() {
             gap: '1rem',
             marginBottom: '1rem'
           }}>
-            <Link href={`/job/${id}`} style={{
+            <Link href={`/jobs/${id}`} style={{
               color: theme.colors.textSubtle,
               textDecoration: 'none',
               fontSize: '14px'
@@ -304,7 +304,7 @@ export default function BuildTargetsPage() {
               ← Back to Job
             </Link>
           </div>
-          
+
           {jobInfo && (
             <div style={{
               backgroundColor: theme.colors.panel,
@@ -313,15 +313,15 @@ export default function BuildTargetsPage() {
               padding: '1.5rem',
               boxShadow: theme.shadow
             }}>
-              <h1 style={{ 
-                margin: 0, 
+              <h1 style={{
+                margin: 0,
                 marginBottom: '0.5rem',
                 fontSize: '1.75rem',
-                fontWeight: 700 
+                fontWeight: 700
               }}>
                 Build Targets
               </h1>
-              <div style={{ 
+              <div style={{
                 color: theme.colors.textSubtle,
                 fontSize: '1rem'
               }}>
@@ -340,7 +340,7 @@ export default function BuildTargetsPage() {
         }}>
           {/* Left Sidebar - Overall Progress */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            
+
             {/* Overall Progress Card */}
             <div style={{
               backgroundColor: theme.colors.panel,
@@ -349,19 +349,19 @@ export default function BuildTargetsPage() {
               padding: '1.5rem',
               boxShadow: theme.shadow
             }}>
-              <h2 style={{ 
-                margin: 0, 
+              <h2 style={{
+                margin: 0,
                 marginBottom: '1rem',
                 fontSize: '1.25rem',
-                fontWeight: 600 
+                fontWeight: 600
               }}>
                 Overall Progress
               </h2>
-              
+
               {/* Circular Progress */}
-              <div style={{ 
-                display: 'flex', 
-                flexDirection: 'column', 
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
                 alignItems: 'center',
                 marginBottom: '1rem'
               }}>
@@ -391,50 +391,50 @@ export default function BuildTargetsPage() {
                   </div>
                 </div>
               </div>
-              
+
               {/* Stats */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <div style={{ 
-                  display: 'flex', 
+                <div style={{
+                  display: 'flex',
                   justifyContent: 'space-between',
-                  alignItems: 'center' 
+                  alignItems: 'center'
                 }}>
                   <span style={{ color: theme.colors.textSubtle }}>Total Products</span>
                   <span style={{ fontWeight: 600 }}>{targets.length}</span>
                 </div>
-                
-                <div style={{ 
-                  display: 'flex', 
+
+                <div style={{
+                  display: 'flex',
                   justifyContent: 'space-between',
-                  alignItems: 'center' 
+                  alignItems: 'center'
                 }}>
                   <span style={{ color: theme.colors.textSubtle }}>Total Items</span>
                   <span style={{ fontWeight: 600 }}>{totalItems}</span>
                 </div>
-                
-                <div style={{ 
-                  display: 'flex', 
+
+                <div style={{
+                  display: 'flex',
                   justifyContent: 'space-between',
-                  alignItems: 'center' 
+                  alignItems: 'center'
                 }}>
                   <span style={{ color: theme.colors.textSubtle }}>Completed</span>
-                  <span style={{ 
+                  <span style={{
                     fontWeight: 600,
-                    color: theme.colors.accentAlt 
+                    color: theme.colors.accentAlt
                   }}>
                     {completedItems}
                   </span>
                 </div>
-                
-                <div style={{ 
-                  display: 'flex', 
+
+                <div style={{
+                  display: 'flex',
                   justifyContent: 'space-between',
-                  alignItems: 'center' 
+                  alignItems: 'center'
                 }}>
                   <span style={{ color: theme.colors.textSubtle }}>Remaining</span>
-                  <span style={{ 
+                  <span style={{
                     fontWeight: 600,
-                    color: theme.colors.warn 
+                    color: theme.colors.warn
                   }}>
                     {totalItems - completedItems}
                   </span>
@@ -451,15 +451,15 @@ export default function BuildTargetsPage() {
                 padding: '1.5rem',
                 boxShadow: theme.shadow
               }}>
-                <h3 style={{ 
-                  margin: 0, 
+                <h3 style={{
+                  margin: 0,
                   marginBottom: '1rem',
                   fontSize: '1.1rem',
-                  fontWeight: 600 
+                  fontWeight: 600
                 }}>
                   Record Progress
                 </h3>
-                
+
                 {targets.length === 0 ? (
                   <div style={{ color: theme.colors.textSubtle, fontSize: '0.9rem' }}>
                     No build targets available. Build targets are created automatically when a job is created from a quote.
@@ -468,17 +468,17 @@ export default function BuildTargetsPage() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     {/* Product Selection */}
                     <div>
-                      <label style={{ 
-                        display: 'block', 
+                      <label style={{
+                        display: 'block',
                         marginBottom: '0.25rem',
                         fontSize: '0.85rem',
-                        color: theme.colors.textSubtle 
+                        color: theme.colors.textSubtle
                       }}>
                         Product
                       </label>
                       <select
                         value={newCompletion.target_id}
-                        onChange={(e) => setNewCompletion({...newCompletion, target_id: e.target.value})}
+                        onChange={(e) => setNewCompletion({ ...newCompletion, target_id: e.target.value })}
                         style={{
                           width: '100%',
                           padding: '8px 10px',
@@ -500,18 +500,18 @@ export default function BuildTargetsPage() {
 
                     {/* Date */}
                     <div>
-                      <label style={{ 
-                        display: 'block', 
+                      <label style={{
+                        display: 'block',
                         marginBottom: '0.25rem',
                         fontSize: '0.85rem',
-                        color: theme.colors.textSubtle 
+                        color: theme.colors.textSubtle
                       }}>
                         Work Date
                       </label>
                       <input
                         type="date"
                         value={newCompletion.work_date}
-                        onChange={(e) => setNewCompletion({...newCompletion, work_date: e.target.value})}
+                        onChange={(e) => setNewCompletion({ ...newCompletion, work_date: e.target.value })}
                         style={{
                           width: '100%',
                           padding: '8px 10px',
@@ -526,11 +526,11 @@ export default function BuildTargetsPage() {
 
                     {/* Quantity */}
                     <div>
-                      <label style={{ 
-                        display: 'block', 
+                      <label style={{
+                        display: 'block',
                         marginBottom: '0.25rem',
                         fontSize: '0.85rem',
-                        color: theme.colors.textSubtle 
+                        color: theme.colors.textSubtle
                       }}>
                         Quantity Completed
                       </label>
@@ -538,7 +538,7 @@ export default function BuildTargetsPage() {
                         type="number"
                         min="1"
                         value={newCompletion.quantity_completed}
-                        onChange={(e) => setNewCompletion({...newCompletion, quantity_completed: parseInt(e.target.value) || 1})}
+                        onChange={(e) => setNewCompletion({ ...newCompletion, quantity_completed: parseInt(e.target.value) || 1 })}
                         style={{
                           width: '100%',
                           padding: '8px 10px',
@@ -553,17 +553,17 @@ export default function BuildTargetsPage() {
 
                     {/* Notes */}
                     <div>
-                      <label style={{ 
-                        display: 'block', 
+                      <label style={{
+                        display: 'block',
                         marginBottom: '0.25rem',
                         fontSize: '0.85rem',
-                        color: theme.colors.textSubtle 
+                        color: theme.colors.textSubtle
                       }}>
                         Notes (optional)
                       </label>
                       <textarea
                         value={newCompletion.notes}
-                        onChange={(e) => setNewCompletion({...newCompletion, notes: e.target.value})}
+                        onChange={(e) => setNewCompletion({ ...newCompletion, notes: e.target.value })}
                         placeholder="Any notes about this completion..."
                         rows={2}
                         style={{
@@ -613,20 +613,20 @@ export default function BuildTargetsPage() {
             padding: '1.5rem',
             boxShadow: theme.shadow
           }}>
-            <h2 style={{ 
-              margin: 0, 
+            <h2 style={{
+              margin: 0,
               marginBottom: '1.5rem',
               fontSize: '1.25rem',
-              fontWeight: 600 
+              fontWeight: 600
             }}>
               Product Targets ({targets.length})
             </h2>
 
             {targets.length === 0 ? (
-              <div style={{ 
+              <div style={{
                 textAlign: 'center',
                 padding: '3rem 1rem',
-                color: theme.colors.textSubtle 
+                color: theme.colors.textSubtle
               }}>
                 <div style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>
                   No build targets found
@@ -642,7 +642,7 @@ export default function BuildTargetsPage() {
                   const _remaining = getRemainingQuantity(target);
                   const completed = getCompletedQuantity(target.id);
                   const dailyHistory = dailyCompletions[target.id] || [];
-                  
+
                   return (
                     <div
                       key={target.id}
@@ -654,20 +654,20 @@ export default function BuildTargetsPage() {
                       }}
                     >
                       {/* Header */}
-                      <div style={{ 
-                        display: 'flex', 
-                        justifyContent: 'space-between', 
+                      <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
                         alignItems: 'flex-start',
-                        marginBottom: '1rem' 
+                        marginBottom: '1rem'
                       }}>
                         <div style={{ flex: 1 }}>
-                          <div style={{ 
+                          <div style={{
                             display: 'flex',
                             alignItems: 'center',
                             gap: '0.5rem',
                             marginBottom: '0.25rem'
                           }}>
-                            <h3 style={{ 
+                            <h3 style={{
                               margin: 0,
                               fontSize: '1.1rem',
                               fontWeight: 600
@@ -698,7 +698,7 @@ export default function BuildTargetsPage() {
                               Order #{target.build_order}
                             </span>
                           </div>
-                          <div style={{ 
+                          <div style={{
                             color: theme.colors.textSubtle,
                             fontSize: '0.9rem',
                             marginBottom: '0.5rem'
@@ -706,12 +706,12 @@ export default function BuildTargetsPage() {
                             {target.description}
                           </div>
                         </div>
-                        
-                        <div style={{ 
+
+                        <div style={{
                           textAlign: 'right',
                           minWidth: '120px'
                         }}>
-                          <div style={{ 
+                          <div style={{
                             fontSize: '1.75rem',
                             fontWeight: 700,
                             color: completionPercentage >= 100 ? theme.colors.accentAlt : theme.colors.accent,
@@ -719,9 +719,9 @@ export default function BuildTargetsPage() {
                           }}>
                             {Math.round(completionPercentage)}%
                           </div>
-                          <div style={{ 
+                          <div style={{
                             fontSize: '0.8rem',
-                            color: theme.colors.textSubtle 
+                            color: theme.colors.textSubtle
                           }}>
                             {completed} of {target.total_quantity} complete
                           </div>
@@ -747,8 +747,8 @@ export default function BuildTargetsPage() {
                       {/* Recent Activity */}
                       {dailyHistory.length > 0 && (
                         <div style={{ marginTop: '1rem' }}>
-                          <h4 style={{ 
-                            margin: 0, 
+                          <h4 style={{
+                            margin: 0,
                             marginBottom: '0.5rem',
                             fontSize: '0.9rem',
                             fontWeight: 600,
@@ -756,9 +756,9 @@ export default function BuildTargetsPage() {
                           }}>
                             Recent Progress ({dailyHistory.length} entries)
                           </h4>
-                          <div style={{ 
-                            display: 'flex', 
-                            flexDirection: 'column', 
+                          <div style={{
+                            display: 'flex',
+                            flexDirection: 'column',
                             gap: '0.25rem',
                             maxHeight: '120px',
                             overflowY: 'auto'
@@ -781,7 +781,7 @@ export default function BuildTargetsPage() {
                                     +{daily.quantity_completed}
                                   </span>
                                   {daily.notes && (
-                                    <span style={{ 
+                                    <span style={{
                                       marginLeft: '0.5rem',
                                       color: theme.colors.textSubtle,
                                       fontStyle: 'italic'

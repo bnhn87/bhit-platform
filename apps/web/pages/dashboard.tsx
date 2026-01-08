@@ -712,11 +712,13 @@ export default function Dashboard() {
               activeJobs.map((job) => (
                 <div
                   key={job.id}
+                  onClick={() => router.push(`/jobs/${job.id}`)}
                   style={{
                     padding: 12,
                     backgroundColor: theme.colors.panelAlt,
                     borderRadius: theme.radii.sm,
                     border: `1px solid ${theme.colors.border}`,
+                    cursor: 'pointer'
                   }}
                 >
                   <div style={{
@@ -727,7 +729,7 @@ export default function Dashboard() {
                     flexWrap: "wrap"
                   }}>
                     <div style={{ minWidth: 0, flex: 1 }}>
-                      <Link href={`/job/${job.id}`} style={{
+                      <Link href={`/jobs/${job.id}`} style={{
                         fontWeight: 600,
                         fontSize: 14,
                         color: theme.colors.text,

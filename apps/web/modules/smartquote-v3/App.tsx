@@ -315,7 +315,7 @@ export default function SmartQuoteV3App() {
 
             if (result.success && result.jobId) {
                 showSuccess(`Job created successfully! ID: ${result.jobId}`);
-                window.open(`/job/${result.jobId}`, '_blank');
+                window.open(`/jobs/${result.jobId}`, '_blank');
             } else {
                 setError(result.error || 'Failed to create job');
             }

@@ -107,7 +107,7 @@ export default function JobDetailPage() {
 
   // Lead installer state
   const [leadInstaller, setLeadInstaller] = React.useState<string | null>(null);
-  const [_users, setUsers] = React.useState<Array<{id: string, name: string, email: string}>>([]);
+  const [_users, setUsers] = React.useState<Array<{ id: string, name: string, email: string }>>([]);
   const [_loadingUsers, setLoadingUsers] = React.useState(false);
 
   // Products state
@@ -133,7 +133,7 @@ export default function JobDetailPage() {
     total_qty: number;
   }>>({});
 
-  
+
   // Editable fields
   const [isEditing, setIsEditing] = React.useState(false);
   const [editData, setEditData] = React.useState({
@@ -148,10 +148,10 @@ export default function JobDetailPage() {
     }
     setLoading(true);
     setErr(null);
-    
+
     // Try to load from v_jobs_list view first, with fallback to jobs table
     let data, error;
-    
+
     // First attempt: use v_jobs_list view
     const viewResult = await supabase
       .from("v_jobs_list")
@@ -159,7 +159,7 @@ export default function JobDetailPage() {
       .eq("id", id)
       .limit(1)
       .maybeSingle();
-    
+
     if (!viewResult.error && viewResult.data) {
       data = viewResult.data;
       error = null;
@@ -172,7 +172,7 @@ export default function JobDetailPage() {
         .eq("id", id)
         .limit(1)
         .maybeSingle();
-      
+
       data = tableResult.data;
       error = tableResult.error;
     }
@@ -187,7 +187,7 @@ export default function JobDetailPage() {
       // Map database status to our status type
       const status = getStatusVariant(data?.status);
       setRow(data ? { ...data, status } : null);
-      
+
       // Initialize edit data
       setEditData({
         title: data?.title || "",
@@ -378,25 +378,25 @@ export default function JobDetailPage() {
       await logJobEdit(row.id, win.userId, "lead_installer", oldValue, newValue);
     }
   }
-  
+
   // Save edited job details
   async function saveEdit() {
     if (!row || !id || !userId) return;
-    
+
     try {
       // Log changes for each field
       if (editData.title !== (row.title || "")) {
         await logJobEdit(id, userId, "title", row.title, editData.title);
       }
-      
+
       if (editData.client_name !== (row.client_name || "")) {
         await logJobEdit(id, userId, "client_name", row.client_name, editData.client_name);
       }
-      
+
       if (editData.reference !== (row.reference || "")) {
         await logJobEdit(id, userId, "reference", row.reference, editData.reference);
       }
-      
+
       // Update job in database
       const { error } = await supabase
         .from("jobs")
@@ -406,12 +406,12 @@ export default function JobDetailPage() {
           reference: editData.reference
         })
         .eq("id", id);
-        
+
       if (error) {
         setErr(`Failed to update job: ${error instanceof Error ? error.message : "Unknown error"}`);
         return;
       }
-      
+
       // Update local state
       setRow({
         ...row,
@@ -419,7 +419,7 @@ export default function JobDetailPage() {
         client_name: editData.client_name,
         reference: editData.reference
       });
-      
+
       setIsEditing(false);
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "Failed to save changes";
@@ -432,16 +432,16 @@ export default function JobDetailPage() {
       <Head>
         <title>{row ? `Job ${row.reference} • BHIT Work OS` : "Job • BHIT Work OS"}</title>
       </Head>
-      
+
       {/* Load PDF.js for task generation from documents */}
       <Script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" strategy="lazyOnload" />
       <Script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js" strategy="lazyOnload" />
 
-      <main style={{ 
-        padding: 16, 
+      <main style={{
+        padding: 16,
         minHeight: '100vh',
         background: '#0f1419',
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif' 
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif'
       }}>
         {err && (
           <div style={{ marginBottom: 12, color: "#ff6b6b" }}>
@@ -484,7 +484,7 @@ export default function JobDetailPage() {
                   <div style={{ display: "grid", gap: 8 }}>
                     <input
                       value={editData.reference}
-                      onChange={(e) => setEditData({...editData, reference: e.target.value})}
+                      onChange={(e) => setEditData({ ...editData, reference: e.target.value })}
                       placeholder="Reference"
                       style={{
                         padding: "6px 10px",
@@ -497,7 +497,7 @@ export default function JobDetailPage() {
                     />
                     <input
                       value={editData.title}
-                      onChange={(e) => setEditData({...editData, title: e.target.value})}
+                      onChange={(e) => setEditData({ ...editData, title: e.target.value })}
                       placeholder="Title"
                       style={{
                         padding: "6px 10px",
@@ -511,7 +511,7 @@ export default function JobDetailPage() {
                     />
                     <input
                       value={editData.client_name}
-                      onChange={(e) => setEditData({...editData, client_name: e.target.value})}
+                      onChange={(e) => setEditData({ ...editData, client_name: e.target.value })}
                       placeholder="Client Name"
                       style={{
                         padding: "6px 10px",
@@ -535,7 +535,7 @@ export default function JobDetailPage() {
               </div>
 
               <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-                <button 
+                <button
                   onClick={() => router.push('/today')}
                   style={{
                     border: `1px solid ${theme.colors.border}`,
@@ -548,7 +548,7 @@ export default function JobDetailPage() {
                 >
                   Today
                 </button>
-                <button 
+                <button
                   onClick={() => router.push('/jobs')}
                   style={{
                     border: `1px solid ${theme.colors.border}`,
@@ -561,11 +561,11 @@ export default function JobDetailPage() {
                 >
                   All Jobs
                 </button>
-                
+
                 {canManage && (
                   isEditing ? (
                     <div style={{ display: "flex", gap: 8 }}>
-                      <button 
+                      <button
                         onClick={() => setIsEditing(false)}
                         style={{
                           border: `1px solid ${theme.colors.border}`,
@@ -578,7 +578,7 @@ export default function JobDetailPage() {
                       >
                         Cancel
                       </button>
-                      <button 
+                      <button
                         onClick={saveEdit}
                         style={{
                           border: `1px solid ${theme.colors.accent}`,
@@ -594,7 +594,7 @@ export default function JobDetailPage() {
                       </button>
                     </div>
                   ) : (
-                    <button 
+                    <button
                       onClick={() => setIsEditing(true)}
                       style={{
                         border: `1px solid ${theme.colors.accent}`,
@@ -609,35 +609,35 @@ export default function JobDetailPage() {
                     </button>
                   )
                 )}
-                
+
                 <StatusPill
                   status={row.status}
                   jobId={row.id}
                   canManage={canManage}
                   onStatusChange={canManage ? updateJobStatus : undefined}
                 />
-                
+
                 {canManage && (
-                  <button 
+                  <button
                     onClick={async () => {
                       if (confirm(`Are you sure you want to delete job "${row.title || row.reference}"? This action cannot be undone.`)) {
                         try {
-                          
+
                           const response = await fetch(`/api/jobs/${row.id}/delete`, {
                             method: 'DELETE',
                             headers: {
                               'Content-Type': 'application/json'
                             }
                           });
-                          
+
                           const result = await response.json();
-                          
+
                           if (!response.ok) {
                             throw new Error(result.error || 'Failed to delete job');
                           }
-                          
+
                           alert('Job deleted successfully');
-                          
+
                           // Force navigation to jobs page
                           window.location.href = '/jobs';
                         } catch (error: unknown) {
@@ -673,10 +673,10 @@ export default function JobDetailPage() {
 
             {/* Tab Navigation */}
             <section style={{ maxWidth: 1200, margin: "16px auto" }}>
-              <div style={{ 
-                display: "flex", 
-                gap: 10, 
-                flexWrap: "wrap", 
+              <div style={{
+                display: "flex",
+                gap: 10,
+                flexWrap: "wrap",
                 marginBottom: 20,
                 background: 'linear-gradient(135deg, #1a1f2e 0%, #242938 100%)',
                 borderRadius: '16px',
@@ -689,7 +689,7 @@ export default function JobDetailPage() {
                 {(Object.keys(TAB_LABELS) as TabType[]).map((tab) => {
                   // Hide edit history tab if user can't view it
                   if (tab === "editHistory" && !canViewHistory) return null;
-                  
+
                   return (
                     <button
                       key={tab}
@@ -699,8 +699,8 @@ export default function JobDetailPage() {
                         padding: "12px 20px",
                         borderRadius: 12,
                         border: activeTab === tab ? "2px solid #2196F3" : "2px solid rgba(255,255,255,0.05)",
-                        background: activeTab === tab 
-                          ? "linear-gradient(135deg, rgba(33, 150, 243, 0.2) 0%, rgba(33, 203, 243, 0.1) 100%)" 
+                        background: activeTab === tab
+                          ? "linear-gradient(135deg, rgba(33, 150, 243, 0.2) 0%, rgba(33, 203, 243, 0.1) 100%)"
                           : "rgba(255,255,255,0.03)",
                         color: activeTab === tab ? "#2196F3" : "#ffffff",
                         textDecoration: "none",
@@ -724,18 +724,18 @@ export default function JobDetailPage() {
                           e.currentTarget.style.borderColor = "rgba(255,255,255,0.05)";
                         }
                       }}
-                      onTouchStart={() => {}}
+                      onTouchStart={() => { }}
                     >
                       {TAB_LABELS[tab]}
                     </button>
                   );
                 })}
-                
+
                 <span style={{ marginLeft: "auto" }} />
-                
+
                 <button
                   onClick={async () => {
-                    const url = `${window.location.origin}/job/${id}`;
+                    const url = `${window.location.origin}/jobs/${id}`;
                     try {
                       // eslint-disable-next-line @typescript-eslint/no-explicit-any
                       const nav = navigator as unknown as { share?: (data: { title: string; url: string }) => Promise<void>; clipboard: { writeText: (text: string) => Promise<void> } };
@@ -765,7 +765,7 @@ export default function JobDetailPage() {
                   Share
                 </button>
               </div>
-              
+
               {/* Tab Content */}
               <div style={{
                 background: "rgba(255,255,255,0.02)",
@@ -1526,20 +1526,20 @@ export default function JobDetailPage() {
                               </h3>
                               <div class="products-container">
                                 ${loadingProducts ?
-                                  '<div style="text-align: center; padding: 20px; color: #8899a6;">Loading products...</div>' :
-                                  products.length === 0 ?
-                                    '<div style="text-align: center; padding: 20px; color: #8899a6;">No products found for this job</div>' :
-                                    products.map(product => {
-                                      const progressData = getProductStatusAndProgress(product);
-                                      const statusClass = 'status-' + progressData.phase.replace(/\s+/g, '-').toLowerCase();
-                                      return `
+                        '<div style="text-align: center; padding: 20px; color: #8899a6;">Loading products...</div>' :
+                        products.length === 0 ?
+                          '<div style="text-align: center; padding: 20px; color: #8899a6;">No products found for this job</div>' :
+                          products.map(product => {
+                            const progressData = getProductStatusAndProgress(product);
+                            const statusClass = 'status-' + progressData.phase.replace(/\s+/g, '-').toLowerCase();
+                            return `
                                         <div class="product-item">
                                           <div class="product-name">${product.quantity}no. ${product.name}</div>
                                           <span class="product-status ${statusClass}">${progressData.status}</span>
                                         </div>
                                       `;
-                                    }).join('')
-                                }
+                          }).join('')
+                      }
                               </div>
                             </div>
 

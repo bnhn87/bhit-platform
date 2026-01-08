@@ -129,7 +129,7 @@ export default function JobsPage() {
             >
               {loading ? "Loading…" : "Reload"}
             </button>
-            <Link href="/job/new">
+            <Link href="/jobs/new">
               <button
                 className="glassmorphic-button glassmorphic-base glassmorphic-glow-green"
                 style={{
@@ -286,7 +286,7 @@ export default function JobsPage() {
                 <div style={{ color: theme.colors.text }}>—</div>
                 <div>
                   <Link
-                    href={`/job/${r.id}`}
+                    href={`/jobs/${r.id}`}
                     className="glassmorphic-button glassmorphic-base glassmorphic-glow-cyan"
                     style={{
                       padding: "6px 10px",

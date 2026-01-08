@@ -28,7 +28,7 @@ const tile: React.CSSProperties = {
   padding: 16,
 };
 
-export default function JobProductsPage() {
+export default function JobDocumentsPage() {
   const r = useRouter();
   const jobId = (r.query.id as string) || "";
   const activePath = r.asPath;
@@ -37,23 +37,26 @@ export default function JobProductsPage() {
     () => {
       if (!jobId) return [];
       return [
-        { label: "Overview", href: `/job/${jobId}`, active: activePath === `/job/${jobId}` },
-        { label: "Floor Plan", href: `/job/${jobId}/floorplan`, active: activePath.startsWith(`/job/${jobId}/floorplan`) },
-        { label: "Documents", href: `/job/${jobId}/documents`, active: activePath.startsWith(`/job/${jobId}/documents`) },
-        { label: "Products", href: `/job/${jobId}/products`, active: true },
+        { label: "Overview", href: `/jobs/${jobId}`, active: activePath === `/jobs/${jobId}` },
+        { label: "Floor Plan", href: `/jobs/${jobId}/floorplan`, active: activePath.startsWith(`/jobs/${jobId}/floorplan`) },
+        { label: "Documents", href: `/jobs/${jobId}/documents`, active: true },
+        { label: "Products", href: `/jobs/${jobId}/products`, active: activePath.startsWith(`/jobs/${jobId}/products`) },
       ];
     },
     [activePath, jobId]
   );
 
   async function share() {
-    const url = `${window.location.origin}/job/${jobId}/products`;
+    const url = `${window.location.origin}/jobs/${jobId}/documents`;
     try {
-      if ((navigator as unknown as {share?: (data: {title: string; url: string}) => Promise<void>}).share) {
-        await (navigator as unknown as {share: (data: {title: string; url: string}) => Promise<void>}).share({ title: "Job Products", url });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const nav = navigator as unknown as { share?: (data: { title: string; url: string }) => Promise<void>; clipboard: { writeText: (text: string) => Promise<void> } };
+      if ('share' in navigator && nav.share) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await nav.share({ title: "Job Documents", url });
       }
       else {
-        await navigator.clipboard.writeText(url);
+        await nav.clipboard.writeText(url);
         alert("Link copied.");
       }
     } catch {
@@ -80,8 +83,8 @@ export default function JobProductsPage() {
       </div>
 
       <div style={tile}>
-        {/* TODO: connect Smart Quote output / product lines */}
-        <div style={{ opacity: 0.85 }}>Products module — show parsed items / quantities here.</div>
+        {/* TODO: hook up your actual documents list / uploads */}
+        <div style={{ opacity: 0.85 }}>Documents module — upload/list drawings, RAMS, transport sheets, etc.</div>
       </div>
     </div>
   );

@@ -111,10 +111,10 @@ export default function JobCard({
       >
         <div style={{ flex: 1, minWidth: 0 }}>
           <Link
-            href={`/job/${job.id}`}
-            style={{ 
-              color: theme.colors.text, 
-              textDecoration: "none", 
+            href={`/jobs/${job.id}`}
+            style={{
+              color: theme.colors.text,
+              textDecoration: "none",
               fontWeight: 700,
               fontSize: 16,
               display: "block",
@@ -126,10 +126,10 @@ export default function JobCard({
           >
             {job.title}
           </Link>
-          
+
           {job.reference && (
-            <div style={{ 
-              fontSize: 11, 
+            <div style={{
+              fontSize: 11,
               color: theme.colors.textSubtle,
               marginTop: 2
             }}>
@@ -148,7 +148,7 @@ export default function JobCard({
               {job.percent_complete}%
             </div>
           )}
-          
+
           <StatusPill
             status={job.status}
             jobId={job.id}
@@ -158,30 +158,32 @@ export default function JobCard({
         </div>
       </div>
 
-      {showDetails && (
-        <div style={{ 
-          display: "flex", 
-          alignItems: "center", 
-          justifyContent: "space-between",
-          color: theme.colors.textSubtle, 
-          fontSize: 12 
-        }}>
-          <div>
-            {job.client_name ?? "—"} • {new Date(job.created_at).toLocaleDateString()}
-          </div>
-          
-          {job.deadline && (
-            <div style={{ 
-              color: isOverdue ? theme.colors.danger : theme.colors.textSubtle,
-              fontWeight: isOverdue ? 600 : 400
-            }}>
-              Due: {new Date(job.deadline).toLocaleDateString()}
-              {isOverdue && " (Overdue)"}
+      {
+        showDetails && (
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            color: theme.colors.textSubtle,
+            fontSize: 12
+          }}>
+            <div>
+              {job.client_name ?? "—"} • {new Date(job.created_at).toLocaleDateString()}
             </div>
-          )}
-        </div>
-      )}
-    </div>
+
+            {job.deadline && (
+              <div style={{
+                color: isOverdue ? theme.colors.danger : theme.colors.textSubtle,
+                fontWeight: isOverdue ? 600 : 400
+              }}>
+                Due: {new Date(job.deadline).toLocaleDateString()}
+                {isOverdue && " (Overdue)"}
+              </div>
+            )}
+          </div>
+        )
+      }
+    </div >
   );
 }
 

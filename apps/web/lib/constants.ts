@@ -51,9 +51,9 @@ export const PAGE_ROUTES = {
   dashboard: '/dashboard',
   jobs: {
     list: '/jobs',
-    new: '/job/new',
-    detail: (id: string) => `/job/${id}`,
-    edit: (id: string) => `/job/${id}/edit`,
+    new: '/jobs/new',
+    detail: (id: string) => `/jobs/${id}`,
+    edit: (id: string) => `/jobs/${id}/edit`,
   },
   clients: '/clients',
   settings: {

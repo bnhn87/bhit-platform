@@ -74,7 +74,7 @@ export default function NewJobPage() {
       return;
     }
     const id = data?.id as string | undefined;
-    if (id) router.replace(`/job/${id}`);
+    if (id) router.replace(`/jobs/${id}`);
     else setMsg("Created, but could not resolve new Job ID.");
   }
 

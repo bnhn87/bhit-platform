@@ -100,10 +100,10 @@ export default function GuestPage() {
       status === "planned"
         ? theme.colors.textSubtle
         : status === "in_progress"
-        ? theme.colors.accent
-        : status === "snagging"
-        ? theme.colors.warn
-        : theme.colors.accentAlt;
+          ? theme.colors.accent
+          : status === "snagging"
+            ? theme.colors.warn
+            : theme.colors.accentAlt;
 
     return (
       <span
@@ -189,7 +189,7 @@ export default function GuestPage() {
 
             <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
               <Link
-                href={`/job/${job.id}`}
+                href={`/jobs/${job.id}`}
                 style={{
                   padding: "8px 12px",
                   borderRadius: 10,

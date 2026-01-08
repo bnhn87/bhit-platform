@@ -54,43 +54,43 @@ export default function CloseDay() {
       const items = [
         crew > 0
           ? {
-              job_id: jobId,
-              kind: "labour",
-              description: "Crew days",
-              qty: crew,
-              unit: "day",
-              unit_cost: installerRate,
-              unit_price: null,
-              tax_rate: vat,
-              meta: {}
-            }
+            job_id: jobId,
+            kind: "labour",
+            description: "Crew days",
+            qty: crew,
+            unit: "day",
+            unit_cost: installerRate,
+            unit_price: null,
+            tax_rate: vat,
+            meta: {}
+          }
           : null,
         waste > 0
           ? {
-              job_id: jobId,
-              kind: "waste",
-              description: "Waste loads",
-              qty: waste,
-              unit: "load",
-              unit_cost: wasteRate,
-              unit_price: null,
-              tax_rate: vat,
-              meta: {}
-            }
+            job_id: jobId,
+            kind: "waste",
+            description: "Waste loads",
+            qty: waste,
+            unit: "load",
+            unit_cost: wasteRate,
+            unit_price: null,
+            tax_rate: vat,
+            meta: {}
+          }
           : null,
         // Optional convention: one vehicle per active crew day
         crew > 0
           ? {
-              job_id: jobId,
-              kind: "vehicle",
-              description: "Vehicle day",
-              qty: 1,
-              unit: "day",
-              unit_cost: vehicleRate,
-              unit_price: null,
-              tax_rate: vat,
-              meta: {}
-            }
+            job_id: jobId,
+            kind: "vehicle",
+            description: "Vehicle day",
+            qty: 1,
+            unit: "day",
+            unit_cost: vehicleRate,
+            unit_price: null,
+            tax_rate: vat,
+            meta: {}
+          }
           : null
       ].filter(Boolean) as Array<unknown>;
 
@@ -101,7 +101,7 @@ export default function CloseDay() {
 
       setMsg("Day report saved.");
       // Optionally navigate back to the job after a short delay
-      r.push(`/job/${jobId}`);
+      r.push(`/jobs/${jobId}`);
     } catch (e: unknown) {
       setMsg(e instanceof Error ? e.message : "Failed to save day report.");
     } finally {
@@ -112,7 +112,7 @@ export default function CloseDay() {
   return (
     <div style={{ padding: 16, maxWidth: 640 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
-        <Link href={`/job/${jobId}`} style={{ color: theme.colors.textSubtle, textDecoration: "none" }}>
+        <Link href={`/jobs/${jobId}`} style={{ color: theme.colors.textSubtle, textDecoration: "none" }}>
           ← Back
         </Link>
         <h2 style={{ margin: 0 }}>Close Day</h2>
