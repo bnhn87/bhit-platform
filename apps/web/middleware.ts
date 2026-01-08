@@ -20,6 +20,15 @@ export function middleware(req: NextRequest) {
     cookie.name === 'bhit-auth-token'
   );
 
+  // LEGACY ROUTE SUPPORT
+  // Redirect /job/[id] to /jobs/[id] to catch database links or bookmarks
+  if (req.nextUrl.pathname.startsWith('/job/')) {
+    const newUrl = req.nextUrl.clone();
+    newUrl.pathname = req.nextUrl.pathname.replace('/job/', '/jobs/');
+    return NextResponse.redirect(newUrl);
+  }
+
+
   // If no session and trying to access protected route
   // The matcher below handles the "protected route" definition
   // We simply redirect everything that matches but isn't public
