@@ -2,70 +2,70 @@ import { createClient } from '@supabase/supabase-js';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  const { id } = req.query;
-  
-  if (!id || typeof id !== 'string') {
-    return res.status(400).json({ error: 'Job ID is required' });
-  }
-
-  try {
-    // Get job information
-    const { data: jobData, error: jobError } = await supabase
-      .from('jobs')
-      .select('id, title, reference, client_name, status, start_date')
-      .eq('id', id)
-      .single();
-
-    if (jobError) {
-      return res.status(404).json({ error: 'Job not found' });
+    if (req.method !== 'GET') {
+        return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    // Get labour bank data
-    const { data: labourBank, error: _bankError } = await supabase
-      .from('job_labour_bank')
-      .select('*')
-      .eq('job_id', id)
-      .single();
+    const { id } = req.query;
 
-    // Get labour allocations
-    const { data: allocations, error: allocationsError } = await supabase
-      .from('labour_allocations')
-      .select('*')
-      .eq('job_id', id)
-      .order('work_date', { ascending: true });
-
-    if (allocationsError) {
-      return res.status(500).json({ error: 'Failed to fetch allocations' });
+    if (!id || typeof id !== 'string') {
+        return res.status(400).json({ error: 'Job ID is required' });
     }
 
-    // Generate HTML content for PDF
-    const htmlContent = generateScheduleHTML(jobData, labourBank, allocations || []);
-    
-    // Return HTML for now (can be enhanced with actual PDF generation)
-    res.setHeader('Content-Type', 'text/html');
-    res.setHeader('Content-Disposition', `inline; filename="labour-schedule-${jobData.reference}.html"`);
-    return res.send(htmlContent);
-    
-  } catch (error: unknown) {
-    console.error('Error generating schedule export:', error);
-    return res.status(500).json({
-      error: 'Internal server error',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    });
-  }
+    try {
+        // Get job information
+        const { data: jobData, error: jobError } = await supabase
+            .from('jobs')
+            .select('id, title, reference, client_name, status, start_date')
+            .eq('id', id)
+            .single();
+
+        if (jobError) {
+            return res.status(404).json({ error: 'Job not found' });
+        }
+
+        // Get labour bank data
+        const { data: labourBank, error: _bankError } = await supabase
+            .from('job_labour_bank')
+            .select('*')
+            .eq('job_id', id)
+            .single();
+
+        // Get labour allocations
+        const { data: allocations, error: allocationsError } = await supabase
+            .from('labour_allocations')
+            .select('*')
+            .eq('job_id', id)
+            .order('work_date', { ascending: true });
+
+        if (allocationsError) {
+            return res.status(500).json({ error: 'Failed to fetch allocations' });
+        }
+
+        // Generate HTML content for PDF
+        const htmlContent = generateScheduleHTML(jobData, labourBank, allocations || []);
+
+        // Return HTML for now (can be enhanced with actual PDF generation)
+        res.setHeader('Content-Type', 'text/html');
+        res.setHeader('Content-Disposition', `inline; filename="labour-schedule-${jobData.reference}.html"`);
+        return res.send(htmlContent);
+
+    } catch (error: unknown) {
+        console.error('Error generating schedule export:', error);
+        return res.status(500).json({
+            error: 'Internal server error',
+            details: error instanceof Error ? error.message : 'Unknown error'
+        });
+    }
 }
 
 function generateScheduleHTML(jobData: { id: string; title: string; reference: string; client_name: string; status: string; start_date: string }, labourBank: { total_labour_days?: number; allocated_days?: number; remaining_days?: number } | null, allocations: Array<{ work_date: string; hours_allocated?: number; is_closed: boolean; van_crews: number; foot_crews: number; supervisors: number; crew_mode: string; notes?: string }>): string {
-  const styles = `
+    const styles = `
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { 
@@ -145,20 +145,20 @@ function generateScheduleHTML(jobData: { id: string; title: string; reference: s
     </style>
   `;
 
-  const totalAllocatedHours = allocations.reduce((sum, alloc) => sum + (alloc.hours_allocated || 0), 0);
-  const completedDays = allocations.filter(alloc => alloc.is_closed).length;
-  const totalDays = allocations.length;
-  const _progressPercentage = totalDays > 0 ? (completedDays / totalDays) * 100 : 0;
+    const totalAllocatedHours = allocations.reduce((sum, alloc) => sum + (alloc.hours_allocated || 0), 0);
+    const completedDays = allocations.filter(alloc => alloc.is_closed).length;
+    const totalDays = allocations.length;
+    const _progressPercentage = totalDays > 0 ? (completedDays / totalDays) * 100 : 0;
 
-  const scheduleRows = allocations.map(allocation => {
-    const workDate = new Date(allocation.work_date).toLocaleDateString('en-GB', {
-      weekday: 'short',
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
-    });
+    const scheduleRows = allocations.map(allocation => {
+        const workDate = new Date(allocation.work_date).toLocaleDateString('en-GB', {
+            weekday: 'short',
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric'
+        });
 
-    return `
+        return `
       <tr>
         <td><strong>${workDate}</strong></td>
         <td>
@@ -176,9 +176,9 @@ function generateScheduleHTML(jobData: { id: string; title: string; reference: s
         <td class="notes">${allocation.notes || '—'}</td>
       </tr>
     `;
-  }).join('');
+    }).join('');
 
-  return `
+    return `
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -196,12 +196,12 @@ function generateScheduleHTML(jobData: { id: string; title: string; reference: s
           <div class="subtitle">${jobData.title}</div>
           <div class="meta">
             Generated on ${new Date().toLocaleDateString('en-GB', {
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit'
-            })}
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    })}
           </div>
         </div>
 

@@ -9,7 +9,11 @@
   "orientation": "portrait-primary",
   "scope": "/",
   "lang": "en-AU",
-  "categories": ["business", "productivity", "utilities"],
+  "categories": [
+    "business",
+    "productivity",
+    "utilities"
+  ],
   "icons": [
     {
       "src": "/icons/icon-72x72.png",
@@ -125,7 +129,7 @@
   "protocol_handlers": [
     {
       "protocol": "web+bhit",
-      "url": "/job/%s"
+      "url": "/jobs/%s"
     }
   ],
   "handle_links": "preferred",

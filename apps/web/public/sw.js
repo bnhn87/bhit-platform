@@ -1,8 +1,8 @@
 // Service Worker for BHIT Work OS - Construction Progress Tracking
 // Provides offline-first functionality with smart caching and sync
 
-const CACHE_NAME = 'bhit-work-os-v1.0.1';
-const API_CACHE_NAME = 'bhit-api-cache-v1.0.1';
+const CACHE_NAME = 'bhit-work-os-v1.0.2';
+const API_CACHE_NAME = 'bhit-api-cache-v1.0.2';
 const OFFLINE_URL = '/offline.html';
 
 // Resources to cache for offline use
@@ -11,7 +11,7 @@ const STATIC_CACHE_URLS = [
   '/offline.html',
   '/manifest.json',
   // Core pages
-  '/job/',
+  '/jobs/',
   '/today/',
   '/settings/',
   // Styles and scripts will be added automatically by Next.js
@@ -34,7 +34,7 @@ const SYNC_TAGS = {
 
 // Install event - cache static resources
 self.addEventListener('install', (event) => {
-  
+
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
@@ -49,7 +49,7 @@ self.addEventListener('install', (event) => {
 
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
-  
+
   event.waitUntil(
     Promise.all([
       // Clean up old caches
@@ -173,33 +173,33 @@ async function handleOfflineApiRequest(request) {
       body: body,
       timestamp: Date.now()
     };
-    
+
     // Store in IndexedDB for background sync
     await storeForSync(queueItem);
-    
+
     // Schedule background sync
     if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
       await self.registration.sync.register(SYNC_TAGS.PRODUCT_UPDATE);
     }
-    
+
     return new Response(
-      JSON.stringify({ 
+      JSON.stringify({
         success: true,
         queued: true,
         message: 'Update queued for sync when online'
       }),
-      { 
+      {
         status: 202,
         headers: { 'Content-Type': 'application/json' }
       }
     );
   } catch (error) {
     return new Response(
-      JSON.stringify({ 
+      JSON.stringify({
         error: 'Failed to queue request',
         details: error.message
       }),
-      { 
+      {
         status: 500,
         headers: { 'Content-Type': 'application/json' }
       }
@@ -211,11 +211,11 @@ async function handleOfflineApiRequest(request) {
 async function handleStaticAssets(request) {
   const cache = await caches.open(CACHE_NAME);
   const cachedResponse = await cache.match(request);
-  
+
   if (cachedResponse) {
     return cachedResponse;
   }
-  
+
   try {
     const networkResponse = await fetch(request);
     if (networkResponse.ok) {
@@ -231,7 +231,7 @@ async function handleStaticAssets(request) {
 async function handlePageRequest(request) {
   try {
     const networkResponse = await fetch(request);
-    
+
     if (networkResponse.ok) {
       // Cache successful page responses
       const cache = await caches.open(CACHE_NAME);
@@ -240,13 +240,13 @@ async function handlePageRequest(request) {
     }
   } catch (error) {
   }
-  
+
   // Try cache
   const cachedResponse = await caches.match(request);
   if (cachedResponse) {
     return cachedResponse;
   }
-  
+
   // Fallback to offline page for navigation requests
   if (request.mode === 'navigate') {
     const offlineResponse = await caches.match(OFFLINE_URL);
@@ -254,11 +254,11 @@ async function handlePageRequest(request) {
       return offlineResponse;
     }
   }
-  
+
   // Return a basic offline response
   return new Response(
     'Offline - Please check your connection',
-    { 
+    {
       status: 503,
       headers: { 'Content-Type': 'text/plain' }
     }
@@ -267,7 +267,7 @@ async function handlePageRequest(request) {
 
 // Background sync event
 self.addEventListener('sync', (event) => {
-  
+
   if (Object.values(SYNC_TAGS).includes(event.tag)) {
     event.waitUntil(processOfflineQueue());
   }
@@ -277,7 +277,7 @@ self.addEventListener('sync', (event) => {
 async function processOfflineQueue() {
   try {
     const queuedItems = await getQueuedItems();
-    
+
     for (const item of queuedItems) {
       try {
         const response = await fetch(item.url, {
@@ -285,7 +285,7 @@ async function processOfflineQueue() {
           headers: item.headers,
           body: item.body
         });
-        
+
         if (response.ok) {
           await removeFromQueue(item.id);
         } else {
@@ -302,18 +302,18 @@ async function processOfflineQueue() {
 async function storeForSync(item) {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open('bhit-offline-queue', 1);
-    
+
     request.onerror = () => reject(request.error);
     request.onsuccess = () => {
       const db = request.result;
       const transaction = db.transaction(['queue'], 'readwrite');
       const store = transaction.objectStore('queue');
-      
+
       store.add(item);
       transaction.oncomplete = () => resolve();
       transaction.onerror = () => reject(transaction.error);
     };
-    
+
     request.onupgradeneeded = () => {
       const db = request.result;
       if (!db.objectStoreNames.contains('queue')) {
@@ -327,14 +327,14 @@ async function storeForSync(item) {
 async function getQueuedItems() {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open('bhit-offline-queue', 1);
-    
+
     request.onerror = () => reject(request.error);
     request.onsuccess = () => {
       const db = request.result;
       const transaction = db.transaction(['queue'], 'readonly');
       const store = transaction.objectStore('queue');
       const getAllRequest = store.getAll();
-      
+
       getAllRequest.onsuccess = () => resolve(getAllRequest.result);
       getAllRequest.onerror = () => reject(getAllRequest.error);
     };
@@ -344,13 +344,13 @@ async function getQueuedItems() {
 async function removeFromQueue(id) {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open('bhit-offline-queue', 1);
-    
+
     request.onerror = () => reject(request.error);
     request.onsuccess = () => {
       const db = request.result;
       const transaction = db.transaction(['queue'], 'readwrite');
       const store = transaction.objectStore('queue');
-      
+
       store.delete(id);
       transaction.oncomplete = () => resolve();
       transaction.onerror = () => reject(transaction.error);
@@ -382,13 +382,13 @@ self.addEventListener('message', (event) => {
 async function getCacheStatus() {
   const cacheNames = await caches.keys();
   const status = {};
-  
+
   for (const cacheName of cacheNames) {
     const cache = await caches.open(cacheName);
     const keys = await cache.keys();
     status[cacheName] = keys.length;
   }
-  
+
   return status;
 }
 
