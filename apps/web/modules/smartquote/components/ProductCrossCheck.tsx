@@ -158,7 +158,7 @@ export function ProductCrossCheck({ products, onProductUpdate, onProductValidate
         }
       } catch (error) {
         if (process.env.NODE_ENV === 'development') {
-            console.error('[SmartQuote] Error checking product:', error);
+          console.error('[SmartQuote] Error checking product:', error);
         }
         issues.push('Failed to check against database');
         status = 'error';
@@ -281,22 +281,22 @@ export function ProductCrossCheck({ products, onProductUpdate, onProductValidate
 
   if (isProcessing) {
     return (
-      <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6">
+      <div className="bg-[var(--panel-2)] border border-[var(--border)] rounded-2xl p-6 backdrop-blur-sm">
         <div className="flex items-center justify-center space-x-3">
-          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-          <span className="text-neutral-300">Cross-checking products against database...</span>
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[var(--accent)]"></div>
+          <span className="text-[var(--text)]">Cross-checking products against database...</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 space-y-6">
+    <div className="bg-[var(--panel-2)] border border-[var(--border)] rounded-2xl p-6 space-y-6 backdrop-blur-sm">
       <div className="flex items-center justify-between">
-        <h3 className="text-xl font-semibold text-neutral-100">Product Cross-Check</h3>
+        <h3 className="text-xl font-semibold text-[var(--text)]">Product Cross-Check</h3>
         <button
           onClick={processCrossCheck}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+          className="px-4 py-2 bg-[var(--accent)] hover:bg-[var(--accentAlt)] text-white rounded-lg transition-colors"
         >
           Re-check All
         </button>
@@ -304,9 +304,9 @@ export function ProductCrossCheck({ products, onProductUpdate, onProductValidate
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        <div className="bg-neutral-800 rounded-lg p-4 text-center">
-          <div className="text-2xl font-bold text-neutral-100">{summary.total}</div>
-          <div className="text-sm text-neutral-400">Total Products</div>
+        <div className="bg-[var(--panel)] border border-[var(--border)] rounded-lg p-4 text-center">
+          <div className="text-2xl font-bold text-[var(--text)]">{summary.total}</div>
+          <div className="text-sm text-[var(--muted)]">Total Products</div>
         </div>
         <div className="bg-green-400/10 border border-green-400/20 rounded-lg p-4 text-center">
           <div className="text-2xl font-bold text-green-400">{summary.valid}</div>
@@ -327,20 +327,19 @@ export function ProductCrossCheck({ products, onProductUpdate, onProductValidate
       </div>
 
       {/* Confidence Score */}
-      <div className="bg-neutral-800 rounded-lg p-4">
+      <div className="bg-[var(--panel)] border border-[var(--border)] rounded-lg p-4">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-neutral-300">Overall Confidence</span>
-          <span className="text-neutral-100 font-semibold">
+          <span className="text-[var(--text)]">Overall Confidence</span>
+          <span className="text-[var(--text)] font-semibold">
             {(summary.avgConfidence * 100).toFixed(1)}%
           </span>
         </div>
-        <div className="w-full bg-neutral-700 rounded-full h-2">
+        <div className="w-full bg-[var(--panel-2)] rounded-full h-2">
           <div
-            className={`h-2 rounded-full transition-all duration-300 ${
-              summary.avgConfidence >= 0.8 ? 'bg-green-500' :
-              summary.avgConfidence >= 0.6 ? 'bg-yellow-500' :
-              summary.avgConfidence >= 0.4 ? 'bg-orange-500' : 'bg-red-500'
-            }`}
+            className={`h-2 rounded-full transition-all duration-300 ${summary.avgConfidence >= 0.8 ? 'bg-green-500' :
+                summary.avgConfidence >= 0.6 ? 'bg-yellow-500' :
+                  summary.avgConfidence >= 0.4 ? 'bg-orange-500' : 'bg-red-500'
+              }`}
             style={{ width: `${summary.avgConfidence * 100}%` }}
           />
         </div>
@@ -348,7 +347,7 @@ export function ProductCrossCheck({ products, onProductUpdate, onProductValidate
 
       {/* Product Results */}
       <div className="space-y-3">
-        <h4 className="text-lg font-medium text-neutral-100">Product Validation Results</h4>
+        <h4 className="text-lg font-medium text-[var(--text)]">Product Validation Results</h4>
 
         {crossCheckResults.map((result) => {
           const product = products.find(p => p.lineNumber === result.lineNumber);
@@ -436,7 +435,7 @@ export function ProductCrossCheck({ products, onProductUpdate, onProductValidate
       </div>
 
       {crossCheckResults.length === 0 && (
-        <div className="text-center py-8 text-neutral-400">
+        <div className="text-center py-8 text-[var(--muted)]">
           No products to cross-check. Add products to your quote to validate them.
         </div>
       )}

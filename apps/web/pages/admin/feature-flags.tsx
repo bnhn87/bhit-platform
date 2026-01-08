@@ -1,4 +1,5 @@
 import React from 'react';
+
 import FeatureFlagAdmin from '../../components/FeatureFlagAdmin';
 
 export default function FeatureFlagsPage() {

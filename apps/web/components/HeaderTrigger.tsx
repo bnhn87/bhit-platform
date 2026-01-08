@@ -63,7 +63,7 @@ export default function HeaderTrigger({ onOpen }: HeaderTriggerProps) {
                     e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.4)';
                 }}
             >
-                <Menu size={24} />
+                <Menu size={24} color="#f38b00" strokeWidth={2.5} />
             </button>
         </div>
     );

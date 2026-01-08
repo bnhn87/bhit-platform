@@ -1,7 +1,7 @@
+import { X, LogOut } from "lucide-react"; // Assuming lucide-react is available as it was used in TaskBanner
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useRef } from "react";
-import { X, LogOut } from "lucide-react"; // Assuming lucide-react is available as it was used in TaskBanner
 
 import { getCoreNavItems, getNavItemsForRole } from "@/config/navigation";
 import { useHasInvoiceAccess } from "@/hooks/useHasInvoiceAccess";

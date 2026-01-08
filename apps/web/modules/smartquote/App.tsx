@@ -251,7 +251,7 @@ const App: React.FC = () => {
     // 1. On initial load from saved data
     // 2. When user explicitly changes it
     // 3. When resetting the app
-    
+
     const displaySuccessMessage = (message: string) => {
         setShowSuccessMessage(message);
         announceToScreenReader(message, 'polite');
@@ -331,7 +331,7 @@ const App: React.FC = () => {
             if (validRawProducts.length === 0) {
                 throw new Error("No valid product lines were found. Check if items have product codes and are not on the exclusion list.");
             }
-            
+
             // Extract addresses for the selector
             const parsedAddresses: string[] = [];
             if ((extractedDetails as any).deliveryAddress) {
@@ -419,26 +419,26 @@ const App: React.FC = () => {
             // We stay on the AwaitingInput screen
             return;
         }
-    
+
         const allProducts = [...resolvedProducts, ...newlyResolved].sort((a, b) => a.lineNumber - b.lineNumber);
-    
+
         setResolvedProducts(allProducts);
         setUnresolvedProducts([]);
         setParsingState(AppState.DetailsEntry);
     }, [unresolvedProducts, resolvedProducts, appConfig]);
-    
+
     const calculateAndShowResults = (details: QuoteDetails, products: CalculatedProduct[]) => {
-         try {
+        try {
             // Apply working memory to products (preserves manual time edits)
             const productsWithMemory = workingMemory.applyMemoryToProducts(products);
             const results = calculateAll(productsWithMemory, details, appConfig);
             setCurrentQuote({ details, products: productsWithMemory, results });
             setView('results');
         } catch (err) {
-             const smartError = ErrorHandler.handle(err, ErrorCategory.CALCULATION, 'quote calculation');
-             setError(smartError.userMessage);
-             setParsingState(AppState.Error);
-             setView('parsing');
+            const smartError = ErrorHandler.handle(err, ErrorCategory.CALCULATION, 'quote calculation');
+            setError(smartError.userMessage);
+            setParsingState(AppState.Error);
+            setView('parsing');
         }
     }
 
@@ -459,7 +459,7 @@ const App: React.FC = () => {
 
         calculateAndShowResults(details, resolvedProducts);
     };
-    
+
     const handleProductsChange = useCallback((newProducts: CalculatedProduct[]) => {
         // Save manually edited products to working memory
         newProducts.forEach(product => {
@@ -493,7 +493,7 @@ const App: React.FC = () => {
         });
         setView('results');
     };
-    
+
     const handleSaveLearnedProduct = async (productToSave: CalculatedProduct) => {
         const { productCode, timePerUnit, isHeavy, wastePerUnit } = productToSave;
 
@@ -521,7 +521,7 @@ const App: React.FC = () => {
                 [productCode]: newReference
             };
 
-            handleConfigChange({...appConfig, productCatalogue: newCatalogue });
+            handleConfigChange({ ...appConfig, productCatalogue: newCatalogue });
 
             setCurrentQuote(prev => {
                 if (!prev) return null;
@@ -542,18 +542,18 @@ const App: React.FC = () => {
                 ...appConfig.productCatalogue,
                 [productCode]: newReference
             };
-            handleConfigChange({...appConfig, productCatalogue: newCatalogue });
+            handleConfigChange({ ...appConfig, productCatalogue: newCatalogue });
             displaySuccessMessage(`Time for "${productCode}" saved to local catalogue (database was unavailable)`);
             console.warn(smartError.userMessage);
         }
     };
-    
+
     const handleConfigChange = (newConfig: AppConfig) => {
         saveConfig(newConfig);
         setAppConfig(newConfig);
         displaySuccessMessage("Settings saved successfully!");
     };
-    
+
     const handleResetConfig = async () => {
         if (window.confirm("Are you sure you want to reset all settings to their defaults? This action cannot be undone.")) {
             const defaultConfig = await getDefaultConfig();
@@ -582,7 +582,7 @@ const App: React.FC = () => {
         if (!currentQuote) return;
         generateXlsx(currentQuote.details, currentQuote.products, currentQuote.results);
     };
-    
+
     const handleSaveQuote = async () => {
         if (!currentQuote) return;
         const newSavedQuote: SavedQuote = {
@@ -624,10 +624,10 @@ const App: React.FC = () => {
             setError('No quote data available to create job');
             return;
         }
-        
+
         try {
             const jobTitle = `${currentQuote.details.client} - ${currentQuote.details.project}`;
-            
+
             const requestBody = {
                 quoteData: {
                     results: currentQuote.results,
@@ -639,7 +639,7 @@ const App: React.FC = () => {
                     startDate: null
                 }
             };
-            
+
             const response = await fetch('/api/quotes/convert-to-job', {
                 method: 'POST',
                 headers: {
@@ -655,10 +655,10 @@ const App: React.FC = () => {
             }
 
             displaySuccessMessage(`Job "${jobTitle}" created successfully! Job ID: ${result.jobId}`);
-            
+
             // Optionally redirect to the job page
             window.open(`/job/${result.jobId}`, '_blank');
-            
+
         } catch (error: unknown) {
             const errorMessage = error instanceof Error ? error.message : 'Failed to create job';
             setError(`Job creation failed: ${errorMessage}`);
@@ -671,12 +671,12 @@ const App: React.FC = () => {
                 return (
                     <div className="flex flex-col items-center justify-center text-center h-96">
                         <LoadingSpinnerIcon {...getIconProps('loadingLarge', { color: theme.colors.accent })} />
-                        <h2 className="mt-4 text-xl font-semibold text-gray-700">Processing...</h2>
-                        <p className="mt-1 text-gray-500">The AI is analyzing your documents. This may take a moment.</p>
+                        <h2 className="mt-4 text-xl font-semibold text-[var(--accent)]">Processing...</h2>
+                        <p className="mt-1 text-[var(--muted)]">The AI is analyzing your documents. This may take a moment.</p>
                     </div>
                 );
             case AppState.AwaitingInput:
-                 return <UnknownProductInput products={unresolvedProducts} onSubmit={handleUnknownProductsSubmit} config={appConfig} />
+                return <UnknownProductInput products={unresolvedProducts} onSubmit={handleUnknownProductsSubmit} config={appConfig} />
             case AppState.DetailsEntry:
                 return (
                     <div className="space-y-6">
@@ -687,28 +687,28 @@ const App: React.FC = () => {
                             submitButtonText="Calculate Quote & Proceed"
                             config={appConfig}
                         />
-                         <div className="bg-white rounded-lg shadow border border-gray-200 overflow-hidden mt-6">
-                            <div className="p-4 border-b border-gray-200">
-                                <h3 className="text-lg font-semibold text-gray-800">Parsed & Standardized Items ({resolvedProducts.length})</h3>
-                                <p className="text-sm text-gray-500">Verify items below before calculating.</p>
+                        <div className="bg-[var(--panel)] rounded-lg shadow-[var(--shadow)] border border-[var(--border)] overflow-hidden mt-6 backdrop-blur-md">
+                            <div className="p-4 border-b border-[var(--border)]">
+                                <h3 className="text-lg font-semibold text-[var(--text)]">Parsed & Standardized Items ({resolvedProducts.length})</h3>
+                                <p className="text-sm text-[var(--muted)]">Verify items below before calculating.</p>
                             </div>
                             <div className="overflow-x-auto max-h-96">
-                                <table className="min-w-full divide-y divide-gray-200">
-                                    <thead className="bg-gray-50 sticky top-0">
+                                <table className="min-w-full divide-y divide-[var(--border)]">
+                                    <thead className="bg-[var(--panel-2)] sticky top-0">
                                         <tr>
-                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Line</th>
-                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qty</th>
-                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
-                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Standardized Description</th>
+                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">Line</th>
+                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">Qty</th>
+                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">Code</th>
+                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">Standardized Description</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="bg-white divide-y divide-gray-200">
+                                    <tbody className="bg-transparent divide-y divide-[var(--border)]">
                                         {resolvedProducts.map((item) => (
-                                            <tr key={`${item.lineNumber}-${item.productCode}`}>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.lineNumber}</td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.quantity}</td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.productCode}</td>
-                                                <td className="px-6 py-4 text-sm text-gray-800">{item.description}</td>
+                                            <tr key={`${item.lineNumber}-${item.productCode}`} className="hover:bg-[var(--panel-2)] transition-colors">
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{item.lineNumber}</td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--text)]">{item.quantity}</td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text)] opacity-80">{item.productCode}</td>
+                                                <td className="px-6 py-4 text-sm text-[var(--text)]">{item.description}</td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -718,15 +718,15 @@ const App: React.FC = () => {
                     </div>
                 );
             case AppState.Error:
-                 return (
-                     <div className="bg-red-50 rounded-lg shadow p-8 text-center border border-red-200 h-full flex flex-col justify-center">
-                         <h2 className="text-2xl font-semibold text-red-800">An Error Occurred</h2>
-                         <p className="mt-2 text-red-600">{error || 'Could not process the quote. Please try again.'}</p>
-                         <button onClick={resetApp} className="mt-4 mx-auto inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">
+                return (
+                    <div className="bg-[rgba(239,68,68,0.1)] rounded-lg shadow-[var(--shadow)] p-8 text-center border border-[var(--bad)] h-full flex flex-col justify-center">
+                        <h2 className="text-2xl font-semibold text-[var(--bad)]">An Error Occurred</h2>
+                        <p className="mt-2 text-[var(--text)] opacity-80">{error || 'Could not process the quote. Please try again.'}</p>
+                        <button onClick={resetApp} className="mt-4 mx-auto inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-[var(--bad)] rounded-md hover:bg-red-700 shadow-lg">
                             Start Over
-                         </button>
-                     </div>
-                 );
+                        </button>
+                    </div>
+                );
             case AppState.Idle:
             default:
                 return <InitialInput onParse={handleParse} />;
@@ -740,10 +740,10 @@ const App: React.FC = () => {
             case 'parsing':
                 return renderParsingContent();
             case 'manual':
-                 return <ManualProductSelector 
-                            config={appConfig}
-                            onSubmit={handleManualQuoteSubmit} 
-                        />
+                return <ManualProductSelector
+                    config={appConfig}
+                    onSubmit={handleManualQuoteSubmit}
+                />
             case 'history':
                 return <QuoteHistory
                     onViewQuote={handleViewQuote}
@@ -914,8 +914,8 @@ const App: React.FC = () => {
                                     }}
                                     onProductsChange={handleProductsChange}
                                     onSaveLearnedProduct={handleSaveLearnedProduct}
-                                 />
-                                <ExportControls onExportPdf={handleExportPdf} onExportXlsx={handleExportXlsx} onSaveQuote={handleSaveQuote} onCreateJob={handleCreateJob}/>
+                                />
+                                <ExportControls onExportPdf={handleExportPdf} onExportXlsx={handleExportXlsx} onSaveQuote={handleSaveQuote} onCreateJob={handleCreateJob} />
                             </div>
                         </div>
                     </>
@@ -931,14 +931,14 @@ const App: React.FC = () => {
             ctrlKey: true,
             description: 'Undo product changes',
             enabled: view === 'results' && canUndo,
-            callback: () => {}
+            callback: () => { }
         },
         {
             key: 'y',
             ctrlKey: true,
             description: 'Redo product changes',
             enabled: view === 'results' && canRedo,
-            callback: () => {}
+            callback: () => { }
         },
         {
             key: 'z',
@@ -946,26 +946,26 @@ const App: React.FC = () => {
             shiftKey: true,
             description: 'Redo product changes',
             enabled: view === 'results' && canRedo,
-            callback: () => {}
+            callback: () => { }
         },
         {
             key: 's',
             ctrlKey: true,
             description: 'Save quote',
             enabled: view === 'results' && !!currentQuote,
-            callback: () => {}
+            callback: () => { }
         },
         {
             key: '?',
             description: 'Show keyboard shortcuts',
             enabled: true,
-            callback: () => {}
+            callback: () => { }
         },
         {
             key: 'Escape',
             description: 'Close modals',
             enabled: true,
-            callback: () => {}
+            callback: () => { }
         }
     ];
 
@@ -1007,7 +1007,7 @@ const App: React.FC = () => {
                                 alignItems: "center",
                                 gap: 16
                             }}>
-                                 <BHILogo {...getIconProps('brandLarge', { color: theme.colors.text })} />
+                                <BHILogo {...getIconProps('brandLarge', { color: theme.colors.text })} />
                             </div>
                             <nav aria-label="Main navigation" style={{ display: 'flex', gap: isMobile ? 8 : 12, alignItems: 'center', flexWrap: 'wrap' }}>
                                 <button
@@ -1030,7 +1030,7 @@ const App: React.FC = () => {
                                     ⌨️
                                 </button>
                                 {view !== 'home' && (
-                                     <button
+                                    <button
                                         onClick={resetApp}
                                         aria-label="Return to home page"
                                         style={{
@@ -1104,7 +1104,7 @@ const App: React.FC = () => {
                         padding: responsiveSpacing[breakpoint].padding
                     }}
                 >
-                     <div style={{ maxWidth: "100%" }}>
+                    <div style={{ maxWidth: "100%" }}>
                         {renderContent()}
                     </div>
                 </main>

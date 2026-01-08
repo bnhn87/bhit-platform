@@ -535,7 +535,7 @@ export default function SmartQuoteV3App() {
                                             <p className="font-medium mb-1">After Quote is Won:</p>
                                             <ul className="space-y-1">
                                                 <li>• Mark quote as WON in status</li>
-                                                <li>• Click "Convert to Job" to create job</li>
+                                                <li>• Click &quot;Convert to Job&quot; to create job</li>
                                                 <li>• Job will inherit all quote details</li>
                                             </ul>
                                         </div>
@@ -580,7 +580,7 @@ export default function SmartQuoteV3App() {
                                     config={appConfig}
                                     onDetailsChange={setQuoteDetails}
                                     onProductsChange={setProducts}
-                                    onSaveLearnedProduct={async () => {}}
+                                    onSaveLearnedProduct={async () => { }}
                                 />
                             </div>
                         </div>

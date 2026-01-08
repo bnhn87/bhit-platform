@@ -7,10 +7,10 @@ import Script from "next/script";
 import React from "react";
 
 import AccessibilityProvider from "@/components/AccessibilityProvider";
-import Sidebar from "@/components/Sidebar"; // Replaces AppNav
-import HeaderTrigger from "@/components/HeaderTrigger";
-// import AppNav from "@/components/AppNav"; // Deprecated
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import HeaderTrigger from "@/components/HeaderTrigger";
+import Sidebar from "@/components/Sidebar"; // Replaces AppNav
+// import AppNav from "@/components/AppNav"; // Deprecated
 import TaskBanner from "@/components/TaskBanner";
 import { AuthProvider } from "@/lib/AuthProvider";
 import "@/styles/globals.css";

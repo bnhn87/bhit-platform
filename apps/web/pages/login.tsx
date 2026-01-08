@@ -6,8 +6,8 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-import { getSiteUrl } from "../lib/utils/url";
 import { supabase } from "../lib/supabaseClient";
+import { getSiteUrl } from "../lib/utils/url";
 
 export default function LoginPage() {
   const router = useRouter();

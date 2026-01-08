@@ -1,22 +1,22 @@
 export const theme = {
   colors: {
-    bg: "#0a0e17", // BHi Concept Background
-    background: "#0a0e17",
-    panel: "#1a202c", // BHi Concept Inactive/Panel
-    panelAlt: "#141824",
-    border: "#262626", // Dark grey border
-    text: "#ffffff",
-    textSubtle: "#a3a3a3",
-    accent: "#f38b00", // BHi Concept Orange
-    accentAlt: "#3182ce", // BHi Concept Active Blue
-    warn: "#f59e0b",
-    danger: "#ef4444",
-    error: "#ef4444",
-    success: "#22c55e",
-    info: "#3182ce", // BHi Concept Blue
-    muted: "#4a5568" // BHi Toggle Inactive
+    bg: "var(--bg)",
+    background: "var(--bg)",
+    panel: "var(--panel)",
+    panelAlt: "var(--panel-2)",
+    border: "var(--border)",
+    text: "var(--text)",
+    textSubtle: "var(--muted)",
+    accent: "var(--accent)",
+    accentAlt: "var(--info)", // Preserving Blue as alternate accent
+    warn: "var(--warn)",
+    danger: "var(--bad)",
+    error: "var(--bad)",
+    success: "var(--ok)",
+    info: "var(--info)",
+    muted: "var(--muted)"
   },
-  radii: { xs: 4, sm: 4, md: 8, lg: 12, xl: 16, full: 9999 }, // Concept uses 4px button radius
+  radii: { xs: 4, sm: 4, md: 8, lg: 12, xl: 16, full: 9999 },
   spacing: (n: number) => `${n * 4}px`,
-  shadow: "0 4px 20px rgba(0,0,0,0.5)"
+  shadow: "var(--shadow)"
 } as const;
