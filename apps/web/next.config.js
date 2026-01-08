@@ -4,7 +4,7 @@ const webpack = require("webpack");
 
 module.exports = {
   reactStrictMode: true,
-  swcMinify: false,
+
   experimental: {
     forceSwcTransforms: false,
   },
