@@ -8,28 +8,20 @@ interface HeaderTriggerProps {
 export default function HeaderTrigger({ onOpen }: HeaderTriggerProps) {
     return (
         <div style={{
-            position: 'sticky',
-            top: 16, // Stick 16px from top when scrolling
+            position: 'fixed',
+            top: 16,
+            left: 16, // Fixed quantity from left edge
             zIndex: 10001,
             display: 'flex',
-            alignItems: 'flex-start',
-            pointerEvents: 'none',
-            width: '100%',
-            // If height is auto, it pushes main down "too much"?
-            // Hamburger is 40px. Padding 16. Total space ~72px.
-            // If we want the classic sidebar trigger look, it usually floats OVER the main content top-left corner.
-            // But BELOW the banner.
-            // So: Sticky positioning. Top: 0. 
-            // But we don't want it to occupy 72px of white space at the top of the Main content.
-            // Solution: 
-            // Keep it Sticky. 
-            // Set height to 0. Use Overflow visible.
-            // Then it conceptually starts at the top of Main (below banner) but doesn't push Main down.
-            // USER SAID: "banner... pushes everything down."
-            // Does hamburger push content down? Usually no, hamburger floats over content.
-            // So Banner -> [Hamburger (Sticky, Height 0, float over)] -> Main Content.
-            // Banner pushes [Hamburger + Main].
-            // This satisfies "Hamburger below banner".
+            alignItems: 'center',
+            justifyContent: 'center',
+            // No width/height 0 hacks. Just place it.
+            // But we need to make sure it doesn't block clicks underneath if we made IT a container.
+            // Actually, if we just position the button itself, or a small wrapper...
+            // current wrapper is width 100%. 
+            // Let's make the wrapper just fit the button to avoid blocking clicks locally.
+            width: 'auto',
+            height: 'auto',
         }}>
             <button
                 onClick={onOpen}

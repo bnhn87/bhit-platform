@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import Script from "next/script";
-import React from "react";
+import React, { useEffect } from "react";
 
 import AccessibilityProvider from "@/components/AccessibilityProvider";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
@@ -28,6 +28,17 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 
   // Define routes that should have a clean layout (no nav/banners)
   const isPublicRoute = ['/login', '/reset-password'].includes(router.pathname);
+
+  useEffect(() => {
+    // FORCE CACHE BUST: Unregister all service workers to ensure new sw.js with /jobs/ logic is loaded
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function (registrations) {
+        for (let registration of registrations) {
+          registration.unregister();
+        }
+      });
+    }
+  }, []);
 
   return (
     <ErrorBoundary>
