@@ -400,6 +400,56 @@ export const ROLE_BASED_NAV: Record<UserRole, NavItem[]> = {
       category: "Administrative"
     },
   ],
+
+  // Managers have read-only access to most things, similar to Ops but restricted
+  manager: [
+    {
+      id: 501,
+      label: "501. Dashboard",
+      href: "/dashboard",
+      enabled: true,
+      category: "Main Hub"
+    },
+    {
+      id: 502,
+      label: "502. Jobs",
+      href: "/jobs",
+      enabled: true,
+      category: "Main Hub"
+    },
+    {
+      id: 503,
+      label: "503. Schedule",
+      href: "/labour-calendar",
+      enabled: true,
+      category: "Scheduling & Resources"
+    }
+  ],
+
+  // General Managers have full access similar to Directors
+  general_manager: [
+    {
+      id: 601,
+      label: "601. Dashboard",
+      href: "/dashboard",
+      enabled: true,
+      category: "Main Hub"
+    },
+    {
+      id: 602,
+      label: "602. Admin Panel",
+      href: "/admin-panel",
+      enabled: true,
+      category: "Administrative"
+    },
+    {
+      id: 603,
+      label: "603. Financials",
+      href: "/admin/costing",
+      enabled: true,
+      category: "Planning & Quoting"
+    }
+  ]
 };
 
 /**

@@ -15,7 +15,10 @@ DECLARE
     'daily_progress_log', 'construction_milestones', 'product_catalogue',
     'daily_progress_reports', 'quote_shares',
     'progress_photos', 'weather_impact_log', 'invoice_schedule_items',
-    'job_invoice_history'
+    'job_invoice_history',
+    -- Added dependencies for views:
+    'clients', 'job_costs', 'job_risk_flags', 'job_tasks', 'job_documents',
+    'job_photos', 'job_notes', 'job_items', 'job_drawings'
   ];
   t text;
   relkind "char";
